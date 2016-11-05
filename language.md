@@ -10,7 +10,7 @@ The primitive types are:
 - `int`: an integer from -2147483648 to 2147483647
 - `uint`: a positive integer, from 0 to 4294967295
 - `real`: a floating-point number, equivalent to a `double` or `float64` from other languages
-- `string`: an UTF-8 encoded sequence of characters. This is not meant to store binary data, only printable/readable characters. There is a soft limit of 65535 in a string.
+- `string`: an UTF-8 encoded sequence of characters. This is not meant to store binary data, only printable/readable characters. There is a soft limit of 65535 chars in a string.
 - `date`: A point in time with millisecond precision. Timezone information is not preserved and will be converted to the local timezone of the receiver always.
 - `bytes`: Arbitrary binary data.
 - `void`: Special type that means the lack of value. Can only be used as the return type of a `function` operation (more on that later)
@@ -52,7 +52,7 @@ The client targets are:
 - `web`: TypeScript
 - `desktop`: C++/Qt
 
-Every running client must have a version following [Semantic Versioning](https://semver.org/). Not that a older client should be able to communicate with a newer server. The other way around (newer client with older server) is not garanteed.
+Every running client must have a version following [Semantic Versioning](https://semver.org/). Note that a older client should be able to communicate with a newer server. The other way around (newer client with older server) is not garanteed.
 
 The communication protocol is HTTP (either 1.0, 1.1 or 2.0) with JSON messages. A request can expect a direct response or a stream of partial responses. This is implemented with HTTP Streamming.
 
@@ -78,7 +78,7 @@ Examples:
 
     // Fetchs a profile by id if it exists
     get userProfile(userId: string): Profile?
-    
+
     // Sends a message, returns nothing
     function sendMessage(target: string, message: Message): void
 
@@ -88,21 +88,27 @@ Examples:
 
 ## Marks
 
-A mark can be added after a field or a operation parameter to add some special meaning. A starts with an exclamation and is followed by some word. Supported marks are:
+A mark can be added after a field or an operation parameter to add some special meaning. It starts with an exclamation and is followed by some word. Supported marks are:
 
 - `!secret`: Specifies that this value is of sensitive nature and should be omited from all logs.
 
-For example:
+  For example:
 
-    class CardData {
-        cardNumber: string !secret
-        holder: string
-        month: uint
-        year: uint
-        ccv: string !secret
-    }
+      class CardData {
+          cardNumber: string !secret
+          holder: string
+          month: uint
+          year: uint
+          ccv: string !secret
+      }
 
-    function logIn(username: string, password: string !secret): User
+      function logIn(username: string, password: string !secret): User
+
+- `!big`: If a function take some input marked as big (or return something marked as big), it will have a progress callback.
+
+  For example:
+
+      function sendPhoto(image: bytes !big): void
 
 ## Annotations
 
@@ -124,16 +130,16 @@ Operations and classes can be annoted with extra information. Each annotation ha
           text: string
       }
 
-      @version(android > 1.2 || ios > 1.7)
+      @version(android > 1.2 || ios > 1.7 || web)
       class Message {
           text: bytes
       }
 
-      @version(android) function doThing(): void
+      @version(android || web) function doThing(): void
       @version(ios) function doThing(value: int): void
-    
+
   Note: when creating multiple things with the same name, you will need to use `@name` to create a unique name for them (used in server code).
-  
+
 - `@name`: Specifies a name for this class or operation. This is only necessary if you have multiple things with the same name in the code.
 
   Example:
@@ -143,7 +149,7 @@ Operations and classes can be annoted with extra information. Each annotation ha
 
   This name only affects server code (that have to handle all client versions). The client generated code is always targeted at one specific plataform/version and has no name conflicts. This annotation is ignored for them.
 
-- `@cache`: Only appliable to `get` operations. The argument can be `weak`, which menas the function will use cache if available but always try to get the lastest information online. Or the argument can be a time duration for how long the cache is valid. Syntax:
+- `@cache`: Only appliable to `get` operations. The argument can be `weak`, which means the function will use cache if available but always try to get the lastest information online. Or the argument can be a time duration for how long the cache is valid. Syntax:
   - `7d`: one week
   - `5h`: five hours
   - `10m`: ten minutes
