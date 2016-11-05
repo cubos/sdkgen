@@ -50,7 +50,7 @@ The client targets are:
 - `android`: Java
 - `ios`: Swift
 - `web`: TypeScript
-- `desktop`: C++/Qt
+- `qt`: C++/Qt
 
 Every running client must have a version following [Semantic Versioning](https://semver.org/). Note that a older client should be able to communicate with a newer server. The other way around (newer client with older server) is not garanteed.
 
@@ -123,7 +123,7 @@ Operations and classes can be annoted with extra information. Each annotation ha
   - `1.1 < android < 1.5`: Similar as above. Both `<` and `<=` can be used
   - `android`: Any version of android
 
-  Plataforms can be `android`, `ios`, `web` and `desktop`. Multiple conditionals can be combined with `||`. Example:
+  Plataforms can be `android`, `ios`, `web` and `qt`. Multiple conditionals can be combined with `||`. Example:
 
       @version(android <= 1.2 || ios <= 1.7)
       class Message {
