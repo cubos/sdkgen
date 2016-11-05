@@ -134,7 +134,9 @@ Operations and classes can be annoted with extra information. Each annotation ha
     
   Note: when creating multiple things with the same name, you will need to use `@name` to create a unique name for them (used in server code).
   
-- `@name`: Specifies a name for this class or operation. This is only necessary if you have multiple things with the same name in the code. Example:
+- `@name`: Specifies a name for this class or operation. This is only necessary if you have multiple things with the same name in the code.
+
+  Example:
 
       @version(android) @name(doThingForAndroid) function doThing(): void
       @version(ios) @name(doThingForIos) function doThing(value: int): void
