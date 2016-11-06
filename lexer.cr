@@ -124,6 +124,10 @@ class Token
   def try_ident
     self
   end
+
+  def location
+    "#{filename}:#{line}:#{col}"
+  end
 end
 
 class TypeKeywordToken < Token

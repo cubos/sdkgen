@@ -41,13 +41,13 @@ class Parser
       {% if token_type.stringify == "IdentifierToken" %}
         token = token.try_ident
       {% end %}
-      if token.is_a?({{token_type}})
+      if !result && token.is_a?({{token_type}})
         result = token
       end
     {% end %}
 
     unless result
-      raise ParserException.new "Expected #{{{token_types.map{|t| t.stringify}.join(" or ")}}} at #{token.filename}:#{token.line}:#{token.col}, but found #{token.class}"
+      raise ParserException.new "Expected #{{{token_types.map{|t| t.stringify}.join(" or ")}}} at #{token.location}, but found #{token.class}"
     end
 
     result
@@ -62,7 +62,7 @@ class Parser
       token = token.try_ident
     {% end %}
     unless token.is_a?({{token_type}})
-      raise ParserException.new "Expected #{{{token_type}}} at #{token.filename}:#{token.line}:#{token.col}, but found #{token.class}"
+      raise ParserException.new "Expected #{{{token_type}}} at #{token.location}, but found #{token.class}"
     end
     token
   end
@@ -72,7 +72,11 @@ class Parser
     next_token
 
     t = CustomType.new
-    t.name = expect(IdentifierToken).name
+    name_token = expect(IdentifierToken)
+    unless name_token.name[0].uppercase?
+      raise ParserException.new "A custom type name must start with an uppercase letter, but found '#{name_token.name}' at #{name_token.location}"
+    end
+    t.name = name_token.name
     next_token
 
     expect CurlyOpenSymbolToken
@@ -134,7 +138,7 @@ class Parser
     next_token
     expect ColonSymbolToken
     next_token
-    field.type = parse_type
+    field.type = parse_type(allow_void: false)
 
     while @token.is_a?(ExclamationMarkSymbolToken)
       next_token
@@ -142,7 +146,7 @@ class Parser
       when "secret"
         field.secret = true
       else
-        raise ParserException.new "Unknown field mark !#{token.name} at #{token.filename}:#{token.line}:#{token.col}"
+        raise ParserException.new "Unknown field mark !#{token.name} at #{token.location}"
       end
       next_token
     end
@@ -150,9 +154,12 @@ class Parser
     field
   end
 
-  def parse_type
-    result = case token = multi_expect(IdentifierToken, PrimitiveTypeToken)
+  def parse_type(allow_void = true)
+    result = case token = multi_expect(PrimitiveTypeToken, IdentifierToken)
     when IdentifierToken
+      unless token.name[0].uppercase?
+        raise ParserException.new "Expected a type but found '#{token.name}', at #{token.location}"
+      end
       CustomTypeReference.new(token.name)
     when PrimitiveTypeToken
       case token.name
@@ -163,7 +170,12 @@ class Parser
       when "float";  FloatPrimitiveType.new
       when "bool";   BoolPrimitiveType.new
       when "bytes";  BytesPrimitiveType.new
-      when "void";   VoidPrimitiveType.new
+      when "void"
+        if allow_void
+          VoidPrimitiveType.new
+        else
+          raise ParserException.new "Can't use 'void' here, at #{token.location}"
+        end
       else
         raise "BUG! Should handle primitive #{token.name}"
       end
