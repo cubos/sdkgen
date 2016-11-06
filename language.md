@@ -30,13 +30,13 @@ Types can be made optional by appending `?` at the end. If the type is an array,
     string?      // Maybe a string
     bool[]?      // Maybe a bool array
 
-## Classes
+## Types
 
-Custom types can be created with a collection of fields. Each field have a name and a type. A class name starts with a upper case letter. The field syntax is `name: type`. The class name can then be used as a type anywhere.
+Custom types can be created with a collection of fields. Each field have a name and a type. A type name starts with a upper case letter. The field syntax is `name: type`. The type name can then be used as a type anywhere.
 
 For example:
 
-    class Message {
+    type Message {
         date: date
         author: User
         mentions: User[]
@@ -94,7 +94,7 @@ A mark can be added after a field or an operation parameter to add some special 
 
   For example:
 
-      class CardData {
+      type CardData {
           cardNumber: string !secret
           holder: string
           month: uint
@@ -112,9 +112,9 @@ A mark can be added after a field or an operation parameter to add some special 
 
 ## Annotations
 
-Operations and classes can be annoted with extra information. Each annotation has a different meaning. All of them start with `@` followed by a word, followed by parenthesis and some argument. Here are the supported annotations:
+Operations and types can be annoted with extra information. Each annotation has a different meaning. All of them start with `@` followed by a word, followed by parenthesis and some argument. Here are the supported annotations:
 
-- `@version`: Restrict this class or operation to only exist in one particular client version. You can create multiple classes/operations with the same name as long as they don't exist in the same version. The argument is a list of restrictions per plataform. Each plataform can have a conditional checking for versions. Possible forms:
+- `@version`: Restrict this type or operation to only exist in one particular client version. You can create multiple types/operations with the same name as long as they don't exist in the same version. The argument is a list of restrictions per plataform. Each plataform can have a conditional checking for versions. Possible forms:
   - `android > 1.2`: This matches `1.3` | `1.5.2` | `2.1`, but not `1.0` | `1.2` | `1.2.1`.
   - `android >= 1.2`: This matches `1.3` | `1.5.2` | `2.1` | `1.2` | `1.2.1`, but not `1.0`.
   - `android == 1.3`: This matches `1.3` | `1.3.5`, but not `1.0` | `1.4`.
@@ -126,12 +126,12 @@ Operations and classes can be annoted with extra information. Each annotation ha
   Plataforms can be `android`, `ios`, `web` and `qt`. Multiple conditionals can be combined with `||`. Example:
 
       @version(android <= 1.2 || ios <= 1.7)
-      class Message {
+      type Message {
           text: string
       }
 
       @version(android > 1.2 || ios > 1.7 || web)
-      class Message {
+      type Message {
           text: bytes
       }
 
@@ -140,7 +140,7 @@ Operations and classes can be annoted with extra information. Each annotation ha
 
   Note: when creating multiple things with the same name, you will need to use `@name` to create a unique name for them (used in server code).
 
-- `@name`: Specifies a name for this class or operation. This is only necessary if you have multiple things with the same name in the code.
+- `@name`: Specifies a name for this type or operation. This is only necessary if you have multiple things with the same name in the code.
 
   Example:
 
