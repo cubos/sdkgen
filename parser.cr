@@ -15,9 +15,11 @@ class Parser
   def parse
     api = ApiDescription.new
     while @token
-      case multi_expect(TypeKeywordToken)
+      case multi_expect(TypeKeywordToken, GetKeywordToken, FunctionKeywordToken, SubscribeKeywordToken)
       when TypeKeywordToken
         api.custom_types << parse_custom_type_definition
+      when GetKeywordToken, FunctionKeywordToken, SubscribeKeywordToken
+        api.operations << parse_operation
       end
     end
     api
@@ -56,7 +58,7 @@ class Parser
     unless token
       raise ParserException.new "Expected #{{{token_type}}}, but found end of file"
     end
-    {% if token_type == IdentifierToken %}
+    {% if token_type.stringify == "IdentifierToken" %}
       token = token.try_ident
     {% end %}
     unless token.is_a?({{token_type}})
@@ -79,25 +81,73 @@ class Parser
     while true
       case token = multi_expect(IdentifierToken, CurlyCloseSymbolToken)
       when IdentifierToken
-        field = Field.new
-        field.name = token.name
-        next_token
-        expect ColonSymbolToken
-        next_token
-        field.type = parse_type
-
-        while @token.is_a?(ExclamationMarkSymbolToken)
-          next_token
-          field.marks << expect(IdentifierToken).name
-          next_token
-        end
-
-        t.fields << field
+        t.fields << parse_field
       when CurlyCloseSymbolToken
         next_token
         return t
       end
     end
+  end
+
+  def parse_operation
+    op = nil
+    case token = multi_expect(GetKeywordToken, FunctionKeywordToken, SubscribeKeywordToken)
+    when GetKeywordToken
+      op = GetOperation.new
+    when FunctionKeywordToken
+      op = FunctionOperation.new
+    when SubscribeKeywordToken
+      op = SubscribeOperation.new
+    else
+      raise "never"
+    end
+
+    next_token
+    op.name = expect(IdentifierToken).name
+    next_token
+    expect ParensOpenSymbolToken
+    next_token
+
+    while true
+      case token = multi_expect(IdentifierToken, ParensCloseSymbolToken, CommaSymbolToken)
+      when IdentifierToken
+        op.args << parse_field
+      when ParensCloseSymbolToken
+        next_token
+        break
+      when CommaSymbolToken
+        next_token
+        next
+      end
+    end
+
+    expect ColonSymbolToken
+    next_token
+    op.return_type = parse_type
+
+    op
+  end
+
+  def parse_field
+    field = Field.new
+    field.name = expect(IdentifierToken).name
+    next_token
+    expect ColonSymbolToken
+    next_token
+    field.type = parse_type
+
+    while @token.is_a?(ExclamationMarkSymbolToken)
+      next_token
+      case (token = expect(IdentifierToken)).name
+      when "secret"
+        field.secret = true
+      else
+        raise ParserException.new "Unknown field mark !#{token.name} at #{token.filename}:#{token.line}:#{token.col}"
+      end
+      next_token
+    end
+
+    field
   end
 
   def parse_type

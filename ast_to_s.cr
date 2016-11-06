@@ -56,13 +56,16 @@ end
 
 class ApiDescription
   def to_s
-    custom_types.map(&.to_s).join("\n")
+    custom_types.map(&.to_s).join("\n") + "\n" +
+    operations.map(&.to_s).join("\n")
   end
 end
 
 class Field
   def to_s
-    "#{name}: #{type.to_s}#{marks.map{|m| " !#{m}" }.join}"
+    str = "#{name}: #{type.to_s}"
+    str += " !secret" if secret
+    str
   end
 end
 
@@ -74,10 +77,26 @@ class CustomType
   end
 end
 
-class CustomTypeReference < Type
+class CustomTypeReference
   def to_s
     name
   end
 end
 
+class GetOperation
+  def to_s
+    "get #{name}(#{args.map(&.to_s).join(", ")}): #{return_type.to_s}"
+  end
+end
 
+class FunctionOperation
+  def to_s
+    "function #{name}(#{args.map(&.to_s).join(", ")}): #{return_type.to_s}"
+  end
+end
+
+class SubscribeOperation
+  def to_s
+    "subscribe #{name}(#{args.map(&.to_s).join(", ")}): #{return_type.to_s}"
+  end
+end

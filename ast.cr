@@ -34,12 +34,13 @@ end
 
 class ApiDescription
   property custom_types = [] of CustomType
+  property operations = [] of Operation
 end
 
 class Field
   property! name : String
   property! type : Type
-  property marks = [] of String
+  property secret = false
 end
 
 class CustomType
@@ -53,4 +54,17 @@ class CustomTypeReference < Type
   end
 end
 
+class Operation
+  property! name : String
+  property args = [] of Field
+  property! return_type : Type
+end
 
+class GetOperation < Operation
+end
+
+class FunctionOperation < Operation
+end
+
+class SubscribeOperation < Operation
+end

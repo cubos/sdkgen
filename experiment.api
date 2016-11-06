@@ -1,5 +1,5 @@
 
-// primitive types: int, uint, real, string, bytes, date
+// primitive types: int, uint, real, string, bytes, date, bool
 
 type Image {
     url: string
@@ -26,9 +26,9 @@ type CardData {
     ccv: string !secret
 }
 
-//get currentUser(): User?
-//get lastMessage(): Message
-//function logIn(user: string, pass: string !secret): User
+get currentUser(): User?
+get lastMessage(): Message
+function logIn(user: string, pass: string !secret): User
 
-//subscribe messages(since: date): Message
+subscribe messages(since: date): Message
 
