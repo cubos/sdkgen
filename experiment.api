@@ -1,26 +1,24 @@
 
 // primitive types: int, uint, real, string, bytes, date
 
-
-
-class Image {
+type Image {
     url: string
     width: int
     height: int
 }
 
-class User {
+type User {
     name: string
     avatar: Image
 }
 
-class Message {
+type Message {
     date: date
     message: string
     image: bytes?
 }
 
-class CardData {
+type CardData {
     cardNumber: string !secret
     holder: string
     month: uint
@@ -28,14 +26,9 @@ class CardData {
     ccv: string !secret
 }
 
-get currentUser(): User?
-get lastMessage(): Message
-function logIn(user: string, pass: string !secret): User
+//get currentUser(): User?
+//get lastMessage(): Message
+//function logIn(user: string, pass: string !secret): User
 
-@version(android < 1.2; ios < 1.7)
-@implementation(subscribeMessagesOld)
-subscribe messages(since: date): Message
-
-@version(android >= 1.2; ios >= 1.7)
-subscribe messages(since: date): Message
+//subscribe messages(since: date): Message
 
