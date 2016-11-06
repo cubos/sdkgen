@@ -11,7 +11,7 @@ end
 class UIntPrimitiveType < Type
 end
 
-class RealPrimitiveType < Type
+class FloatPrimitiveType < Type
 end
 
 class DatePrimitiveType < Type

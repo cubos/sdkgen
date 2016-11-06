@@ -1,5 +1,5 @@
 
-// primitive types: int, uint, real, string, bytes, date, bool
+// primitive types: int, uint, float, string, bytes, date, bool
 
 type Image {
     url: string

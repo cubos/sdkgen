@@ -18,9 +18,9 @@ class UIntPrimitiveType
   end
 end
 
-class RealPrimitiveType
+class FloatPrimitiveType
   def to_s
-    "real"
+    "float"
   end
 end
 

@@ -160,12 +160,12 @@ class Parser
       when "int";    IntPrimitiveType.new
       when "uint";   UIntPrimitiveType.new
       when "date";   DatePrimitiveType.new
-      when "real";   RealPrimitiveType.new
+      when "float";  FloatPrimitiveType.new
       when "bool";   BoolPrimitiveType.new
       when "bytes";  BytesPrimitiveType.new
       when "void";   VoidPrimitiveType.new
       else
-        raise "BUG!"
+        raise "BUG! Should handle primitive #{token.name}"
       end
     else
       raise "never"

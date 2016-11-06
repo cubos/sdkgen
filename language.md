@@ -9,7 +9,7 @@ The primitive types are:
 - `bool`: Either `true` or `false`
 - `int`: an integer from -2147483648 to 2147483647
 - `uint`: a positive integer, from 0 to 4294967295
-- `real`: a floating-point number, equivalent to a `double` or `float64` from other languages
+- `float`: a floating-point number, equivalent to a `double` or `float64` from other languages
 - `string`: an UTF-8 encoded sequence of characters. This is not meant to store binary data, only printable/readable characters. There is a soft limit of 65535 chars in a string.
 - `date`: A point in time with millisecond precision. Timezone information is not preserved and will be converted to the local timezone of the receiver always.
 - `bytes`: Arbitrary binary data.
