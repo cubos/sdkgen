@@ -1,29 +1,35 @@
 
-class Type
+abstract class Type
 end
 
-class StringPrimitiveType < Type
+abstract class PrimitiveType < Type
 end
 
-class IntPrimitiveType < Type
+class StringPrimitiveType < PrimitiveType
 end
 
-class UIntPrimitiveType < Type
+class IntPrimitiveType < PrimitiveType
 end
 
-class FloatPrimitiveType < Type
+class UIntPrimitiveType < PrimitiveType
 end
 
-class DatePrimitiveType < Type
+class FloatPrimitiveType < PrimitiveType
 end
 
-class BoolPrimitiveType < Type
+class DatePrimitiveType < PrimitiveType
 end
 
-class BytesPrimitiveType < Type
+class DateTimePrimitiveType < PrimitiveType
 end
 
-class VoidPrimitiveType < Type
+class BoolPrimitiveType < PrimitiveType
+end
+
+class BytesPrimitiveType < PrimitiveType
+end
+
+class VoidPrimitiveType < PrimitiveType
 end
 
 class OptionalType < Type
@@ -54,7 +60,7 @@ class CustomTypeReference < Type
   end
 end
 
-class Operation
+abstract class Operation
   property! name : String
   property args = [] of Field
   property! return_type : Type

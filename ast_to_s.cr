@@ -30,6 +30,12 @@ class DatePrimitiveType
   end
 end
 
+class DateTimePrimitiveType
+  def to_s
+    "datetime"
+  end
+end
+
 class BoolPrimitiveType
   def to_s
     "bool"

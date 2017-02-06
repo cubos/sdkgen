@@ -8,7 +8,8 @@ type Image {
 }
 
 type User {
-    name: string
+    name: string !maxlen(30)
+    cpf: string !cpf
     avatar: Image
 }
 
@@ -21,7 +22,7 @@ type Message {
 type CardData {
     cardNumber: string !secret
     holder: string
-    month: uint
+    month: uint !range(1, 12)
     year: uint
     ccv: string !secret
 }

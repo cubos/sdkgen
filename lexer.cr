@@ -54,11 +54,12 @@ class Lexer
     return make_token(PrimitiveTypeToken.new("float")) if literal_match("float")
     return make_token(PrimitiveTypeToken.new("string")) if literal_match("string")
     return make_token(PrimitiveTypeToken.new("date")) if literal_match("date")
+    return make_token(PrimitiveTypeToken.new("datetime")) if literal_match("datetime")
     return make_token(PrimitiveTypeToken.new("bytes")) if literal_match("bytes")
     return make_token(PrimitiveTypeToken.new("void")) if literal_match("void")
 
-    if current_char!.alpha?
-      while current_char && (current_char!.alpha? || current_char!.digit? || current_char! == '_')
+    if current_char!.letter?
+      while current_char && (current_char!.letter? || current_char!.number? || current_char! == '_')
         next_char
       end
       return make_token(IdentifierToken.new(@raw[@start...@pos]))

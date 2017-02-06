@@ -163,13 +163,14 @@ class Parser
       CustomTypeReference.new(token.name)
     when PrimitiveTypeToken
       case token.name
-      when "string"; StringPrimitiveType.new
-      when "int";    IntPrimitiveType.new
-      when "uint";   UIntPrimitiveType.new
-      when "date";   DatePrimitiveType.new
-      when "float";  FloatPrimitiveType.new
-      when "bool";   BoolPrimitiveType.new
-      when "bytes";  BytesPrimitiveType.new
+      when "string";   StringPrimitiveType.new
+      when "int";      IntPrimitiveType.new
+      when "uint";     UIntPrimitiveType.new
+      when "date";     DatePrimitiveType.new
+      when "datetime"; DateTimePrimitiveType.new
+      when "float";    FloatPrimitiveType.new
+      when "bool";     BoolPrimitiveType.new
+      when "bytes";    BytesPrimitiveType.new
       when "void"
         if allow_void
           VoidPrimitiveType.new
