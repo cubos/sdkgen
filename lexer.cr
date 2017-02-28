@@ -43,11 +43,13 @@ class Lexer
     return make_token(ColonSymbolToken.new) if literal_match(":")
     return make_token(ExclamationMarkSymbolToken.new) if literal_match("!")
     return make_token(CommaSymbolToken.new) if literal_match(",")
+    return make_token(EqualSymbolToken.new) if literal_match("=")
 
     return make_token(TypeKeywordToken.new) if literal_match("type")
     return make_token(GetKeywordToken.new) if literal_match("get")
     return make_token(FunctionKeywordToken.new) if literal_match("function")
     return make_token(SubscribeKeywordToken.new) if literal_match("subscribe")
+    return make_token(ErrorKeywordToken.new) if literal_match("error")
     return make_token(PrimitiveTypeToken.new("bool")) if literal_match("bool")
     return make_token(PrimitiveTypeToken.new("int")) if literal_match("int")
     return make_token(PrimitiveTypeToken.new("uint")) if literal_match("uint")
@@ -65,9 +67,22 @@ class Lexer
       return make_token(IdentifierToken.new(@raw[@start...@pos]))
     end
 
+    if current_char! == '$'
+      next_char
+      while current_char && (current_char!.letter? || current_char!.number? || current_char! == '_')
+        next_char
+      end
+      return make_token(GlobalOptionToken.new(@raw[@start+1...@pos]))
+    end
+
+    if current_char! == '"'
+      return string_match
+    end
+
     until [' ', '\t', '\r', '\n'].includes? current_char
       next_char
     end
+
     raise LexerException.new("Invalid token at #{@filename}:#{@line}:#{@col}: \"#{@raw[@start...@pos]}\"")
   end
 
@@ -115,6 +130,49 @@ class Lexer
     end
     @pos += str.size
   end
+
+  private def string_match
+    unless current_char != "\""
+      raise LexerException.new("BUG: Expected string start here")
+    end
+
+    next_char
+    contents = String::Builder.new;
+    while true
+      c = current_char
+      unless c
+        raise LexerException.new("Unexpected end of input inside string literal at #{@filename}:#{@line}:#{@col}")
+      end
+      if c == '"'
+        next_char
+        break
+      end
+      if c == '\\'
+        next_char
+        case current_char
+        when 'n'
+          contents << '\n'
+        when 'r'
+          contents << '\r'
+        when 't'
+          contents << '\t'
+        when '"'
+          contents << '\"'
+        when '\\'
+          contents << '\\'
+        when nil
+          raise LexerException.new("Unexpected end of input on escape sequence inside string literal at #{@filename}:#{@line}:#{@col}")
+        else
+          contents << current_char!
+        end
+        next_char
+        next
+      end
+      contents << c
+      next_char
+    end
+    return make_token(StringLiteralToken.new(contents.to_s))
+  end
 end
 
 class Token
@@ -155,6 +213,12 @@ class SubscribeKeywordToken < Token
   end
 end
 
+class ErrorKeywordToken < Token
+  def try_ident
+    IdentifierToken.new("error")
+  end
+end
+
 class PrimitiveTypeToken < Token
   property name : String
   def initialize(@name)
@@ -169,6 +233,21 @@ class IdentifierToken < Token
   property name : String
   def initialize(@name)
   end
+end
+
+class GlobalOptionToken < Token
+  property name : String
+  def initialize(@name)
+  end
+end
+
+class StringLiteralToken < Token
+  property str : String
+  def initialize(@str)
+  end
+end
+
+class EqualSymbolToken < Token
 end
 
 class ExclamationMarkSymbolToken < Token

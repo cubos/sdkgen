@@ -1,103 +1,242 @@
-require "./target"
+require "./target_typescript"
 
-Target.add_target(language: "ts", is_server: true) do |description, output|
-  io = IO::Memory.new
-
-  io << <<-END
-import http from "http"
+class TypeScriptServerTarget < TypeScriptTarget
+  def gen
+    @io << <<-END
+import http from "http";
+import crypto from "crypto";
+import os from "os";
+import moment from "moment";
+import r from "../rethinkdb";
 
 
 END
 
-  io << "interface Implementation {\n"
-  description.operations.each do |operation|
-    io << "  "
-    generate_operation_declaration(io, operation)
-  end
-  io << "}\n\n"
+    @io << "export const fn: {\n"
+    @ast.operations.each do |op|
+      @io << "  " << operation_name(op) << ": " << operation_type(op) << ";\n"
+    end
+    @io << "} = {\n";
+    @ast.operations.each do |op|
+      @io << "  " << operation_name(op) << ": () => { throw \"not implemented\"; },\n"
+    end
+    @io << "};\n\n"
 
-  description.custom_types.each do |custom_type|
-    generate_custom_type_interface(io, custom_type)
-    io << "\n"
-  end
+    @ast.custom_types.each do |custom_type|
+      generate_custom_type_interface(@io, custom_type)
+      @io << "\n"
+    end
 
-  io << <<-END
-export interface Device {
-  id: string;
-  platform: "android" | "ios" | "web" | "qt";
-  version: string;
-}
+    @io << "const fnExec: {[name: string]: (ctx: Context, args: any) => Promise<any>} = {\n"
+    @ast.operations.each do |op|
+      @io << "  " << operation_name(op) << ": async (ctx: Context, args: any) => {\n"
+      op.args.each do |arg|
+        @io << "    let #{arg.name}: #{native_type arg.type};\n"
+      end
+      op.args.each do |arg|
+        @io << ident ident type_from_json(arg.type, arg.name, "args.#{arg.name}")
+        @io << "\n"
+      end
+      @io << "    const ret = await fn.#{operation_name op}(#{(["ctx"] + op.args.map(&.name)).join(", ")});\n"
+      @io << "    let retJson: any;\n"
+      @io << ident ident type_to_json(op.return_type, "retJson", "ret")
+      @io << "\n"
+      @io << "    return retJson;\n"
+      @io << "  },\n"
+    end
+    @io << "};\n\n"
+
+    @io << "export const err = {\n"
+    @ast.errors.each do |error|
+      @io << "  #{error}: function () {\n"
+      @io << "    throw {type: #{error.inspect}};\n"
+      @io << "  },\n"
+    end
+    @io << "};\n\n"
+
+    @io << <<-END
+//////////////////////////////////////////////////////
 
 export interface Context {
-  device: Device;
-  ip: string;
-  date: Date;
+  device: DBDevice;
+  startTime: Date;
 }
 
-export function start(implementation: Implementation) {
-
+function sleep(ms: number) {
+  return new Promise<void>(resolve => setTimeout(resolve, ms));
 }
+
+export function start(port: number) {
+  const server = http.createServer((req, res) => {
+    req.on("error", (err) => {
+      console.error(err);
+    });
+
+    res.on("error", (err) => {
+      console.error(err);
+    });
+
+    res.setHeader("Access-Control-Allow-Origin", "*");
+    res.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS");
+    res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+    res.setHeader("Access-Control-Max-Age", "86400");
+
+    switch (req.method) {
+      case "GET": {
+        res.writeHead(200);
+        res.write(`{"ok": true}`);
+        res.end();
+        break;
+      }
+      case "POST": {
+        let data = "";
+        req.on("data", chunk => data += chunk.toString());
+        req.on("end", () => {
+          try {
+            const request = JSON.parse(data);
+            const context: Context = {
+              device: request.device,
+              startTime: new Date
+            };
+            const startTime = process.hrtime();
+
+            (async () => {
+              const deviceInfo = {
+                  platform: request.device.platform,
+                  platformVersion: request.device.platformVersion,
+                  version: request.device.version,
+                  language: request.device.language
+              };
+
+              if (!context.device.id) {
+                context.device.id = crypto.randomBytes(32).toString("hex");
+
+                await r.table("devices").insert({
+                  id: context.device.id,
+                  ...deviceInfo
+                });
+              } else {
+                await r.table("devices").get(context.device.id).update(deviceInfo);
+              }
+
+              const executionId = crypto.randomBytes(32).toString("hex");
+
+              let call: DBApiCall = {
+                id: `${context.device.id}_${request.id}`,
+                name: request.name,
+                args: request.args,
+                executionId: executionId,
+                running: true,
+                device: context.device,
+                date: context.startTime,
+                duration: 0,
+                host: os.hostname(),
+                ok: true,
+                result: null as any,
+                error: null as {type: string, message: string}|null
+              };
+
+              async function tryLock(): Promise<boolean> {
+                const priorCall = await r.table("api_calls").get(call.id);
+                if (priorCall === null) {
+                  await r.table("api_calls").insert(call);
+                  return await tryLock();
+                }
+                if (!priorCall.running) {
+                  call = priorCall;
+                  return true;
+                }
+                if (priorCall.executionId === executionId) {
+                  return true;
+                }
+                return false;
+              }
+
+              for (let i = 0; i < 30; ++i) {
+                if (tryLock()) break;
+                await sleep(100);
+              }
+
+              if (call.running) {
+                if (call.executionId !== executionId) {
+                  call.ok = false;
+                  call.error = {
+                    type: "CallExecutionTimeout",
+                    message: "Timeout while waiting for execution somewhere else"
+                  };
+                } else {
+                  try {
+                    call.result = await fnExec[call.name](context, call.args);
+                  } catch (err) {
+                    call.ok = false;
+                    call.error = {
+                      type: "",
+                      message: err.toString()
+                    };
+                  }
+                }
+              }
+
+              const deltaTime = process.hrtime(startTime);
+              call.duration = deltaTime[0] + deltaTime[1] * 1e-9;
+
+              const response = {
+                id: call.id,
+                ok: call.ok,
+                executed: call.executionId === executionId,
+                deviceId: call.device.id,
+                startTime: call.date,
+                duration: call.duration,
+                host: call.host,
+                result: call.result,
+                error: call.error
+              };
+
+              console.log({
+                request,
+                response
+              });
+
+              res.writeHead(200);
+              res.write(JSON.stringify(response));
+              res.end();
+            })().catch(err => {
+              console.error(err);
+              res.writeHead(500);
+              res.end();
+            });
+          } catch (err) {
+            console.error(err);
+            res.writeHead(400);
+            res.end();
+          }
+        });
+        break;
+      }
+      default: {
+        res.writeHead(400);
+        res.end();
+      }
+    }
+  });
+
+  server.listen(port, () => {
+    console.log(`Listening on ${server.address().address}:${server.address().port}`);
+  });
+}
+
 
 END
+  end
 
-  io.rewind
-  File.write(output, io)
-end
+  def operation_args(op : AST::Operation)
+    args = ["ctx: Context"] + op.args.map {|arg| "#{arg.name}: #{native_type arg.type}" }
+    if op.is_a? SubscribeOperation
+      args << "callback: (result: #{native_type op.return_type}) => void"
+    end
 
-def native_type(t : PrimitiveType)
-  case t
-  when StringPrimitiveType
-    "string"
-  when IntPrimitiveType
-    "number"
-  when UIntPrimitiveType
-    "number"
-  when FloatPrimitiveType
-    "number"
-  when DatePrimitiveType
-    "Date"
-  when BoolPrimitiveType
-    "boolean"
-  when BytesPrimitiveType
-    "Buffer"
-  when VoidPrimitiveType
-    "void"
-  else
-    raise "BUG! Should handle primitive #{t.class}"
+    "(#{args.join(", ")})"
   end
 end
 
-def native_type(t : OptionalType)
-  native_type(t.base) + " | null"
-end
-
-def native_type(t : CustomTypeReference)
-  t.name
-end
-
-def generate_custom_type_interface(io, custom_type)
-  io << "export interface #{custom_type.name} {\n"
-  custom_type.fields.each do |field|
-    io << "  #{field.name}: #{native_type field.type};\n"
-  end
-  io << "}\n"
-end
-
-def native_operation_name(op : GetOperation)
-  "get" + op.name[0].upcase + op.name[1..-1]
-end
-
-def native_operation_name(op : FunctionOperation | SubscribeOperation)
-  op.name
-end
-
-def generate_operation_declaration(io, op : Operation)
-  args = ["ctx: Context"]
-  op.args.each {|arg| args << "#{arg.name}: #{native_type arg.type}" }
-  ret = native_type op.return_type
-  if op.is_a? SubscribeOperation
-    args << "callback: (result: #{ret}) => void"
-    ret = "void"
-  end
-  io << native_operation_name(op) << "(#{args.join(", ")}): #{ret};\n"
-end
+Target.register(TypeScriptServerTarget, language: "ts", is_server: true)

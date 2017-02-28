@@ -1,5 +1,7 @@
 
-// primitive types: int, uint, float, string, bytes, date, bool
+// primitive types: int, uint, float, string, bytes, date, datetime, bool
+
+$db = "test"
 
 type Image {
     url: string
@@ -8,8 +10,7 @@ type Image {
 }
 
 type User {
-    name: string !maxlen(30)
-    cpf: string !cpf
+    name: string
     avatar: Image
 }
 
@@ -22,14 +23,14 @@ type Message {
 type CardData {
     cardNumber: string !secret
     holder: string
-    month: uint !range(1, 12)
+    month: uint
     year: uint
     ccv: string !secret
 }
 
 get currentUser(): User?
-get lastMessage(): Message
+get lastMessage(user: User): Message
 function logIn(user: string, pass: string !secret): User
 
-subscribe messages(since: date): Message
+// subscribe messages(since: date): Message
 

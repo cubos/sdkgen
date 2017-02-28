@@ -2,14 +2,25 @@ require "./ast"
 require "./lexer"
 require "./parser"
 
-module Target
-  @@targets = {} of {String, Bool} => (ApiDescription, String)->
+abstract class Target
+  @@targets = {} of {String, Bool} => Target.class
 
-  def self.add_target(language, is_server = false, &block : (ApiDescription, String)->)
-    @@targets[{language, is_server}] = block
+  def initialize(@output : String, @ast : AST::ApiDescription)
+    @io = IO::Memory.new
   end
 
-  def self.process(input, output, is_server = false)
+  def write
+    @io.rewind
+    File.write(@output, @io)
+  end
+
+  abstract def gen
+
+  def self.register(target, language, is_server = false)
+    @@targets[{language, is_server}] = target
+  end
+
+  def self.process(ast, output, is_server = false)
     match = output.match(/\.(\w+)$/)
     unless match
       raise "Unrecognized extension for '#{output}'"
@@ -19,8 +30,12 @@ module Target
     unless target
       raise "Language extension '.#{language}' is not supported"
     end
-    lexer = Lexer.new(input)
-    parser = Parser.new(lexer)
-    target.call(parser.parse, output)
+    t = target.new(output, ast)
+    t.gen
+    t.write
+  end
+
+  def ident(code)
+    code.split("\n").map {|line| "  " + line}.join("\n")
   end
 end

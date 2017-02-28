@@ -13,13 +13,20 @@ class Parser
   end
 
   def parse
-    api = ApiDescription.new
+    api = AST::ApiDescription.new
     while @token
-      case multi_expect(TypeKeywordToken, GetKeywordToken, FunctionKeywordToken, SubscribeKeywordToken)
+      case multi_expect(TypeKeywordToken, GetKeywordToken, FunctionKeywordToken, SubscribeKeywordToken, GlobalOptionToken, ErrorKeywordToken)
       when TypeKeywordToken
         api.custom_types << parse_custom_type_definition
       when GetKeywordToken, FunctionKeywordToken, SubscribeKeywordToken
         api.operations << parse_operation
+      when GlobalOptionToken
+        parse_option(api.options)
+      when ErrorKeywordToken
+        next_token
+        token = expect IdentifierToken
+        next_token
+        api.errors << token.name
       end
     end
     api
@@ -71,7 +78,7 @@ class Parser
     expect TypeKeywordToken
     next_token
 
-    t = CustomType.new
+    t = AST::CustomType.new
     name_token = expect(IdentifierToken)
     unless name_token.name[0].uppercase?
       raise ParserException.new "A custom type name must start with an uppercase letter, but found '#{name_token.name}' at #{name_token.location}"
@@ -97,11 +104,11 @@ class Parser
     op = nil
     case token = multi_expect(GetKeywordToken, FunctionKeywordToken, SubscribeKeywordToken)
     when GetKeywordToken
-      op = GetOperation.new
+      op = AST::GetOperation.new
     when FunctionKeywordToken
-      op = FunctionOperation.new
+      op = AST::FunctionOperation.new
     when SubscribeKeywordToken
-      op = SubscribeOperation.new
+      op = AST::SubscribeOperation.new
     else
       raise "never"
     end
@@ -132,8 +139,24 @@ class Parser
     op
   end
 
+  def parse_option(options)
+    var = expect GlobalOptionToken
+    next_token
+    expect EqualSymbolToken
+    next_token
+
+    case var.name
+    when "url"
+      token = expect StringLiteralToken
+      next_token
+      options.url = token.str
+    else
+      raise ParserException.new("Unknown option $#{var.name} at #{var.location}")
+    end
+  end
+
   def parse_field
-    field = Field.new
+    field = AST::Field.new
     field.name = expect(IdentifierToken).name
     next_token
     expect ColonSymbolToken
@@ -160,20 +183,20 @@ class Parser
       unless token.name[0].uppercase?
         raise ParserException.new "Expected a type but found '#{token.name}', at #{token.location}"
       end
-      CustomTypeReference.new(token.name)
+      AST::CustomTypeReference.new(token.name)
     when PrimitiveTypeToken
       case token.name
-      when "string";   StringPrimitiveType.new
-      when "int";      IntPrimitiveType.new
-      when "uint";     UIntPrimitiveType.new
-      when "date";     DatePrimitiveType.new
-      when "datetime"; DateTimePrimitiveType.new
-      when "float";    FloatPrimitiveType.new
-      when "bool";     BoolPrimitiveType.new
-      when "bytes";    BytesPrimitiveType.new
+      when "string";   AST::StringPrimitiveType.new
+      when "int";      AST::IntPrimitiveType.new
+      when "uint";     AST::UIntPrimitiveType.new
+      when "date";     AST::DatePrimitiveType.new
+      when "datetime"; AST::DateTimePrimitiveType.new
+      when "float";    AST::FloatPrimitiveType.new
+      when "bool";     AST::BoolPrimitiveType.new
+      when "bytes";    AST::BytesPrimitiveType.new
       when "void"
         if allow_void
-          VoidPrimitiveType.new
+          AST::VoidPrimitiveType.new
         else
           raise ParserException.new "Can't use 'void' here, at #{token.location}"
         end
@@ -187,7 +210,7 @@ class Parser
 
     if @token.is_a?(OptionalSymbolToken)
       next_token
-      result = OptionalType.new(result)
+      result = AST::OptionalType.new(result)
     end
 
     result
