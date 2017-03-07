@@ -2,7 +2,7 @@
 
 NAME=$(basename `git rev-parse --show-toplevel`)
 VERSION=1.0.$(git rev-list --count HEAD)
-LOCATION=$(pwd)
+LOCATION=/root
 
 rm -rf $LOCATION/api/src/main/java/io/cubos/api
 mkdir -p $LOCATION/api/src/main/java/io/cubos/api/$NAME
