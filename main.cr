@@ -36,4 +36,5 @@ if destination == ""
   exit
 end
 
+FileUtils.mkdir_p(File.dirname(destination))
 Target.process(ast, destination, is_server: is_server)
