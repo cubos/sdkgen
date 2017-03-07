@@ -17,3 +17,12 @@ Docker Build Web:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.cubos.io
     - docker build -t registry.cubos.io/cubos/sdkgen2:target-web .
     - docker push registry.cubos.io/cubos/sdkgen2:target-web
+
+Docker Build Android:
+  image: gitlab/dind
+  stage: docker
+  script:
+    - cd target-android
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.cubos.io
+    - docker build -t registry.cubos.io/cubos/sdkgen2:target-android .
+    - docker push registry.cubos.io/cubos/sdkgen2:target-android
