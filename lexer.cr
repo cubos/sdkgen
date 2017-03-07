@@ -55,8 +55,8 @@ class Lexer
     return make_token(PrimitiveTypeToken.new("uint")) if literal_match("uint")
     return make_token(PrimitiveTypeToken.new("float")) if literal_match("float")
     return make_token(PrimitiveTypeToken.new("string")) if literal_match("string")
-    return make_token(PrimitiveTypeToken.new("date")) if literal_match("date")
     return make_token(PrimitiveTypeToken.new("datetime")) if literal_match("datetime")
+    return make_token(PrimitiveTypeToken.new("date")) if literal_match("date")
     return make_token(PrimitiveTypeToken.new("bytes")) if literal_match("bytes")
     return make_token(PrimitiveTypeToken.new("void")) if literal_match("void")
 
