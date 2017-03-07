@@ -7,7 +7,7 @@ cp $1 /root/api.ts
 cd /root
 
 export PATH=$(npm bin):$PATH
-json -I -f package.json -e 'this.name=\"@cubos/'$NAME'\"'
+json -I -f package.json -e 'this.name="@cubos/'$NAME'"'
 npm version $VERSION || true
 tsc
 babel api.js -o api.js
