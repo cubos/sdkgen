@@ -4,6 +4,7 @@ require "./ast_to_s"
 require "./target_typescript_server"
 require "./target_typescript_web"
 require "option_parser"
+require "file_utils"
 
 is_server = false
 destination = ""
