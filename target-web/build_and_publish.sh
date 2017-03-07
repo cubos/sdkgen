@@ -8,3 +8,4 @@ npm-exec json -I -f package.json -e 'this.name=\"@cubos/'$NAME'\"'
 npm version $VERSION || true
 npm-exec tsc
 npm-exec babel api.js -o api.js
+npm publish
