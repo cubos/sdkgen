@@ -1,6 +1,7 @@
 require "./lexer"
 require "./parser"
 require "./ast_to_s"
+require "./target_java_android"
 require "./target_typescript_server"
 require "./target_typescript_web"
 require "option_parser"

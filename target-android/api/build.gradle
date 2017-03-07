@@ -11,6 +11,7 @@ android {
         versionCode 1
         versionName "1.0"
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -21,7 +22,6 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
 }
 
 publishing {
@@ -35,8 +35,8 @@ publishing {
         maven(MavenPublication) {
             artifacts {
                 groupId 'io.cubos.api'
-                artifactId 'nutriserie'
-                version '1.0'
+                artifactId 'sdkgen2'
+                version '1.0.27'
                 artifact 'build/outputs/aar/api-release.aar'
             }
         }
