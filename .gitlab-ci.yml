@@ -6,6 +6,14 @@ Docker Build:
   stage: docker
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.cubos.io
-
-    - docker build -t registry.cubos.io/cubos/sdkgen2 -f Dockerfile .
+    - docker build -t registry.cubos.io/cubos/sdkgen2 .
     - docker push registry.cubos.io/cubos/sdkgen2
+
+Docker Build Web:
+  image: gitlab/dind
+  stage: docker
+  script:
+    - cd target-web
+    - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.cubos.io
+    - docker build -t registry.cubos.io/cubos/sdkgen2:target-web .
+    - docker push registry.cubos.io/cubos/sdkgen2:target-web
