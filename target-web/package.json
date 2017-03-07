@@ -1,6 +1,6 @@
 {
-  "name": "@cubos/anaiti-api",
-  "version": "1.0.22",
+  "name": "@cubos/api",
+  "version": "0.0",
   "scripts": {
     "build": "json -I -f package.json -e 'this.name=\"@cubos/'$(basename `git rev-parse --show-toplevel`)'\"'; npm version 0.0.0; npm version 1.0.$(git rev-list --count HEAD); tsc; babel api.js -o api.js"
   },
