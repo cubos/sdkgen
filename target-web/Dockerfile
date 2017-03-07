@@ -1,6 +1,5 @@
 FROM node
 WORKDIR /root
-RUN npm install -g yarn
 ADD package.json /root/
 ADD yarn.lock /root/
 RUN yarn install
