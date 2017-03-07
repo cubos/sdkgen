@@ -17,17 +17,21 @@ END
     end
 
     @ast.operations.each do |op|
-      @io << "export async function #{operation_name op}#{operation_args(op)} {\n"
-      @io << "  const args: any = {};\n"
-      op.args.each do |arg|
-        @io << ident type_to_json(arg.type, "args.#{arg.name}", arg.name)
-        @io << "\n"
+      @io << "export async function #{operation_name op}#{operation_args(op)}: Promise<#{operation_ret(op)}> {\n"
+      if op.args.size > 0
+        @io << "  const args = {\n"
+        op.args.each do |arg|
+          @io << ident ident "#{arg.name}: #{type_to_json(arg.type, arg.name)},"
+          @io << "\n"
+        end
+        @io << "  };\n"
       end
-      @io << "  const retJson = await makeRequest({name: #{operation_name(op).inspect}, args});\n"
-      @io << "  let ret: #{operation_ret op};\n"
-      @io << ident type_from_json(op.return_type, "ret", "retJson")
+
+      @io << "  "
+      @io << "const ret = " unless op.return_type.is_a? AST::VoidPrimitiveType
+      @io << "await makeRequest({name: #{operation_name(op).inspect}, #{op.args.size > 0 ? "args" : "args: {}"}});\n"
+      @io << ident "return " + type_from_json(op.return_type, "ret") + ";"
       @io << "\n"
-      @io << "  return ret;\n"
       @io << "}\n\n"
     end
 

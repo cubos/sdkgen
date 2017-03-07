@@ -3,20 +3,37 @@ require "./parser"
 require "./ast_to_s"
 require "./target_typescript_server"
 require "./target_typescript_web"
+require "option_parser"
 
-# lexer = Lexer.new("test.api")
-# parser = Parser.new(lexer)
-# ast = parser.parse
+is_server = false
+destination = ""
+sources = [] of String
 
-# Target.process(ast, "test-server/api-user/api.ts", is_server: true)
+OptionParser.parse! do |parser|
+  parser.banner = "Usage: salute [arguments]"
+  parser.on("-s", "--server", "Generates server-side code") { is_server = true }
+  parser.on("-o NAME", "--output=NAME", "Specifies the output file") { |name| destination = name }
+  parser.on("-h", "--help", "Show this help") { puts parser }
+  parser.unknown_args {|args| sources = args }
+end
 
+if sources.size == 0
+  STDERR.puts "You must specify one source file"
+  exit
+elsif sources.size > 1
+  STDERR.puts "You must specify only one source file"
+  exit
+end
 
+source = sources[0]
 
-
-
-lexer = Lexer.new("../anaiti-api/src/user/api.sdkgen")
+lexer = Lexer.new(source)
 parser = Parser.new(lexer)
 ast = parser.parse
 
-Target.process(ast, "../anaiti-api/src/user/api.ts", is_server: true)
-Target.process(ast, "../anaiti-web/src/api.ts", is_server: false)
+if destination == ""
+  STDERR.puts "You must specify an output file"
+  exit
+end
+
+Target.process(ast, destination, is_server: is_server)
