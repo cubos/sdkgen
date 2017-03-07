@@ -62,54 +62,58 @@ abstract class TypeScriptTarget < Target
     "#{operation_args(op)} => Promise<#{operation_ret(op)}>"
   end
 
-  def type_from_json(t : AST::Type, dst : String, src : String)
+  def type_from_json(t : AST::Type, src : String)
     case t
     when AST::StringPrimitiveType, AST::IntPrimitiveType, AST::UIntPrimitiveType, AST::FloatPrimitiveType, AST::BoolPrimitiveType
-      "#{dst} = #{src};"
+      "#{src}"
     when AST::DatePrimitiveType
-      "#{dst} = moment.utc(#{src}, \"YYYY-MM-DD\").toDate();"
+      "moment.utc(#{src}, \"YYYY-MM-DD\").toDate()"
     when AST::DateTimePrimitiveType
-      "#{dst} = moment.utc(#{src}, \"YYYY-MM-DDTHH:mm:ss.SSS\").toDate();"
+      "moment.utc(#{src}, \"YYYY-MM-DDTHH:mm:ss.SSS\").toDate()"
     when AST::BytesPrimitiveType
-      "#{dst} = Buffer.from(#{src}, \"base64\");"
+      "Buffer.from(#{src}, \"base64\")"
     when AST::VoidPrimitiveType
-      "#{dst} = undefined;"
+      "undefined"
     when AST::OptionalType
-      "if (#{src} === null || #{src} === undefined) {\n  #{dst} = null;\n} else {\n#{ident(type_from_json(t.base, dst, src))}\n}"
+      "#{src} === null || #{src} === undefined ? null : #{type_from_json(t.base, src)}"
     when AST::CustomTypeReference
       String::Builder.build do |io|
-        io << "#{dst} = {} as any;"
+        io << "{\n"
         ct = @ast.custom_types.find {|x| x.name == t.name }.not_nil!
         ct.fields.each do |field|
-          io << "\n" << type_from_json(field.type, "#{dst}.#{field.name}", "#{src}.#{field.name}")
+          io << ident "#{field.name}: #{type_from_json(field.type, "#{src}.#{field.name}")},"
+          io << "\n"
         end
+        io << "}"
       end
     else
       raise "Unknown type"
     end
   end
 
-  def type_to_json(t : AST::Type, dst : String, src : String)
+  def type_to_json(t : AST::Type, src : String)
     case t
     when AST::StringPrimitiveType, AST::IntPrimitiveType, AST::UIntPrimitiveType, AST::FloatPrimitiveType, AST::BoolPrimitiveType
-      "#{dst} = #{src};"
+      "#{src}"
     when AST::DatePrimitiveType
-      "#{dst} = moment(#{src}).format(\"YYYY-MM-DD\");"
+      "moment(#{src}).format(\"YYYY-MM-DD\")"
     when AST::DateTimePrimitiveType
-      "#{dst} = moment(#{src}).format(\"YYYY-MM-DDTHH:mm:ss.SSS\");"
+      "moment(#{src}).format(\"YYYY-MM-DDTHH:mm:ss.SSS\")"
     when AST::BytesPrimitiveType
-      "#{dst} = #{src}.toString(\"base64\");"
+      "#{src}.toString(\"base64\")"
     when AST::VoidPrimitiveType
-      "#{dst} = null;"
+      "null"
     when OptionalType
-      "if (#{src} === null || #{src} === undefined) {\n  #{dst} = null;\n} else {\n#{ident(type_to_json(t.base, dst, src))}\n}"
+      "#{src} === null || #{src} === undefined ? null : #{type_to_json(t.base, src)}"
     when AST::CustomTypeReference
       String::Builder.build do |io|
-        io << "#{dst} = {} as any;"
+        io << "{\n"
         ct = @ast.custom_types.find {|x| x.name == t.name }.not_nil!
         ct.fields.each do |field|
-          io << "\n" << type_to_json(field.type, "#{dst}.#{field.name}", "#{src}.#{field.name}")
+          io << ident "#{field.name}: #{type_to_json(field.type, "#{src}.#{field.name}")},"
+          io << "\n"
         end
+        io << "}"
       end
     else
       raise "Unknown type"

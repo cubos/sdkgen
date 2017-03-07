@@ -31,17 +31,12 @@ END
     @ast.operations.each do |op|
       @io << "  " << operation_name(op) << ": async (ctx: Context, args: any) => {\n"
       op.args.each do |arg|
-        @io << "    let #{arg.name}: #{native_type arg.type};\n"
-      end
-      op.args.each do |arg|
-        @io << ident ident type_from_json(arg.type, arg.name, "args.#{arg.name}")
+        @io << ident ident "const #{arg.name} = #{type_from_json(arg.type, "args.#{arg.name}")};"
         @io << "\n"
       end
       @io << "    const ret = await fn.#{operation_name op}(#{(["ctx"] + op.args.map(&.name)).join(", ")});\n"
-      @io << "    let retJson: any;\n"
-      @io << ident ident type_to_json(op.return_type, "retJson", "ret")
+      @io << ident ident "return " + type_to_json(op.return_type, "ret") + ";"
       @io << "\n"
-      @io << "    return retJson;\n"
       @io << "  },\n"
     end
     @io << "};\n\n"
