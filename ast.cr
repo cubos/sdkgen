@@ -85,7 +85,7 @@ module AST
 
   class GetOperation < Operation
     def fnName
-      return_type.is_a?(BoolPrimitiveType) ? name : "get" + name.capitalize
+      return_type.is_a?(BoolPrimitiveType) ? name : "get" + name[0].upcase + name[1..-1]
     end
   end
 
