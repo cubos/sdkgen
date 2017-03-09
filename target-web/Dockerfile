@@ -1,5 +1,5 @@
 FROM node
-WORKDIR /root
+WORKDIR /root/stage/
 ADD package.json /root/stage/
 ADD yarn.lock /root/stage/
 RUN yarn install
