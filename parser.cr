@@ -39,7 +39,7 @@ class Parser
   macro multi_expect(*token_types)
     token = @token
     unless token
-      raise ParserException.new "Expected #{{{token_types.map{|t| t.stringify}.join(" or ")}}}, but found end of file"
+      raise ParserException.new "Expected #{{{token_types.map{|t| t.stringify.gsub(/Token$/, "")}.join(" or ")}}}, but found end of file"
     end
 
     result = nil
@@ -54,7 +54,7 @@ class Parser
     {% end %}
 
     unless result
-      raise ParserException.new "Expected #{{{token_types.map{|t| t.stringify}.join(" or ")}}} at #{token.location}, but found #{token.class}"
+      raise ParserException.new "Expected #{{{token_types.map{|t| t.stringify.gsub(/Token$/, "")}.join(" or ")}}} at #{token.location}, but found #{token.class.to_s.gsub(/Token$/, "")}"
     end
 
     result
@@ -63,13 +63,13 @@ class Parser
   macro expect(token_type)
     token = @token
     unless token
-      raise ParserException.new "Expected #{{{token_type}}}, but found end of file"
+      raise ParserException.new "Expected #{{{token_type.stringify.gsub(/Token$/, "")}}}, but found end of file"
     end
     {% if token_type.stringify == "IdentifierToken" %}
       token = token.try_ident
     {% end %}
     unless token.is_a?({{token_type}})
-      raise ParserException.new "Expected #{{{token_type}}} at #{token.location}, but found #{token.class}"
+      raise ParserException.new "Expected #{{{token_type.stringify.gsub(/Token$/, "")}}} at #{token.location}, but found #{token.class.to_s.sub(/Token$/, "")}"
     end
     token
   end
@@ -132,9 +132,13 @@ class Parser
       end
     end
 
-    expect ColonSymbolToken
-    next_token
-    op.return_type = parse_type
+    if @token.is_a? ColonSymbolToken
+      expect ColonSymbolToken
+      next_token
+      op.return_type = parse_type
+    else
+      op.return_type = AST::VoidPrimitiveType.new
+    end
 
     op
   end
@@ -207,6 +211,11 @@ class Parser
       raise "never"
     end
     next_token
+
+    while @token.is_a? ArraySymbolToken
+      next_token
+      result = AST::ArrayType.new(result)
+    end
 
     if @token.is_a?(OptionalSymbolToken)
       next_token
