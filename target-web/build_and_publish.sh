@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 NAME=$(basename `git rev-parse --show-toplevel`)
-VERSION=1.0.$(git rev-list --count HEAD)
+VERSION=1.0.$2
 
 cp $1 /root/stage/api.ts
 cd /root/stage
