@@ -21,6 +21,10 @@ abstract class TypeScriptTarget < Target
     native_type(t.base) + " | null"
   end
 
+  def native_type(t : AST::ArrayType)
+    native_type(t.base) + "[]"
+  end
+
   def native_type(t : AST::CustomTypeReference)
     t.name
   end
@@ -31,14 +35,6 @@ abstract class TypeScriptTarget < Target
       io << "  #{field.name}: #{native_type field.type};\n"
     end
     io << "}\n"
-  end
-
-  def operation_name(op : AST::GetOperation)
-    "get" + op.name[0].upcase + op.name[1..-1]
-  end
-
-  def operation_name(op : AST::FunctionOperation | AST::SubscribeOperation)
-    op.name
   end
 
   def operation_ret(op : AST::GetOperation | AST::FunctionOperation)
@@ -76,6 +72,8 @@ abstract class TypeScriptTarget < Target
       "undefined"
     when AST::OptionalType
       "#{src} === null || #{src} === undefined ? null : #{type_from_json(t.base, src)}"
+    when AST::ArrayType
+      t.base.is_a?(AST::CustomTypeReference) ? "#{src}.map(e => (#{type_from_json(t.base, "e")}))" : "#{src}.map(e => #{type_from_json(t.base, "e")})"
     when AST::CustomTypeReference
       String::Builder.build do |io|
         io << "{\n"
@@ -103,8 +101,10 @@ abstract class TypeScriptTarget < Target
       "#{src}.toString(\"base64\")"
     when AST::VoidPrimitiveType
       "null"
-    when OptionalType
+    when AST::OptionalType
       "#{src} === null || #{src} === undefined ? null : #{type_to_json(t.base, src)}"
+    when AST::ArrayType
+      t.base.is_a?(AST::CustomTypeReference) ? "#{src}.map(e => (#{type_to_json(t.base, "e")}))" : "#{src}.map(e => #{type_to_json(t.base, "e")})"
     when AST::CustomTypeReference
       String::Builder.build do |io|
         io << "{\n"

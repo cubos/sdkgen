@@ -39,6 +39,12 @@ module AST
     end
   end
 
+  class ArrayType < Type
+    property base
+    def initialize(@base : Type)
+    end
+  end
+
   class ApiDescription
     property custom_types = [] of CustomType
     property operations = [] of Operation
@@ -71,9 +77,16 @@ module AST
     property! name : String
     property args = [] of Field
     property! return_type : Type
+
+    def fnName
+      name
+    end
   end
 
   class GetOperation < Operation
+    def fnName
+      return_type.is_a?(BoolPrimitiveType) ? name : "get" + name
+    end
   end
 
   class FunctionOperation < Operation
