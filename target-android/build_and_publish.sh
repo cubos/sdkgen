@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-NAME=$(basename `git rev-parse --show-toplevel`)
+NAME=$(basename `git rev-parse --show-toplevel` | sed -e 's/-api//g')
 VERSION=1.0.$2
 LOCATION=/root
 
