@@ -12,7 +12,7 @@ cp $1 $LOCATION/tmp.java
 cd $LOCATION
 
 pwd
-ls -lA api
+tree
 
 (echo "package io.cubos.api."$NAME";"; cat tmp.java) > api/src/main/java/io/cubos/api/$NAME/API.java
 
