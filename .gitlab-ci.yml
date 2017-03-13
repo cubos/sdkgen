@@ -6,7 +6,7 @@ Docker Build:
   stage: docker
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.cubos.io
-    - docker build -t registry.cubos.io/cubos/sdkgen2 .
+    - docker build --pull -t registry.cubos.io/cubos/sdkgen2 .
     - docker push registry.cubos.io/cubos/sdkgen2
 
 Docker Build Web:
@@ -15,7 +15,7 @@ Docker Build Web:
   script:
     - cd target-web
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.cubos.io
-    - docker build -t registry.cubos.io/cubos/sdkgen2:target-web .
+    - docker build --pull -t registry.cubos.io/cubos/sdkgen2:target-web .
     - docker push registry.cubos.io/cubos/sdkgen2:target-web
 
 Docker Build Android:
@@ -24,5 +24,5 @@ Docker Build Android:
   script:
     - cd target-android
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.cubos.io
-    - docker build -t registry.cubos.io/cubos/sdkgen2:target-android .
+    - docker build --pull -t registry.cubos.io/cubos/sdkgen2:target-android .
     - docker push registry.cubos.io/cubos/sdkgen2:target-android
