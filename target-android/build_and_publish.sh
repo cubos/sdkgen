@@ -4,12 +4,17 @@ NAME=$(basename `git rev-parse --show-toplevel`)
 VERSION=1.0.$2
 LOCATION=/root
 
+ls -lA target
+
 rm -rf $LOCATION/api/src/main/java/io/cubos/api
 mkdir -p $LOCATION/api/src/main/java/io/cubos/api/$NAME
-cp $1 $LOCATION/api/src/main/java/io/cubos/api/$NAME/API.java
+cp $1 $LOCATION/tmp.java
 cd $LOCATION
 
-(echo "package io.cubos.api.sdkgen2;"; cat $1) > $LOCATION/api/src/main/java/io/cubos/api/$NAME/API.java
+pwd
+ls -lA api
+
+(echo "package io.cubos.api."$NAME";"; cat tmp.java) > api/src/main/java/io/cubos/api/$NAME/API.java
 
 CURRENT_NAME=$(cat api/src/main/res/values/strings.xml | grep app_name | sed -e 's/<[^>]*>//g' | xargs echo -n)
 CURRENT_VERSION=$(cat api/build.gradle | grep "version " | sed 's/version//g' | xargs echo -n)
