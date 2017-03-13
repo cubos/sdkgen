@@ -162,10 +162,17 @@ export function start(port: number) {
                     call.result = await fnExec[call.name](context, call.args);
                   } catch (err) {
                     call.ok = false;
-                    call.error = {
-                      type: "",
-                      message: err.toString()
-                    };
+                    if (err.type) {
+                      call.error = {
+                        type: err.type,
+                        message: err.message
+                      };
+                    } else {
+                      call.error = {
+                        type: "bug",
+                        message: err.toString()
+                      };
+                    }
                   }
                 }
               }
@@ -193,6 +200,8 @@ export function start(port: number) {
               res.writeHead(200);
               res.write(JSON.stringify(response));
               res.end();
+
+              await r.table("api_calls").get(call.id).update(call);
             })().catch(err => {
               console.error(err);
               res.writeHead(500);
