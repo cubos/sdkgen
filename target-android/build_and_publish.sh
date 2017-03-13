@@ -4,15 +4,10 @@ NAME=$(basename `git rev-parse --show-toplevel`)
 VERSION=1.0.$2
 LOCATION=/root
 
-ls -lA target
-
 rm -rf $LOCATION/api/src/main/java/io/cubos/api
 mkdir -p $LOCATION/api/src/main/java/io/cubos/api/$NAME
 cp $1 $LOCATION/tmp.java
 cd $LOCATION
-
-pwd
-tree
 
 (echo "package io.cubos.api."$NAME";"; cat tmp.java) > api/src/main/java/io/cubos/api/$NAME/API.java
 
