@@ -43,7 +43,7 @@ END
       args = op.args.map {|arg| "#{native_type arg.type} #{arg.name}" }
       args << "#{callback_type op.return_type} callback"
       @io << ident(String.build do |io|
-        io << "void #{op.fnName}(#{args.join(", ")}) {\n"
+        io << "static public void #{op.fnName}(#{args.join(", ")}) {\n"
         #   if op.args.size > 0
         #     @io << "  const args = {\n"
         #     op.args.each do |arg|
