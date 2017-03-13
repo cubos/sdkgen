@@ -3,7 +3,7 @@ require "./target_typescript"
 class TypeScriptWebTarget < TypeScriptTarget
   def gen
     @io << <<-END
-import moment from "moment";
+import * as moment from "moment";
 import {UAParser} from "ua-parser-js";
 
 const baseUrl = #{@ast.options.url.inspect};
@@ -28,7 +28,7 @@ END
       end
 
       @io << "  "
-      @io << "const ret = " unless op.return_type.is_a? AST::VoidPrimitiveType
+      @io << "const ret: #{native_type op.return_type} = " unless op.return_type.is_a? AST::VoidPrimitiveType
       @io << "await makeRequest({name: #{op.fnName.inspect}, #{op.args.size > 0 ? "args" : "args: {}"}});\n"
       @io << ident "return " + type_from_json(op.return_type, "ret") + ";"
       @io << "\n"
