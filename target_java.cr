@@ -1,24 +1,48 @@
 require "./target"
 
-abstract class TypeScriptTarget < Target
+abstract class JavaTarget < Target
+  def ident(code)
+    super super code
+  end
+
+  def native_type_not_primitive(t : AST::PrimitiveType)
+    case t
+    when AST::StringPrimitiveType;   "String"
+    when AST::IntPrimitiveType;      "Integer"
+    when AST::UIntPrimitiveType;     "Integer"
+    when AST::FloatPrimitiveType;    "Double"
+    when AST::DatePrimitiveType;     "Date"
+    when AST::DateTimePrimitiveType; "Date"
+    when AST::BoolPrimitiveType;     "Boolean"
+    when AST::BytesPrimitiveType;    "byte[]"
+    when AST::VoidPrimitiveType;     "void"
+    else
+      raise "BUG! Should handle primitive #{t.class}"
+    end
+  end
+
+  def native_type_not_primitive(t : AST::Type)
+    native_type(t)
+  end
+
   def native_type(t : AST::PrimitiveType)
     case t
-    when AST::StringPrimitiveType;   "string"
-    when AST::IntPrimitiveType;      "number"
-    when AST::UIntPrimitiveType;     "number"
-    when AST::FloatPrimitiveType;    "number"
+    when AST::StringPrimitiveType;   "String"
+    when AST::IntPrimitiveType;      "int"
+    when AST::UIntPrimitiveType;     "int"
+    when AST::FloatPrimitiveType;    "double"
     when AST::DatePrimitiveType;     "Date"
     when AST::DateTimePrimitiveType; "Date"
     when AST::BoolPrimitiveType;     "boolean"
-    when AST::BytesPrimitiveType;    "Buffer"
-    when AST::VoidPrimitiveType;     "null"
+    when AST::BytesPrimitiveType;    "byte[]"
+    when AST::VoidPrimitiveType;     "void"
     else
       raise "BUG! Should handle primitive #{t.class}"
     end
   end
 
   def native_type(t : AST::OptionalType)
-    native_type(t.base) + " | null"
+    native_type_not_primitive(t.base)
   end
 
   def native_type(t : AST::ArrayType)
@@ -31,30 +55,14 @@ abstract class TypeScriptTarget < Target
 
   def generate_custom_type_interface(custom_type)
     String.build do |io|
-      io << "export interface #{custom_type.name} {\n"
+      io << "public static class #{custom_type.name} {\n"
       custom_type.fields.each do |field|
-        io << ident "#{field.name}: #{native_type field.type};\n"
+        io << ident "#{native_type field.type} #{field.name};\n"
       end
       io << "}"
     end
   end
 
-  def operation_ret(op : AST::GetOperation | AST::FunctionOperation)
-    op.return_type.is_a?(AST::VoidPrimitiveType) ? "void" : native_type op.return_type
-  end
-
-  def operation_ret(op : AST::SubscribeOperation)
-    "null"
-  end
-
-  def operation_args(op : AST::Operation)
-    args = op.args.map {|arg| "#{arg.name}: #{native_type arg.type}" }
-    if op.is_a? SubscribeOperation
-      args << "callback: (result: #{native_type op.return_type}) => null"
-    end
-
-    "(#{args.join(", ")})"
-  end
 
   def operation_type(op : AST::Operation)
     "#{operation_args(op)} => Promise<#{operation_ret(op)}>"

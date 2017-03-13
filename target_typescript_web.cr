@@ -12,8 +12,8 @@ const baseUrl = #{@ast.options.url.inspect};
 END
 
     @ast.custom_types.each do |custom_type|
-      generate_custom_type_interface(@io, custom_type)
-      @io << "\n"
+      @io << generate_custom_type_interface(custom_type)
+      @io << "\n\n"
     end
 
     @ast.operations.each do |op|

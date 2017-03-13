@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/api/api.iml" filepath="$PROJECT_DIR$/api/api.iml" />
-      <module fileurl="file://$PROJECT_DIR$/nutriserie-android-api.iml" filepath="$PROJECT_DIR$/nutriserie-android-api.iml" />
       <module fileurl="file://$PROJECT_DIR$/target-android.iml" filepath="$PROJECT_DIR$/target-android.iml" />
     </modules>
   </component>

@@ -22,6 +22,7 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.squareup.okhttp3:okhttp:3.6.0'
 }
 
 publishing {
@@ -36,7 +37,7 @@ publishing {
             artifacts {
                 groupId 'io.cubos.api'
                 artifactId 'sdkgen2'
-                version '1.0.27'
+                version '1.0.10'
                 artifact 'build/outputs/aar/api-release.aar'
             }
         }
