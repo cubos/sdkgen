@@ -32,6 +32,7 @@ source = sources[0]
 lexer = Lexer.new(source)
 parser = Parser.new(lexer)
 ast = parser.parse
+ast.check
 
 if destination == ""
   STDERR.puts "You must specify an output file"
