@@ -23,8 +23,8 @@ END
     @io << "};\n\n"
 
     @ast.custom_types.each do |custom_type|
-      generate_custom_type_interface(@io, custom_type)
-      @io << "\n"
+      @io << generate_custom_type_interface(custom_type)
+      @io << "\n\n"
     end
 
     @io << "const fnExec: {[name: string]: (ctx: Context, args: any) => Promise<any>} = {\n"
@@ -43,9 +43,7 @@ END
 
     @io << "export const err = {\n"
     @ast.errors.each do |error|
-      @io << "  #{error}: function () {\n"
-      @io << "    throw {type: #{error.inspect}};\n"
-      @io << "  },\n"
+      @io << "  #{error}: (message: string = \"\") => { throw {type: #{error.inspect}, message}; },\n"
     end
     @io << "};\n\n"
 
