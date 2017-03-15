@@ -10,8 +10,10 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.Settings;
+import android.util.Base64;
 import android.util.Log;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,8 +22,13 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
 import java.security.SecureRandom;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import okhttp3.Call;
 import okhttp3.MediaType;
@@ -40,24 +47,73 @@ END
     end
 
     @ast.operations.each do |op|
-      args = op.args.map {|arg| "#{native_type arg.type} #{arg.name}" }
-      args << "#{callback_type op.return_type} callback"
+      args = op.args.map {|arg| "final #{native_type arg.type} #{arg.name}" }
+      args << "final #{callback_type op.return_type} callback"
       @io << ident(String.build do |io|
         io << "static public void #{op.fnName}(#{args.join(", ")}) {\n"
-        #   if op.args.size > 0
-        #     @io << "  const args = {\n"
-        #     op.args.each do |arg|
-        #       @io << ident ident "#{arg.name}: #{type_to_json(arg.type, arg.name)},"
-        #       @io << "\n"
-        #     end
-        #     @io << "  };\n"
-        #   end
+        io << ident(String.build do |io|
+          if op.args.size == 0
+            io << "JSONObject args = new JSONObject();"
+          else
+            io << <<-END
+JSONObject args;
+try {
+    args = new JSONObject() {{
 
-        #   @io << "  "
-        #   @io << "const ret = " unless op.return_type.is_a? AST::VoidPrimitiveType
-        #   @io << "await makeRequest({name: #{operation_name(op).inspect}, #{op.args.size > 0 ? "args" : "args: {}"}});\n"
-        #   @io << ident "return " + type_from_json(op.return_type, "ret") + ";"
-        #   @io << "\n"
+END
+      op.args.each do |arg|
+        io << ident ident "put(\"#{arg.name}\", #{type_to_json arg.type, arg.name});\n"
+      end
+          io << <<-END
+    }};
+} catch (JSONException e) {
+    e.printStackTrace();
+    callback.onFinished();
+    callback.onError("bug", e.getMessage());
+    return;
+}
+END
+          end
+          io << <<-END
+
+Internal.makeRequest(#{op.fnName.inspect}, args, new Internal.RequestCallback() {
+    @Override
+    public void onResult(final JSONObject result) {
+        callback.onFinished();
+
+END
+          if op.return_type.is_a? AST::VoidPrimitiveType
+            io << <<-END
+        callback.onResult();
+
+END
+          else
+            io << <<-END
+        try {
+            callback.onResult(#{type_from_json op.return_type, get_field_from_json_object(op.return_type, "result", "result".inspect)});
+        } catch (JSONException e) {
+            e.printStackTrace();
+            callback.onError("bug", e.getMessage());
+        }
+END
+          end
+          io << <<-END
+    }
+
+    @Override
+    public void onError(String type, String message) {
+        callback.onFinished();
+        callback.onError(type, message);
+    }
+
+    @Override
+    public void onFailure(String message) {
+        callback.onFinished();
+        callback.onError("Connection", message);
+    }
+});
+END
+        end)
         io << "}"
       end)
       @io << "\n\n"
@@ -161,7 +217,7 @@ END
             return bcp47Tag.toString();
         }
 
-        private JSONObject device() throws JSONException {
+        private static JSONObject device() throws JSONException {
             JSONObject device = new JSONObject();
             device.put("platform", "android");
             device.put("fingerprint", "" + Settings.Secure.ANDROID_ID);
@@ -178,7 +234,7 @@ END
             return device;
         }
 
-        private String randomBytesHex(int len) {
+        private static String randomBytesHex(int len) {
             String str = new BigInteger(8 * len, random).toString(16);
             while (str.length() < len) str = "0" + str;
             return str;
@@ -187,15 +243,20 @@ END
         private interface RequestCallback {
             void onResult(JSONObject result);
             void onError(String type, String message);
-            void onFailure();
+            void onFailure(String message);
         }
 
-        private void makeRequest(String name, JSONObject args, final RequestCallback callback) throws JSONException {
+        private static void makeRequest(String name, JSONObject args, final RequestCallback callback) {
             JSONObject body = new JSONObject();
-            body.put("id", randomBytesHex(16));
-            body.put("device", device());
-            body.put("name", name);
-            body.put("args", args);
+            try {
+                body.put("id", randomBytesHex(16));
+                body.put("device", device());
+                body.put("name", name);
+                body.put("args", args);
+            } catch (JSONException e) {
+                e.printStackTrace();
+                callback.onError("bug", e.getMessage());
+            }
 
             Request request = new Request.Builder()
                     .url("https://" + baseUrl + "/" + name)
@@ -206,14 +267,14 @@ END
                 @Override
                 public void onFailure(Call call, IOException e) {
                     e.printStackTrace();
-                    callback.onFailure();
+                    callback.onFailure(e.getMessage());
                 }
 
                 @Override
                 public void onResponse(Call call, Response response) throws IOException {
                     if (response.code() >= 500) {
                         Log.e("API Fatal", response.body().string());
-                        callback.onFailure();
+                        callback.onFailure("HTTP " + response.code());
                         return;
                     }
 
@@ -224,14 +285,54 @@ END
                             String message = body.getJSONObject("error").getString("message");
                             callback.onError(type, message);
                         } else {
-                            callback.onResult(body.getJSONObject("result"));
+                            callback.onResult(body);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        callback.onFailure();
+                        callback.onError("bug", e.getMessage());
                     }
                 }
             });
+        }
+
+        static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US);
+        static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+
+        static {
+            dateTimeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+            dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        }
+
+        static Calendar toCalendar(Date date){
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            return cal;
+        }
+
+        static Calendar decodeDateTime(String str) {
+            try {
+                return toCalendar(dateTimeFormat.parse(str));
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        static Calendar decodeDate(String str) {
+            try {
+                return toCalendar(dateFormat.parse(str));
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        static String encodeDateTime(Calendar cal) {
+            return dateTimeFormat.format(cal.getTime());
+        }
+
+        static String encodeDate(Calendar cal) {
+            return dateFormat.format(cal.getTime());
         }
     }
 }

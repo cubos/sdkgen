@@ -31,8 +31,8 @@ abstract class JavaTarget < Target
     when AST::IntPrimitiveType;      "int"
     when AST::UIntPrimitiveType;     "int"
     when AST::FloatPrimitiveType;    "double"
-    when AST::DatePrimitiveType;     "Date"
-    when AST::DateTimePrimitiveType; "Date"
+    when AST::DatePrimitiveType;     "Calendar"
+    when AST::DateTimePrimitiveType; "Calendar"
     when AST::BoolPrimitiveType;     "boolean"
     when AST::BytesPrimitiveType;    "byte[]"
     when AST::VoidPrimitiveType;     "void"
@@ -46,7 +46,7 @@ abstract class JavaTarget < Target
   end
 
   def native_type(t : AST::ArrayType)
-    native_type(t.base) + "[]"
+    "ArrayList<#{native_type_not_primitive(t.base)}>"
   end
 
   def native_type(t : AST::CustomTypeReference)
@@ -57,15 +57,73 @@ abstract class JavaTarget < Target
     String.build do |io|
       io << "public static class #{custom_type.name} {\n"
       custom_type.fields.each do |field|
-        io << ident "#{native_type field.type} #{field.name};\n"
+        io << ident "public #{native_type field.type} #{field.name};\n"
       end
+      io << ident <<-END
+
+public JSONObject toJSON() {
+    try {
+        return new JSONObject() {{
+
+END
+      custom_type.fields.each do |field|
+        io << ident ident ident ident "put(\"#{field.name}\", #{type_to_json field.type, field.name});\n"
+      end
+      io << ident <<-END
+        }};
+    } catch (JSONException e) {
+        e.printStackTrace();
+        return new JSONObject();
+    }
+}
+
+public static #{custom_type.name} fromJSON(final JSONObject json) {
+    try {
+        return new #{custom_type.name}() {{
+
+END
+      custom_type.fields.each do |field|
+        io << ident ident ident ident "#{field.name} = #{type_from_json field.type, get_field_from_json_object(field.type, "json", field.name.inspect)};\n"
+      end
+      io << ident <<-END
+
+        }};
+    } catch (JSONException e) {
+        e.printStackTrace();
+        return new #{custom_type.name}();
+    }
+}
+
+END
       io << "}"
     end
   end
 
-
   def operation_type(op : AST::Operation)
     "#{operation_args(op)} => Promise<#{operation_ret(op)}>"
+  end
+
+  def get_field_from_json_object(t : AST::Type, src : String, name : String)
+    case t
+    when AST::StringPrimitiveType, AST::DatePrimitiveType, AST::DateTimePrimitiveType, AST::BytesPrimitiveType
+      "#{src}.getString(#{name})"
+    when AST::IntPrimitiveType, AST::UIntPrimitiveType
+      "#{src}.getInt(#{name})"
+    when AST::FloatPrimitiveType
+      "#{src}.getDouble(#{name})"
+    when AST::BoolPrimitiveType
+      "#{src}.getBoolean(#{name})"
+    when AST::VoidPrimitiveType
+      "#{src}.get(#{name})"
+    when AST::OptionalType
+      "#{src}.isNull(#{name}) ? null : #{get_field_from_json_object(t.base, src, name)}"
+    when AST::ArrayType
+      "#{src}.getJSONArray(#{name})"
+    when AST::CustomTypeReference
+      "#{src}.getJSONObject(#{name})"
+    else
+      raise "Unknown type"
+    end
   end
 
   def type_from_json(t : AST::Type, src : String)
@@ -73,27 +131,20 @@ abstract class JavaTarget < Target
     when AST::StringPrimitiveType, AST::IntPrimitiveType, AST::UIntPrimitiveType, AST::FloatPrimitiveType, AST::BoolPrimitiveType
       "#{src}"
     when AST::DatePrimitiveType
-      "moment.utc(#{src}, \"YYYY-MM-DD\").toDate()"
+      "Internal.decodeDate(#{src})"
     when AST::DateTimePrimitiveType
-      "moment.utc(#{src}, \"YYYY-MM-DDTHH:mm:ss.SSS\").toDate()"
+      "Internal.decodeDateTime(#{src})"
     when AST::BytesPrimitiveType
-      "Buffer.from(#{src}, \"base64\")"
+      "Base64.decode(#{src}, Base64.DEFAULT)"
     when AST::VoidPrimitiveType
-      "undefined"
+      "null"
     when AST::OptionalType
-      "#{src} === null || #{src} === undefined ? null : #{type_from_json(t.base, src)}"
+      "#{src} == null ? null : #{type_from_json(t.base, src)}"
     when AST::ArrayType
-      t.base.is_a?(AST::CustomTypeReference) ? "#{src}.map(e => (#{type_from_json(t.base, "e")}))" : "#{src}.map(e => #{type_from_json(t.base, "e")})"
+      "new #{native_type t}() {{ JSONArray ary = #{src}; for (int i = 0; i < ary.length(); ++i) add(#{type_from_json(t.base, get_field_from_json_object(t.base, "ary", "i"))}); }}"
     when AST::CustomTypeReference
-      String::Builder.build do |io|
-        io << "{\n"
-        ct = @ast.custom_types.find {|x| x.name == t.name }.not_nil!
-        ct.fields.each do |field|
-          io << ident "#{field.name}: #{type_from_json(field.type, "#{src}.#{field.name}")},"
-          io << "\n"
-        end
-        io << "}"
-      end
+      ct = @ast.custom_types.find {|x| x.name == t.name }.not_nil!
+      "#{ct.name}.fromJSON(#{src})"
     else
       raise "Unknown type"
     end
@@ -104,27 +155,19 @@ abstract class JavaTarget < Target
     when AST::StringPrimitiveType, AST::IntPrimitiveType, AST::UIntPrimitiveType, AST::FloatPrimitiveType, AST::BoolPrimitiveType
       "#{src}"
     when AST::DatePrimitiveType
-      "moment(#{src}).format(\"YYYY-MM-DD\")"
+      "Internal.encodeDate(#{src})"
     when AST::DateTimePrimitiveType
-      "moment(#{src}).format(\"YYYY-MM-DDTHH:mm:ss.SSS\")"
+      "Internal.encodeDateTime(#{src})"
     when AST::BytesPrimitiveType
-      "#{src}.toString(\"base64\")"
+      "Base64.encodeToString(#{src}, Base64.DEFAULT)"
     when AST::VoidPrimitiveType
       "null"
     when AST::OptionalType
-      "#{src} === null || #{src} === undefined ? null : #{type_to_json(t.base, src)}"
+      "#{src} == null ? null : #{type_to_json(t.base, src)}"
     when AST::ArrayType
-      t.base.is_a?(AST::CustomTypeReference) ? "#{src}.map(e => (#{type_to_json(t.base, "e")}))" : "#{src}.map(e => #{type_to_json(t.base, "e")})"
+      "new JSONArray() {{ for (#{native_type t.base} el : #{src}) put(#{type_to_json t.base, "el"}); }}"
     when AST::CustomTypeReference
-      String::Builder.build do |io|
-        io << "{\n"
-        ct = @ast.custom_types.find {|x| x.name == t.name }.not_nil!
-        ct.fields.each do |field|
-          io << ident "#{field.name}: #{type_to_json(field.type, "#{src}.#{field.name}")},"
-          io << "\n"
-        end
-        io << "}"
-      end
+      "#{src}.toJSON()"
     else
       raise "Unknown type"
     end
