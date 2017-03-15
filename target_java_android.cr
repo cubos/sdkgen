@@ -66,23 +66,33 @@ END
     @io << <<-END
 
     public interface Callback<T> {
-
+        void onFinished();
+        void onResult(T result);
+        void onError(String type, String message);
     }
 
     public interface IntCallback {
-
+        void onFinished();
+        void onResult(int result);
+        void onError(String type, String message);
     }
 
     public interface DoubleCallback {
-
+        void onFinished();
+        void onResult(double result);
+        void onError(String type, String message);
     }
 
     public interface BooleanCallback {
-
+        void onFinished();
+        void onResult(boolean result);
+        void onError(String type, String message);
     }
 
     public interface VoidCallback {
-
+        void onFinished();
+        void onResult();
+        void onError(String type, String message);
     }
 
     private static class Internal {
