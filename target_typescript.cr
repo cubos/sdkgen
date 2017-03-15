@@ -65,7 +65,7 @@ abstract class TypeScriptTarget < Target
     when AST::StringPrimitiveType, AST::IntPrimitiveType, AST::UIntPrimitiveType, AST::FloatPrimitiveType, AST::BoolPrimitiveType
       "#{src}"
     when AST::DatePrimitiveType
-      "moment.utc(#{src}, \"YYYY-MM-DD\").toDate()"
+      "moment(#{src}, \"YYYY-MM-DD\").toDate()"
     when AST::DateTimePrimitiveType
       "moment.utc(#{src}, \"YYYY-MM-DDTHH:mm:ss.SSS\").toDate()"
     when AST::BytesPrimitiveType
@@ -98,7 +98,7 @@ abstract class TypeScriptTarget < Target
     when AST::DatePrimitiveType
       "moment(#{src}).format(\"YYYY-MM-DD\")"
     when AST::DateTimePrimitiveType
-      "moment(#{src}).format(\"YYYY-MM-DDTHH:mm:ss.SSS\")"
+      "moment.utc(#{src}).format(\"YYYY-MM-DDTHH:mm:ss.SSS\")"
     when AST::BytesPrimitiveType
       "#{src}.toString(\"base64\")"
     when AST::VoidPrimitiveType
