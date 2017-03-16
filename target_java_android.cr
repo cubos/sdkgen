@@ -278,7 +278,11 @@ END
                         @Override
                         public void run() {
                             if (response.code() >= 500) {
-                                Log.e("API Fatal", response.body().string());
+                                try {
+                                    Log.e("API Fatal", response.body().string());
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
                                 callback.onFailure("HTTP " + response.code());
                                 return;
                             }
@@ -292,7 +296,7 @@ END
                                 } else {
                                     callback.onResult(body);
                                 }
-                            } catch (JSONException e) {
+                            } catch (JSONException | IOException e) {
                                 e.printStackTrace();
                                 callback.onError("bug", e.getMessage());
                             }
