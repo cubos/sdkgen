@@ -26,4 +26,5 @@ RethinkDB NPM Package:
   image: node
   script:
     - cd rethinkdb
+    - yarn
     - sh build_and_publish.sh $CI_PIPELINE_ID
