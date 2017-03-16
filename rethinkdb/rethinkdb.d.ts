@@ -166,8 +166,8 @@ interface RTable<T extends object> extends RTableSlice<T> {
     indexDrop(name: string): RDatum<{dropped: 1}>
     indexStatus(...names: string[]): RArray<R_IndexStatus>
 
-    getAll(id: any, opts: {index: string}): RStream<T>
-    getAll(id1: any, id2: any, opts: {index: string}): RStream<T>
-    getAll(id1: any, id2: any, id3: any, opts: {index: string}): RStream<T>
-    getAll(id1: any, id2: any, id3: any, id4: any, opts: {index: string}): RStream<T>
+    getAll(id: any, opts: {index: string}): RTableSlice<T>
+    getAll(id1: any, id2: any, opts: {index: string}): RTableSlice<T>
+    getAll(id1: any, id2: any, id3: any, opts: {index: string}): RTableSlice<T>
+    getAll(id1: any, id2: any, id3: any, id4: any, opts: {index: string}): RTableSlice<T>
 }
