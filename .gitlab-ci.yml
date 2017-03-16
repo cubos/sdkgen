@@ -1,6 +1,10 @@
 
+stages:
+  - build
+
 Docker Build:
   image: gitlab/dind
+  stage: build
   script:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.cubos.io
     - docker build --pull -t registry.cubos.io/cubos/sdkgen2 .
@@ -8,6 +12,7 @@ Docker Build:
 
 Docker Build Web:
   image: gitlab/dind
+  stage: build
   script:
     - cd target-web
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.cubos.io
@@ -16,6 +21,7 @@ Docker Build Web:
 
 Docker Build Android:
   image: gitlab/dind
+  stage: build
   script:
     - cd target-android
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.cubos.io
@@ -24,6 +30,7 @@ Docker Build Android:
 
 RethinkDB NPM Package:
   image: node
+  stage: build
   script:
     - cd rethinkdb
     - yarn
