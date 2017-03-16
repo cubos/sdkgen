@@ -104,12 +104,12 @@ export function start(port: number) {
               if (!context.device.id) {
                 context.device.id = crypto.randomBytes(32).toString("hex");
 
-                await r.table("devices").insert({
+                r.table("devices").insert({
                   id: context.device.id,
                   ...deviceInfo
-                });
+                }).then();
               } else {
-                await r.table("devices").get(context.device.id).update(deviceInfo);
+                r.table("devices").get(context.device.id).update(deviceInfo).then();
               }
 
               const executionId = crypto.randomBytes(32).toString("hex");
@@ -132,8 +132,8 @@ export function start(port: number) {
               async function tryLock(): Promise<boolean> {
                 const priorCall = await r.table("api_calls").get(call.id);
                 if (priorCall === null) {
-                  await r.table("api_calls").insert(call);
-                  return await tryLock();
+                  const res = await r.table("api_calls").insert(call);
+                  return res.inserted > 0 ? true : await tryLock();
                 }
                 if (!priorCall.running) {
                   call = priorCall;
