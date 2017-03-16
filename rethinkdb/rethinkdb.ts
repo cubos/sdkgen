@@ -1,7 +1,7 @@
 
 let r: R;
 
-export default function(db: string) {
+export function connect(db: string) {
     r = require("rethinkdbdash")({
         db: db,
         pingInterval: 20,
