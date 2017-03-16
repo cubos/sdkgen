@@ -5,5 +5,5 @@ VERSION=1.0.$1
 export PATH=$(npm bin):$PATH
 npm version $VERSION || true
 tsc
-babel rethinkdb.js -o rethinkdb.js
+babel index.js -o index.js
 npm publish
