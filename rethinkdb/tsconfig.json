@@ -1,0 +1,18 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+		"declaration": true,
+    "alwaysStrict": true,
+    "allowSyntheticDefaultImports": true,
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "noImplicitThis": true,
+    "sourceMap": true,
+    "target": "ES2017",
+    "strictNullChecks": true
+  },
+  "include": [
+    "*.ts"
+  ],
+  "exclude": []
+}
