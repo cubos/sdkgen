@@ -27,7 +27,11 @@ interface RDB {
 type RPrimitive = null | string | number | Date | boolean | Buffer
 
 type RDatumfy<T> = {
-    [P in keyof T]: T[P] | RDatum<T[P]>;
+    [P in keyof T]: T[P] | RDatum<T[P]> | RDatumfy<T[P]>;
+};
+
+type DeepPartial<T> = {
+    [P in keyof T]?: DeepPartial<T[P]>;
 };
 
 interface R_TableConfig {
@@ -85,7 +89,7 @@ interface RArray<T> extends RDatum<T[]> {
     map(func: (e: RDatum<T>) => any): RArray<any>
     orderBy(field: string): RArray<T>
     append(other: T): RArray<T>
-    filter(obj: Partial<RDatumfy<T>>): RArray<T>
+    filter(obj: DeepPartial<RDatumfy<T>>): RArray<T>
     filter(criteria: (obj: RDatum<T>) => boolean | RDatum<boolean>): RArray<T>
     limit(other: any): RArray<T>
 }
@@ -95,7 +99,7 @@ interface RStream<T> extends PromiseLike<T[]>, RStreamOrDatum<T[]> {
     map(func: (arg: RDatum<T>) => any): RStream<any>
     orderBy(field: string): RArray<T>
     coerceTo(type: "array"): RArray<T>
-    filter(obj: Partial<RDatumfy<T>>): RStream<T>
+    filter(obj: DeepPartial<RDatumfy<T>>): RStream<T>
     filter(criteria: (obj: RDatum<T>) => boolean | RDatum<boolean>): RStream<T>
     limit(other: any): RStream<T>
 }
@@ -116,7 +120,7 @@ interface R_UpdateResult {
     inserted: 0
 }
 
-type RUpdateObj<T> = Partial<T> | RDatum<T> | ((obj: RDatum<T>) => any)
+type RUpdateObj<T> = DeepPartial<T> | RDatum<T> | ((obj: RDatum<T>) => any)
 
 interface RTableSlice<T extends object> extends RStream<T> {
     update<Opts extends R_UpdateOptions & {returnChanges: true | "always"}>(obj: RUpdateObj<T>, options: Opts): RDatum<R_UpdateResult & {changes: {new_val: T, old_val: T}[]}>
