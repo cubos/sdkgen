@@ -14,6 +14,7 @@ interface R extends RDB {
     not(obj: any): RDatum<boolean>
     and(...objs: any[]): RDatum<boolean>
     or(...objs: any[]): RDatum<boolean>
+    now(): RDatum<Date>
 }
 
 interface RDB {
