@@ -7,6 +7,7 @@ interface R extends RDB {
     range(count: number): RStream<number>
     range(initial: number, count: number): RStream<number>
     epochTime(epoch: number): RDatum<Date>
+    add(...objs: any[]): RDatum<any>
 }
 
 interface RDB {
