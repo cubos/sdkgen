@@ -60,6 +60,7 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
     sub(other: any): RDatum<any>
     add(...others: any[]): RDatum<any>
     append(other: any): RDatum<T>
+    limit(other: any): RDatum<any>
 
     filter(obj: any): RDatum<T>
     filter(criteria: (obj: any) => boolean | RDatum<boolean>): RDatum<T>
@@ -80,6 +81,7 @@ interface RArray<T> extends RDatum<T[]> {
     append(other: T): RArray<T>
     filter(obj: Partial<RDatumfy<T>>): RArray<T>
     filter(criteria: (obj: RDatum<T>) => boolean | RDatum<boolean>): RArray<T>
+    limit(other: any): RArray<T>
 }
 
 interface RStream<T> extends PromiseLike<T[]>, RStreamOrDatum<T[]> {
@@ -89,6 +91,7 @@ interface RStream<T> extends PromiseLike<T[]>, RStreamOrDatum<T[]> {
     coerceTo(type: "array"): RArray<T>
     filter(obj: Partial<RDatumfy<T>>): RStream<T>
     filter(criteria: (obj: RDatum<T>) => boolean | RDatum<boolean>): RStream<T>
+    limit(other: any): RStream<T>
 }
 
 interface R_UpdateOptions {
