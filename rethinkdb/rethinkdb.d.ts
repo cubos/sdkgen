@@ -11,6 +11,7 @@ interface R extends RDB {
     branch(cond1: any, case1: any, otherwise: any): RDatum<any>
     branch(cond1: any, case1: any, cond2: any, case2: any, otherwise: any): RDatum<any>
     branch(cond1: any, case1: any, cond2: any, case2: any, cond3: any, case3: any, otherwise: any): RDatum<any>
+    not(obj: any): RDatum<boolean>
 }
 
 interface RDB {
@@ -59,6 +60,14 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
     sub(other: any): RDatum<any>
     add(...others: any[]): RDatum<any>
     append(other: any): RDatum<T>
+
+    eq(other: any): RDatum<boolean>
+    ne(other: any): RDatum<boolean>
+    gt(other: any): RDatum<boolean>
+    lt(other: any): RDatum<boolean>
+    ge(other: any): RDatum<boolean>
+    le(other: any): RDatum<boolean>
+    not(): RDatum<boolean>
 }
 
 interface RArray<T> extends RDatum<T[]> {
