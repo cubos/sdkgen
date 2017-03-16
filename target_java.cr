@@ -99,10 +99,6 @@ END
     end
   end
 
-  def operation_type(op : AST::Operation)
-    "#{operation_args(op)} => Promise<#{operation_ret(op)}>"
-  end
-
   def get_field_from_json_object(t : AST::Type, src : String, name : String)
     case t
     when AST::StringPrimitiveType, AST::DatePrimitiveType, AST::DateTimePrimitiveType, AST::BytesPrimitiveType
