@@ -10,6 +10,14 @@ Docker Build:
     - docker build --pull -t registry.cubos.io/cubos/sdkgen2 .
     - docker push registry.cubos.io/cubos/sdkgen2
 
+RethinkDB NPM Package:
+  image: node
+  stage: build
+  script:
+    - cd rethinkdb
+    - yarn
+    - sh build_and_publish.sh $CI_PIPELINE_ID
+
 Docker Build Web:
   image: gitlab/dind
   stage: build
@@ -27,11 +35,3 @@ Docker Build Android:
     - docker login -u gitlab-ci-token -p $CI_BUILD_TOKEN registry.cubos.io
     - docker build --pull -t registry.cubos.io/cubos/sdkgen2:target-android .
     - docker push registry.cubos.io/cubos/sdkgen2:target-android
-
-RethinkDB NPM Package:
-  image: node
-  stage: build
-  script:
-    - cd rethinkdb
-    - yarn
-    - sh build_and_publish.sh $CI_PIPELINE_ID
