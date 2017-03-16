@@ -6,8 +6,8 @@
     "babel-runtime": "^6.23.0",
     "rethinkdbdash": "^2.3.28"
   },
-  "main": "rethinkdb.js",
-  "types": "rethinkdb.d.ts",
+  "main": "index.js",
+  "types": "index.d.ts",
   "babel": {
     "plugins": [
       "transform-runtime"

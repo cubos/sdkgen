@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-NAME=$(basename `git rev-parse --show-toplevel` | sed -e 's/-api//g')
-VERSION=1.0.$2
+NAME=$2
+VERSION=1.0.$3
 LOCATION=/root
 
 rm -rf $LOCATION/api/src/main/java/io/cubos/api

@@ -12,7 +12,8 @@
     "strictNullChecks": true
   },
   "include": [
-    "*.ts"
+    "index.ts",
+    "rethinkdb.d.ts"
   ],
   "exclude": []
 }
