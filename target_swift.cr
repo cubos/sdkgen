@@ -26,7 +26,7 @@ abstract class SwiftTarget < Target
   end
 
   def native_type(t : AST::ArrayType)
-    native_type(t.base) + "[]"
+    "[#{native_type(t.base)}]"
   end
 
   def native_type(t : AST::CustomTypeReference)
@@ -41,7 +41,34 @@ abstract class SwiftTarget < Target
       end
       io << ident <<-END
 
-NSDictionary toJSON() {
+init() {
+
+END
+      custom_type.fields.each do |field|
+        io << ident ident "#{field.name} = #{default_value field.type}\n"
+      end
+      io << ident <<-END
+}
+
+init(#{custom_type.fields.map{|f| "#{f.name}: #{native_type f.type}"}.join(", ")}) {
+
+END
+      custom_type.fields.each do |field|
+        io << ident ident "self.#{field.name} = #{field.name}\n"
+      end
+      io << ident <<-END
+}
+
+init(json: NSDictionary) {
+
+END
+      custom_type.fields.each do |field|
+        io << ident ident "#{field.name} = #{type_from_json field.type, "json[#{field.name.inspect}]"}\n"
+      end
+      io << ident <<-END
+}
+
+func toJSON() -> NSDictionary {
     let json: NSMutableDictionary = [:]
 
 END
@@ -52,19 +79,34 @@ END
     return json
 }
 
-static #{custom_type.name} fromJSON(final NSDictionary json) {
-    let obj = #{custom_type.name}()
-
-END
-      custom_type.fields.each do |field|
-        io << ident ident "obj.#{field.name} = #{type_from_json field.type, "json[#{field.name.inspect}]"}\n"
-      end
-      io << ident <<-END
-    return obj;
-}
-
 END
       io << "}"
+    end
+  end
+
+  def default_value(t : AST::Type)
+    case t
+    when AST::StringPrimitiveType
+      "\"\""
+    when AST::IntPrimitiveType, AST::UIntPrimitiveType, AST::FloatPrimitiveType
+      "0"
+    when AST::BoolPrimitiveType
+      "false"
+    when AST::DatePrimitiveType, AST::DateTimePrimitiveType
+      "Date()"
+    when AST::BytesPrimitiveType
+      "Data()"
+    when AST::VoidPrimitiveType
+      "nil"
+    when AST::OptionalType
+      "nil"
+    when AST::ArrayType
+      "[]"
+    when AST::CustomTypeReference
+      ct = @ast.custom_types.find {|x| x.name == t.name }.not_nil!
+      "#{ct.name}()"
+    else
+      raise "Unknown type"
     end
   end
 
@@ -81,11 +123,11 @@ END
     when AST::BoolPrimitiveType
       "#{src} as! Bool"
     when AST::DatePrimitiveType
-      "APIInternal.decodeDate(#{src})"
+      "APIInternal.decodeDate(str: #{src} as! String)"
     when AST::DateTimePrimitiveType
-      "APIInternal.decodeDateTime(#{src})"
+      "APIInternal.decodeDateTime(str: #{src} as! String)"
     when AST::BytesPrimitiveType
-      "Data(base64EncodedString: ${src} as! String, options: NSDataBase64DecodingOptions(rawValue: 0))!"
+      "Data(base64Encoded: #{src} as! String)!"
     when AST::VoidPrimitiveType
       "nil"
     when AST::OptionalType
@@ -94,7 +136,7 @@ END
       "(#{src} as! [AnyObject]).map({(el) -> #{native_type t.base} in return #{type_from_json t.base, "el"}})"
     when AST::CustomTypeReference
       ct = @ast.custom_types.find {|x| x.name == t.name }.not_nil!
-      "#{ct.name}.fromJSON(#{src})"
+      "#{ct.name}(json: #{src} as! NSDictionary)"
     else
       raise "Unknown type"
     end
@@ -105,11 +147,11 @@ END
     when AST::StringPrimitiveType, AST::IntPrimitiveType, AST::UIntPrimitiveType, AST::FloatPrimitiveType, AST::BoolPrimitiveType
       "#{src}"
     when AST::DatePrimitiveType
-      "APIInternal.encodeDate(#{src})"
+      "APIInternal.encodeDate(date: #{src})"
     when AST::DateTimePrimitiveType
-      "APIInternal.encodeDateTime(#{src})"
+      "APIInternal.encodeDateTime(date: #{src})"
     when AST::BytesPrimitiveType
-      "#{src}.base64EncodedStringWithOptions(NSDataBase64EncodingOptions(rawValue: 0))"
+      "#{src}.base64EncodedString()"
     when AST::VoidPrimitiveType
       "nil"
     when AST::OptionalType
