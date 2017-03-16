@@ -8,6 +8,9 @@ interface R extends RDB {
     range(initial: number, count: number): RStream<number>
     epochTime(epoch: number): RDatum<Date>
     add(...objs: any[]): RDatum<any>
+    branch(cond1: any, case1: any, otherwise: any): RDatum<any>
+    branch(cond1: any, case1: any, cond2: any, case2: any, otherwise: any): RDatum<any>
+    branch(cond1: any, case1: any, cond2: any, case2: any, cond3: any, case3: any, otherwise: any): RDatum<any>
 }
 
 interface RDB {
