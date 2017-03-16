@@ -271,26 +271,31 @@ END
                 }
 
                 @Override
-                public void onResponse(Call call, Response response) throws IOException {
-                    if (response.code() >= 500) {
-                        Log.e("API Fatal", response.body().string());
-                        callback.onFailure("HTTP " + response.code());
-                        return;
-                    }
+                public void onResponse(Call call, final Response response) throws IOException {
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (response.code() >= 500) {
+                                Log.e("API Fatal", response.body().string());
+                                callback.onFailure("HTTP " + response.code());
+                                return;
+                            }
 
-                    try {
-                        JSONObject body = new JSONObject(response.body().string());
-                        if (!body.getBoolean("ok")) {
-                            String type = body.getJSONObject("error").getString("type");
-                            String message = body.getJSONObject("error").getString("message");
-                            callback.onError(type, message);
-                        } else {
-                            callback.onResult(body);
+                            try {
+                                JSONObject body = new JSONObject(response.body().string());
+                                if (!body.getBoolean("ok")) {
+                                    String type = body.getJSONObject("error").getString("type");
+                                    String message = body.getJSONObject("error").getString("message");
+                                    callback.onError(type, message);
+                                } else {
+                                    callback.onResult(body);
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                                callback.onError("bug", e.getMessage());
+                            }
                         }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        callback.onError("bug", e.getMessage());
-                    }
+                    });
                 }
             });
         }
