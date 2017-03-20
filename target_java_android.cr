@@ -267,7 +267,7 @@ END
 
             http.newCall(request).enqueue(new okhttp3.Callback() {
                 @Override
-                public void onFailure(Call call, IOException e) {
+                public void onFailure(Call call, final IOException e) {
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
