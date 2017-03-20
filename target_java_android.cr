@@ -268,8 +268,13 @@ END
             http.newCall(request).enqueue(new okhttp3.Callback() {
                 @Override
                 public void onFailure(Call call, IOException e) {
-                    e.printStackTrace();
-                    callback.onFailure(e.getMessage());
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            e.printStackTrace();
+                            callback.onFailure(e.getMessage());
+                        }
+                    });
                 }
 
                 @Override
