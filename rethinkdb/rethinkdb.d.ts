@@ -1,4 +1,6 @@
 
+interface Sorting {}
+
 interface R extends RDB {
     db(name: string): RDB
     expr<X>(obj: any): RDatum<X>
@@ -15,6 +17,8 @@ interface R extends RDB {
     and(...objs: any[]): RDatum<boolean>
     or(...objs: any[]): RDatum<boolean>
     now(): RDatum<Date>
+    asc(name: string): Sorting
+    desc(name: string): Sorting
 }
 
 interface RDB {
@@ -51,7 +55,7 @@ interface RStreamOrDatum<T> {
     avg(): RDatum<number>
     min(): RDatum<any>
     max(): RDatum<any>
-    orderBy(field: string): RArray<any>
+    orderBy(field: string | Sorting | {index: string | Sorting}): RArray<any>
 }
 
 interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
