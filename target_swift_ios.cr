@@ -32,10 +32,16 @@ END
       @io << ident(String.build do |io|
         io << "static public func #{op.fnName}(#{args.join(", ")}) {\n"
         io << ident(String.build do |io|
-          io << <<-END
-let args: NSMutableDictionary = [:]
+#           io << <<-END
+# var args = [String:Any]()
 
-END
+# END
+      if op.args.size != 0
+        io << "var args = [String: Any]()\n"
+      else
+        io << "let args = [String: Any]()\n"
+      end
+
       op.args.each do |arg|
         io << "args[\"#{arg.name}\"] = #{type_to_json arg.type, arg.name}\n"
       end
@@ -45,7 +51,7 @@ APIInternal.makeRequest(#{op.fnName.inspect}, args) { result, error in
     if error != nil {
         callback(#{"nil, " unless op.return_type.is_a? AST::VoidPrimitiveType}error);
     } else {
-        callback(#{"#{type_from_json op.return_type, "result"}, " unless op.return_type.is_a? AST::VoidPrimitiveType}nil);
+        callback(#{"(#{type_from_json op.return_type, "result"}), " unless op.return_type.is_a? AST::VoidPrimitiveType}nil);
     }
 }
 
@@ -61,19 +67,19 @@ END
 
 class APIInternal {
     static var baseUrl = "api.nutriserie.com.br/user"
-
+    
     class Error {
         var type: String
         var message: String
-
+        
         init(_ type: String, _ message: String) {
             self.type = type
             self.message = message
         }
     }
-
-    static func device() -> NSDictionary {
-        let device = NSMutableDictionary()
+    
+    static func device() -> [String: Any] {
+        var device = [String: Any]()
         device["platform"] = "ios"
         device["fingerprint"] = "."
         device["platformVersion"] = "iOS " + UIDevice.current.systemVersion + " on " + UIDevice.current.model
@@ -88,13 +94,13 @@ class APIInternal {
         }
         return device
     }
-
+    
     static func randomBytesHex(len: Int) -> String {
         var randomBytes = [UInt8](repeating: 0, count: len)
         let _ = SecRandomCopyBytes(kSecRandomDefault, len, &randomBytes)
         return randomBytes.map({String(format: "%02hhx", $0)}).joined(separator: "")
     }
-
+    
     static func decodeDate(str: String) -> Date {
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
@@ -102,7 +108,7 @@ class APIInternal {
         formatter.dateFormat = "yyyy-MM-dd"
         return formatter.date(from: str)!
     }
-
+    
     static func encodeDate(date: Date) -> String {
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
@@ -110,7 +116,7 @@ class APIInternal {
         formatter.dateFormat = "yyyy-MM-dd"
         return formatter.string(from: date)
     }
-
+    
     static func decodeDateTime(str: String) -> Date {
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
@@ -119,7 +125,7 @@ class APIInternal {
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
         return formatter.date(from: str)!
     }
-
+    
     static func encodeDateTime(date: Date) -> String {
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
@@ -128,22 +134,23 @@ class APIInternal {
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
         return formatter.string(from: date)
     }
-
-    static func makeRequest(_ name: String, _ args: NSDictionary, callback: @escaping (_ result: AnyObject?, _ error: Error?) -> Void) {
+    
+    static func makeRequest(_ name: String, _ args: [String: Any], callback: @escaping (_ result: Any?, _ error: Error?) -> Void) {
+        
         let body = [
             "id": randomBytesHex(len: 16),
             "device": device(),
             "name": name,
             "args": args
-        ] as [String : Any]
-
-        Alamofire.request("https://\\(baseUrl)/\\(name)", method: .post, parameters: body).validate().responseJSON { response in
+            ] as [String : Any]
+        
+         Alamofire.request("https://\\(baseUrl)/\\(name)", method: .post, parameters: body, encoding: JSONEncoding.default).validate().responseJSON { response in
             switch response.result {
             case .failure(let err):
                 callback(nil, Error("Connection", err.localizedDescription))
                 break
             case .success(let value):
-                let body = value as! [String: AnyObject?]
+                let body = value as! [String: Any]
                 if body["ok"] as! Bool {
                     callback(body["result"]!, nil)
                 } else {
