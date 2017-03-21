@@ -59,7 +59,7 @@ END
       io << ident <<-END
 }
 
-init(json: NSDictionary) {
+init(json: [String: Any]) {
 
 END
       custom_type.fields.each do |field|
@@ -68,8 +68,8 @@ END
       io << ident <<-END
 }
 
-func toJSON() -> NSDictionary {
-    let json: NSMutableDictionary = [:]
+func toJSON() -> [String: Any] {
+    var json = [String: Any]()
 
 END
       custom_type.fields.each do |field|
@@ -131,12 +131,12 @@ END
     when AST::VoidPrimitiveType
       "nil"
     when AST::OptionalType
-      "#{src} == nil ? nil : #{type_from_json(t.base, src)}"
+      "#{src} is NSNull ? nil : (#{type_from_json(t.base, src)})"
     when AST::ArrayType
       "(#{src} as! [AnyObject]).map({(el) -> #{native_type t.base} in return #{type_from_json t.base, "el"}})"
     when AST::CustomTypeReference
       ct = @ast.custom_types.find {|x| x.name == t.name }.not_nil!
-      "#{ct.name}(json: #{src} as! NSDictionary)"
+      "#{ct.name}(json: #{src} as! [String: Any])"
     else
       raise "Unknown type"
     end
