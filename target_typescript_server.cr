@@ -14,11 +14,11 @@ END
 
     @io << "export const fn: {\n"
     @ast.operations.each do |op|
-      @io << "  " << op.fnName << ": " << operation_type(op) << ";\n"
+      @io << "  " << op.pretty_name << ": " << operation_type(op) << ";\n"
     end
     @io << "} = {\n";
     @ast.operations.each do |op|
-      @io << "  " << op.fnName << ": () => { throw \"not implemented\"; },\n"
+      @io << "  " << op.pretty_name << ": () => { throw \"not implemented\"; },\n"
     end
     @io << "};\n\n"
 
@@ -29,12 +29,12 @@ END
 
     @io << "const fnExec: {[name: string]: (ctx: Context, args: any) => Promise<any>} = {\n"
     @ast.operations.each do |op|
-      @io << "  " << op.fnName << ": async (ctx: Context, args: any) => {\n"
+      @io << "  " << op.pretty_name << ": async (ctx: Context, args: any) => {\n"
       op.args.each do |arg|
         @io << ident ident "const #{arg.name} = #{type_from_json(arg.type, "args.#{arg.name}")};"
         @io << "\n"
       end
-      @io << "    const ret = await fn.#{op.fnName}(#{(["ctx"] + op.args.map(&.name)).join(", ")});\n"
+      @io << "    const ret = await fn.#{op.pretty_name}(#{(["ctx"] + op.args.map(&.name)).join(", ")});\n"
       @io << ident ident "return " + type_to_json(op.return_type, "ret") + ";"
       @io << "\n"
       @io << "  },\n"

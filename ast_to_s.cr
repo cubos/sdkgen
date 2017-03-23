@@ -83,7 +83,7 @@ class CustomType
   end
 end
 
-class CustomTypeReference
+class TypeReference
   def to_s
     name
   end
