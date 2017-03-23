@@ -17,7 +17,7 @@ END
     end
 
     @ast.operations.each do |op|
-      @io << "export async function #{op.fnName}#{operation_args(op)}: Promise<#{operation_ret(op)}> {\n"
+      @io << "export async function #{op.pretty_name}#{operation_args(op)}: Promise<#{operation_ret(op)}> {\n"
       if op.args.size > 0
         @io << "  const args = {\n"
         op.args.each do |arg|
@@ -29,7 +29,7 @@ END
 
       @io << "  "
       @io << "const ret: #{native_type op.return_type} = " unless op.return_type.is_a? AST::VoidPrimitiveType
-      @io << "await makeRequest({name: #{op.fnName.inspect}, #{op.args.size > 0 ? "args" : "args: {}"}});\n"
+      @io << "await makeRequest({name: #{op.pretty_name.inspect}, #{op.args.size > 0 ? "args" : "args: {}"}});\n"
       @io << ident "return " + type_from_json(op.return_type, "ret") + ";"
       @io << "\n"
       @io << "}\n\n"

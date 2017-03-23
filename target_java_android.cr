@@ -52,7 +52,7 @@ END
       args = op.args.map {|arg| "final #{native_type arg.type} #{arg.name}" }
       args << "final #{callback_type op.return_type} callback"
       @io << ident(String.build do |io|
-        io << "static public void #{op.fnName}(#{args.join(", ")}) {\n"
+        io << "static public void #{op.pretty_name}(#{args.join(", ")}) {\n"
         io << ident(String.build do |io|
           if op.args.size == 0
             io << "JSONObject args = new JSONObject();"
@@ -78,7 +78,7 @@ END
           end
           io << <<-END
 
-Internal.makeRequest(#{op.fnName.inspect}, args, new Internal.RequestCallback() {
+Internal.makeRequest(#{op.pretty_name.inspect}, args, new Internal.RequestCallback() {
     @Override
     public void onResult(final JSONObject result) {
         callback.onFinished();
