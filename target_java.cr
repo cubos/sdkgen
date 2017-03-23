@@ -49,7 +49,7 @@ abstract class JavaTarget < Target
     "ArrayList<#{native_type_not_primitive(t.base)}>"
   end
 
-  def native_type(t : AST::CustomTypeReference)
+  def native_type(t : AST::TypeReference)
     t.name
   end
 
@@ -115,7 +115,7 @@ END
       "#{src}.isNull(#{name}) ? null : #{get_field_from_json_object(t.base, src, name)}"
     when AST::ArrayType
       "#{src}.getJSONArray(#{name})"
-    when AST::CustomTypeReference
+    when AST::TypeReference
       "#{src}.getJSONObject(#{name})"
     else
       raise "Unknown type"
@@ -138,7 +138,7 @@ END
       "#{src} == null ? null : #{type_from_json(t.base, src)}"
     when AST::ArrayType
       "new #{native_type t}() {{ JSONArray ary = #{src}; for (int i = 0; i < ary.length(); ++i) add(#{type_from_json(t.base, get_field_from_json_object(t.base, "ary", "i"))}); }}"
-    when AST::CustomTypeReference
+    when AST::TypeReference
       ct = @ast.custom_types.find {|x| x.name == t.name }.not_nil!
       "#{ct.name}.fromJSON(#{src})"
     else
@@ -162,7 +162,7 @@ END
       "#{src} == null ? null : #{type_to_json(t.base, src)}"
     when AST::ArrayType
       "new JSONArray() {{ for (#{native_type t.base} el : #{src}) put(#{type_to_json t.base, "el"}); }}"
-    when AST::CustomTypeReference
+    when AST::TypeReference
       "#{src}.toJSON()"
     else
       raise "Unknown type"

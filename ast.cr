@@ -6,6 +6,9 @@ module AST
   abstract class PrimitiveType < Type
     def check(ast)
     end
+
+    def check_recursive_type(ast, stack)
+    end
   end
 
   class StringPrimitiveType < PrimitiveType
@@ -43,6 +46,10 @@ module AST
     def check(ast)
       @base.check(ast)
     end
+
+    def check_recursive_type(ast, stack)
+      @base.check_recursive_type(ast, stack)
+    end
   end
 
   class ArrayType < Type
@@ -53,11 +60,16 @@ module AST
     def check(ast)
       @base.check(ast)
     end
+
+    def check_recursive_type(ast, stack)
+      @base.check_recursive_type(ast, stack)
+    end
   end
 
   class ApiDescription
     property custom_types = [] of CustomType
     property operations = [] of Operation
+    property enums = [] of Enum
     property options = Options.new
     property errors = [] of String
 
@@ -65,6 +77,11 @@ module AST
       custom_types.each &.check(self)
       operations.each &.check(self)
     end
+  end
+
+  class Enum
+    property! name : String
+    property values = [] of String
   end
 
   class Options
@@ -87,18 +104,31 @@ module AST
 
     def check(ast)
       fields.each &.check(ast)
+      check_recursive_type(ast, [] of CustomType)
+    end
+
+    def check_recursive_type(ast, stack)
+      raise "Cannot allow recursive type #{stack.map(&.name).join(" -> ")} -> #{name}" if stack.find &.== self
+      stack << self
+      fields.each {|field| field.type.check_recursive_type(ast, stack) }
+      stack.pop
     end
   end
 
-  class CustomTypeReference < Type
+  class TypeReference < Type
     property name
     def initialize(@name : String)
     end
 
     def check(ast)
-      unless ast.custom_types.find {|t| t.name == name }
+      unless ast.custom_types.find {|t| t.name == name } || ast.enums.find {|t| t.name == name }
         raise "Could not find type '#{name}'"
       end
+    end
+
+    def check_recursive_type(ast, stack)
+      ref = ast.custom_types.find {|t| t.name == name }
+      ref.check_recursive_type(ast, stack) if ref
     end
   end
 
@@ -111,13 +141,13 @@ module AST
       args.each &.check(ast)
     end
 
-    def fnName
+    def pretty_name
       name
     end
   end
 
   class GetOperation < Operation
-    def fnName
+    def pretty_name
       return_type.is_a?(BoolPrimitiveType) ? name : "get" + name[0].upcase + name[1..-1]
     end
   end

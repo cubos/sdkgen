@@ -46,6 +46,7 @@ class Lexer
     return make_token(EqualSymbolToken.new) if literal_match("=")
 
     return make_token(TypeKeywordToken.new) if literal_match("type")
+    return make_token(EnumKeywordToken.new) if literal_match("enum")
     return make_token(GetKeywordToken.new) if literal_match("get")
     return make_token(FunctionKeywordToken.new) if literal_match("function")
     return make_token(SubscribeKeywordToken.new) if literal_match("subscribe")
@@ -190,6 +191,12 @@ class Token
 end
 
 class TypeKeywordToken < Token
+  def try_ident
+    IdentifierToken.new("type")
+  end
+end
+
+class EnumKeywordToken < Token
   def try_ident
     IdentifierToken.new("type")
   end

@@ -25,7 +25,7 @@ abstract class TypeScriptTarget < Target
     native_type(t.base) + "[]"
   end
 
-  def native_type(t : AST::CustomTypeReference)
+  def native_type(t : AST::TypeReference)
     t.name
   end
 
@@ -75,8 +75,8 @@ abstract class TypeScriptTarget < Target
     when AST::OptionalType
       "#{src} === null || #{src} === undefined ? null : #{type_from_json(t.base, src)}"
     when AST::ArrayType
-      t.base.is_a?(AST::CustomTypeReference) ? "#{src}.map(e => (#{type_from_json(t.base, "e")}))" : "#{src}.map(e => #{type_from_json(t.base, "e")})"
-    when AST::CustomTypeReference
+      t.base.is_a?(AST::TypeReference) ? "#{src}.map(e => (#{type_from_json(t.base, "e")}))" : "#{src}.map(e => #{type_from_json(t.base, "e")})"
+    when AST::TypeReference
       String::Builder.build do |io|
         io << "{\n"
         ct = @ast.custom_types.find {|x| x.name == t.name }.not_nil!
@@ -106,8 +106,8 @@ abstract class TypeScriptTarget < Target
     when AST::OptionalType
       "#{src} === null || #{src} === undefined ? null : #{type_to_json(t.base, src)}"
     when AST::ArrayType
-      t.base.is_a?(AST::CustomTypeReference) ? "#{src}.map(e => (#{type_to_json(t.base, "e")}))" : "#{src}.map(e => #{type_to_json(t.base, "e")})"
-    when AST::CustomTypeReference
+      t.base.is_a?(AST::TypeReference) ? "#{src}.map(e => (#{type_to_json(t.base, "e")}))" : "#{src}.map(e => #{type_to_json(t.base, "e")})"
+    when AST::TypeReference
       String::Builder.build do |io|
         io << "{\n"
         ct = @ast.custom_types.find {|x| x.name == t.name }.not_nil!
