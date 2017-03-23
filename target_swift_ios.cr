@@ -30,7 +30,7 @@ END
         args << "callback: @escaping (_ result: #{native_type ret}, _ error: APIInternal.Error?) -> Void"
       end
       @io << ident(String.build do |io|
-        io << "static public func #{op.fnName}(#{args.join(", ")}) {\n"
+        io << "static public func #{op.pretty_name}(#{args.join(", ")}) {\n"
         io << ident(String.build do |io|
 #           io << <<-END
 # var args = [String:Any]()
@@ -47,7 +47,7 @@ END
       end
           io << <<-END
 
-APIInternal.makeRequest(#{op.fnName.inspect}, args) { result, error in
+APIInternal.makeRequest(#{op.pretty_name.inspect}, args) { result, error in
     if error != nil {
         callback(#{"nil, " unless op.return_type.is_a? AST::VoidPrimitiveType}error);
     } else {

@@ -29,7 +29,7 @@ abstract class SwiftTarget < Target
     "[#{native_type(t.base)}]"
   end
 
-  def native_type(t : AST::CustomTypeReference)
+  def native_type(t : AST::TypeReference)
     t.name
   end
 
@@ -102,7 +102,7 @@ END
       "nil"
     when AST::ArrayType
       "[]"
-    when AST::CustomTypeReference
+    when AST::TypeReference
       ct = @ast.custom_types.find {|x| x.name == t.name }.not_nil!
       "#{ct.name}()"
     else
@@ -134,7 +134,7 @@ END
       "#{src} is NSNull ? nil : (#{type_from_json(t.base, src)})"
     when AST::ArrayType
       "(#{src} as! [AnyObject]).map({(el) -> #{native_type t.base} in return #{type_from_json t.base, "el"}})"
-    when AST::CustomTypeReference
+    when AST::TypeReference
       ct = @ast.custom_types.find {|x| x.name == t.name }.not_nil!
       "#{ct.name}(json: #{src} as! [String: Any])"
     else
@@ -158,7 +158,7 @@ END
       "#{src} == nil ? nil : #{type_to_json(t.base, src + "!")}"
     when AST::ArrayType
       "#{src}.map({ return #{type_to_json t.base, "$0"} })"
-    when AST::CustomTypeReference
+    when AST::TypeReference
       "#{src}.toJSON()"
     else
       raise "Unknown type"
