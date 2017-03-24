@@ -149,19 +149,20 @@ class Parser
     next_token
     op.name = expect(IdentifierToken).name
     next_token
-    expect ParensOpenSymbolToken
-    next_token
 
-    while true
-      case token = multi_expect(IdentifierToken, ParensCloseSymbolToken, CommaSymbolToken)
-      when IdentifierToken
-        op.args << parse_field
-      when ParensCloseSymbolToken
-        next_token
-        break
-      when CommaSymbolToken
-        next_token
-        next
+    if @token.is_a? ParensOpenSymbolToken
+      next_token
+      while true
+        case token = multi_expect(IdentifierToken, ParensCloseSymbolToken, CommaSymbolToken)
+        when IdentifierToken
+          op.args << parse_field
+        when ParensCloseSymbolToken
+          next_token
+          break
+        when CommaSymbolToken
+          next_token
+          next
+        end
       end
     end
 
