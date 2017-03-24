@@ -1,4 +1,5 @@
 class Lexer
+  property filename : String
 
   class LexerException < Exception
   end
@@ -45,6 +46,7 @@ class Lexer
     return make_token(CommaSymbolToken.new) if literal_match(",")
     return make_token(EqualSymbolToken.new) if literal_match("=")
 
+    return make_token(ImportKeywordToken.new) if literal_match("import")
     return make_token(TypeKeywordToken.new) if literal_match("type")
     return make_token(EnumKeywordToken.new) if literal_match("enum")
     return make_token(GetKeywordToken.new) if literal_match("get")
@@ -187,6 +189,12 @@ class Token
 
   def location
     "#{filename}:#{line}:#{col}"
+  end
+end
+
+class ImportKeywordToken < Token
+  def try_ident
+    IdentifierToken.new("import")
   end
 end
 
