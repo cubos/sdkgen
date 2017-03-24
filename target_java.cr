@@ -139,8 +139,7 @@ END
     when AST::ArrayType
       "new #{native_type t}() {{ JSONArray ary = #{src}; for (int i = 0; i < ary.length(); ++i) add(#{type_from_json(t.base, get_field_from_json_object(t.base, "ary", "i"))}); }}"
     when AST::TypeReference
-      ct = @ast.type_definitions.find {|x| x.name == t.name }.not_nil!
-      "#{ct.name}.fromJSON(#{src})"
+      "#{t.ref.name}.fromJSON(#{src})"
     else
       raise "Unknown type"
     end
