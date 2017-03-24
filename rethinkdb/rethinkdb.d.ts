@@ -1,4 +1,6 @@
 
+interface Sorting {}
+
 interface R extends RDB {
     db(name: string): RDB
     expr<X>(obj: any): RDatum<X>
@@ -15,6 +17,8 @@ interface R extends RDB {
     and(...objs: any[]): RDatum<boolean>
     or(...objs: any[]): RDatum<boolean>
     now(): RDatum<Date>
+    asc(name: string): Sorting
+    desc(name: string): Sorting
 }
 
 interface RDB {
@@ -51,7 +55,7 @@ interface RStreamOrDatum<T> {
     avg(): RDatum<number>
     min(): RDatum<any>
     max(): RDatum<any>
-    orderBy(field: string): RArray<any>
+    orderBy(field: string | Sorting): RArray<any>
 }
 
 interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
@@ -87,7 +91,7 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
 interface RArray<T> extends RDatum<T[]> {
     (idx: number | RDatum<any>): RDatum<T>
     map(func: (e: RDatum<T>) => any): RArray<any>
-    orderBy(field: string): RArray<T>
+    orderBy(field: string | Sorting): RArray<T>
     append(other: T): RArray<T>
     filter(obj: DeepPartial<RDatumfy<T>>): RArray<T>
     filter(criteria: (obj: RDatum<T>) => boolean | RDatum<boolean>): RArray<T>
@@ -97,7 +101,8 @@ interface RArray<T> extends RDatum<T[]> {
 interface RStream<T> extends PromiseLike<T[]>, RStreamOrDatum<T[]> {
     (idx: number): RDatum<T>
     map(func: (arg: RDatum<T>) => any): RStream<any>
-    orderBy(field: string): RArray<T>
+    orderBy(field: string | Sorting): RArray<T>
+    orderBy(options: {index: string | Sorting}): RStream<T>
     coerceTo(type: "array"): RArray<T>
     filter(obj: DeepPartial<RDatumfy<T>>): RStream<T>
     filter(criteria: (obj: RDatum<T>) => boolean | RDatum<boolean>): RStream<T>
