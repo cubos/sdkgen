@@ -17,7 +17,7 @@ class Parser
     while @token
       case multi_expect(TypeKeywordToken, EnumKeywordToken, GetKeywordToken, FunctionKeywordToken, SubscribeKeywordToken, GlobalOptionToken, ErrorKeywordToken)
       when TypeKeywordToken
-        api.custom_types << parse_custom_type_definition
+        api.type_definitions << parse_type_definition_definition
       when EnumKeywordToken
         api.enums << parse_enum
       when GetKeywordToken, FunctionKeywordToken, SubscribeKeywordToken
@@ -106,11 +106,11 @@ class Parser
     end
   end
 
-  def parse_custom_type_definition
+  def parse_type_definition_definition
     expect TypeKeywordToken
     next_token
 
-    t = AST::CustomType.new
+    t = AST::TypeDefinition.new
     name_token = expect(IdentifierToken)
     unless name_token.name[0].uppercase?
       raise ParserException.new "The custom type name must start with an uppercase letter, but found '#{name_token.name}' at #{name_token.location}"
