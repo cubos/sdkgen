@@ -9,8 +9,8 @@ class API {
 
 END
 
-    @ast.custom_types.each do |custom_type|
-      @io << ident generate_custom_type_interface(custom_type)
+    @ast.type_definitions.each do |type_definition|
+      @io << ident generate_type_definition_interface(type_definition)
       @io << "\n\n"
     end
 
