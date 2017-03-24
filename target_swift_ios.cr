@@ -9,7 +9,7 @@ class API {
 
 END
 
-
+    #generate error index
     @io << "\n"
     @io << ident "enum ErrorType: String {\n"
     @ast.errors.each do |error|
@@ -20,8 +20,8 @@ END
     @io << ident "}"
     @io << "\n\n"
 
-    @ast.custom_types.each do |custom_type|
-      @io << ident generate_custom_type_interface(custom_type)
+    @ast.type_definitions.each do |type_definition|
+      @io << ident generate_type_definition_interface(type_definition)
       @io << "\n\n"
     end
 
@@ -38,7 +38,7 @@ END
         args << "callback: ((_ result: #{native_type ret}, _ error: APIInternal.Error?) -> Void)?"
       end
       @io << ident(String.build do |io|
-        io << "static public func #{op.fnName}(#{args.join(", ")}) {\n"
+        io << "static public func #{op.pretty_name}(#{args.join(", ")}) {\n"
         io << ident(String.build do |io|
 
       if op.args.size != 0
@@ -52,7 +52,7 @@ END
       end
           io << <<-END
 
-APIInternal.makeRequest(#{op.fnName.inspect}, args) { result, error in
+APIInternal.makeRequest(#{op.pretty_name.inspect}, args) { result, error in
     if error != nil {
         callback?(#{"nil, " unless op.return_type.is_a? AST::VoidPrimitiveType}error);
     } else {
