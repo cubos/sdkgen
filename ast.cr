@@ -4,11 +4,6 @@ module AST
   end
 
   abstract class PrimitiveType < Type
-    def check(ast)
-    end
-
-    def check_recursive_type(ast, stack)
-    end
   end
 
   class StringPrimitiveType < PrimitiveType
@@ -42,44 +37,23 @@ module AST
     property base
     def initialize(@base : Type)
     end
-
-    def check(ast)
-      @base.check(ast)
-    end
-
-    def check_recursive_type(ast, stack)
-      @base.check_recursive_type(ast, stack)
-    end
   end
 
   class ArrayType < Type
     property base
     def initialize(@base : Type)
     end
-
-    def check(ast)
-      @base.check(ast)
-    end
-
-    def check_recursive_type(ast, stack)
-      @base.check_recursive_type(ast, stack)
-    end
   end
 
   class ApiDescription
     property type_definitions = [] of TypeDefinition
+    property enum_definitions = [] of EnumDefinition
     property operations = [] of Operation
-    property enums = [] of Enum
     property options = Options.new
     property errors = [] of String
-
-    def check
-      type_definitions.each &.check(self)
-      operations.each &.check(self)
-    end
   end
 
-  class Enum
+  class EnumDefinition
     property! name : String
     property values = [] of String
   end
@@ -101,34 +75,11 @@ module AST
   class TypeDefinition
     property! name : String
     property fields = [] of Field
-
-    def check(ast)
-      fields.each &.check(ast)
-      check_recursive_type(ast, [] of TypeDefinition)
-    end
-
-    def check_recursive_type(ast, stack)
-      raise "Cannot allow recursive type #{stack.map(&.name).join(" -> ")} -> #{name}" if stack.find &.== self
-      stack << self
-      fields.each {|field| field.type.check_recursive_type(ast, stack) }
-      stack.pop
-    end
   end
 
   class TypeReference < Type
     property name
     def initialize(@name : String)
-    end
-
-    def check(ast)
-      unless ast.type_definitions.find {|t| t.name == name } || ast.enums.find {|t| t.name == name }
-        raise "Could not find type '#{name}'"
-      end
-    end
-
-    def check_recursive_type(ast, stack)
-      ref = ast.type_definitions.find {|t| t.name == name }
-      ref.check_recursive_type(ast, stack) if ref
     end
   end
 
@@ -136,20 +87,9 @@ module AST
     property! name : String
     property args = [] of Field
     property! return_type : Type
-
-    def check(ast)
-      args.each &.check(ast)
-    end
-
-    def pretty_name
-      name
-    end
   end
 
   class GetOperation < Operation
-    def pretty_name
-      return_type.is_a?(BoolPrimitiveType) ? name : "get" + name[0].upcase + name[1..-1]
-    end
   end
 
   class FunctionOperation < Operation
