@@ -1,5 +1,6 @@
 require "./lexer"
 require "./ast"
+require "./ast_semantic"
 
 class Parser
 
@@ -15,9 +16,11 @@ class Parser
   def parse
     api = AST::ApiDescription.new
     while @token
-      case multi_expect(TypeKeywordToken, GetKeywordToken, FunctionKeywordToken, SubscribeKeywordToken, GlobalOptionToken, ErrorKeywordToken)
+      case multi_expect(TypeKeywordToken, EnumKeywordToken, GetKeywordToken, FunctionKeywordToken, SubscribeKeywordToken, GlobalOptionToken, ErrorKeywordToken)
       when TypeKeywordToken
-        api.custom_types << parse_custom_type_definition
+        api.type_definitions << parse_type_definition_definition
+      when EnumKeywordToken
+        api.enum_definitions << parse_enum
       when GetKeywordToken, FunctionKeywordToken, SubscribeKeywordToken
         api.operations << parse_operation
       when GlobalOptionToken
@@ -74,14 +77,44 @@ class Parser
     token
   end
 
-  def parse_custom_type_definition
+  def parse_enum
+    expect EnumKeywordToken
+    next_token
+
+    e = AST::EnumDefinition.new
+    name_token = expect(IdentifierToken)
+    unless name_token.name[0].uppercase?
+      raise ParserException.new "The enum name must start with an uppercase letter, but found '#{name_token.name}' at #{name_token.location}"
+    end
+    e.name = name_token.name
+    next_token
+
+    expect CurlyOpenSymbolToken
+    next_token
+
+    while true
+      case token = multi_expect(IdentifierToken, CurlyCloseSymbolToken)
+      when IdentifierToken
+        unless token.name[0].uppercase?
+          raise ParserException.new "The enum value must start with an uppercase letter, but found '#{name_token.name}' at #{name_token.location}"
+        end
+        e.values << token.name
+        next_token
+      when CurlyCloseSymbolToken
+        next_token
+        return e
+      end
+    end
+  end
+
+  def parse_type_definition_definition
     expect TypeKeywordToken
     next_token
 
-    t = AST::CustomType.new
+    t = AST::TypeDefinition.new
     name_token = expect(IdentifierToken)
     unless name_token.name[0].uppercase?
-      raise ParserException.new "A custom type name must start with an uppercase letter, but found '#{name_token.name}' at #{name_token.location}"
+      raise ParserException.new "The custom type name must start with an uppercase letter, but found '#{name_token.name}' at #{name_token.location}"
     end
     t.name = name_token.name
     next_token
@@ -116,19 +149,20 @@ class Parser
     next_token
     op.name = expect(IdentifierToken).name
     next_token
-    expect ParensOpenSymbolToken
-    next_token
 
-    while true
-      case token = multi_expect(IdentifierToken, ParensCloseSymbolToken, CommaSymbolToken)
-      when IdentifierToken
-        op.args << parse_field
-      when ParensCloseSymbolToken
-        next_token
-        break
-      when CommaSymbolToken
-        next_token
-        next
+    if @token.is_a? ParensOpenSymbolToken
+      next_token
+      while true
+        case token = multi_expect(IdentifierToken, ParensCloseSymbolToken, CommaSymbolToken)
+        when IdentifierToken
+          op.args << parse_field
+        when ParensCloseSymbolToken
+          next_token
+          break
+        when CommaSymbolToken
+          next_token
+          next
+        end
       end
     end
 
@@ -187,7 +221,7 @@ class Parser
       unless token.name[0].uppercase?
         raise ParserException.new "Expected a type but found '#{token.name}', at #{token.location}"
       end
-      AST::CustomTypeReference.new(token.name)
+      AST::TypeReference.new(token.name)
     when PrimitiveTypeToken
       case token.name
       when "string";   AST::StringPrimitiveType.new
