@@ -7,16 +7,39 @@ class Parser
   class ParserException < Exception
   end
 
+  @lexers = [] of Lexer
   @token : Token | Nil
 
-  def initialize(@lexer : Lexer)
-    @token = @lexer.next_token
+  def initialize(source : String)
+    @lexers << Lexer.new(source)
+    next_token
+  end
+
+  def next_token
+    while @lexers.size > 0
+      @token = @lexers.last.next_token
+      if @token
+        return
+      else
+        @lexers.pop
+      end
+    end
+  end
+
+  def current_source
+    @lexers.last.filename if @lexers.size > 0
   end
 
   def parse
     api = AST::ApiDescription.new
     while @token
-      case multi_expect(TypeKeywordToken, EnumKeywordToken, GetKeywordToken, FunctionKeywordToken, SubscribeKeywordToken, GlobalOptionToken, ErrorKeywordToken)
+      case multi_expect(ImportKeywordToken, TypeKeywordToken, EnumKeywordToken, GetKeywordToken, FunctionKeywordToken, SubscribeKeywordToken, GlobalOptionToken, ErrorKeywordToken)
+      when ImportKeywordToken
+        next_token
+        token = expect StringLiteralToken
+        source = File.expand_path(token.str + ".sdkgen", File.dirname(current_source.not_nil!))
+        @lexers << Lexer.new(source)
+        next_token
       when TypeKeywordToken
         api.type_definitions << parse_type_definition_definition
       when EnumKeywordToken
@@ -33,10 +56,6 @@ class Parser
       end
     end
     api
-  end
-
-  def next_token
-    @token = @lexer.next_token
   end
 
   macro multi_expect(*token_types)
