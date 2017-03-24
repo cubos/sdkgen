@@ -3,7 +3,6 @@ require "./ast"
 require "./ast_semantic"
 
 class Parser
-
   class ParserException < Exception
   end
 
@@ -41,7 +40,7 @@ class Parser
         @lexers << Lexer.new(source)
         next_token
       when TypeKeywordToken
-        api.type_definitions << parse_type_definition_definition
+        api.type_definitions << parse_type_definition
       when EnumKeywordToken
         api.enum_definitions << parse_enum
       when GetKeywordToken, FunctionKeywordToken, SubscribeKeywordToken
@@ -126,7 +125,7 @@ class Parser
     end
   end
 
-  def parse_type_definition_definition
+  def parse_type_definition
     expect TypeKeywordToken
     next_token
 
