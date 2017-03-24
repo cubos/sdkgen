@@ -62,7 +62,7 @@ end
 
 class ApiDescription
   def to_s
-    custom_types.map(&.to_s).join("\n") + "\n" +
+    type_definitions.map(&.to_s).join("\n") + "\n" +
     operations.map(&.to_s).join("\n")
   end
 end
@@ -75,7 +75,7 @@ class Field
   end
 end
 
-class CustomType
+class TypeDefinition
   def to_s
     "type #{name} {\n" +
     fields.map{|f| "  #{f.to_s}\n" }.join +

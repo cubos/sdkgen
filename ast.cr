@@ -67,14 +67,14 @@ module AST
   end
 
   class ApiDescription
-    property custom_types = [] of CustomType
+    property type_definitions = [] of TypeDefinition
     property operations = [] of Operation
     property enums = [] of Enum
     property options = Options.new
     property errors = [] of String
 
     def check
-      custom_types.each &.check(self)
+      type_definitions.each &.check(self)
       operations.each &.check(self)
     end
   end
@@ -98,13 +98,13 @@ module AST
     end
   end
 
-  class CustomType
+  class TypeDefinition
     property! name : String
     property fields = [] of Field
 
     def check(ast)
       fields.each &.check(ast)
-      check_recursive_type(ast, [] of CustomType)
+      check_recursive_type(ast, [] of TypeDefinition)
     end
 
     def check_recursive_type(ast, stack)
@@ -121,13 +121,13 @@ module AST
     end
 
     def check(ast)
-      unless ast.custom_types.find {|t| t.name == name } || ast.enums.find {|t| t.name == name }
+      unless ast.type_definitions.find {|t| t.name == name } || ast.enums.find {|t| t.name == name }
         raise "Could not find type '#{name}'"
       end
     end
 
     def check_recursive_type(ast, stack)
-      ref = ast.custom_types.find {|t| t.name == name }
+      ref = ast.type_definitions.find {|t| t.name == name }
       ref.check_recursive_type(ast, stack) if ref
     end
   end

@@ -33,10 +33,10 @@ abstract class SwiftTarget < Target
     t.name
   end
 
-  def generate_custom_type_interface(custom_type)
+  def generate_type_definition_interface(type_definition)
     String.build do |io|
-      io << "class #{custom_type.name} {\n"
-      custom_type.fields.each do |field|
+      io << "class #{type_definition.name} {\n"
+      type_definition.fields.each do |field|
         io << ident "var #{field.name}: #{native_type field.type}\n"
       end
       io << ident <<-END
@@ -44,16 +44,16 @@ abstract class SwiftTarget < Target
 init() {
 
 END
-      custom_type.fields.each do |field|
+      type_definition.fields.each do |field|
         io << ident ident "#{field.name} = #{default_value field.type}\n"
       end
       io << ident <<-END
 }
 
-init(#{custom_type.fields.map{|f| "#{f.name}: #{native_type f.type}"}.join(", ")}) {
+init(#{type_definition.fields.map{|f| "#{f.name}: #{native_type f.type}"}.join(", ")}) {
 
 END
-      custom_type.fields.each do |field|
+      type_definition.fields.each do |field|
         io << ident ident "self.#{field.name} = #{field.name}\n"
       end
       io << ident <<-END
@@ -62,7 +62,7 @@ END
 init(json: [String: Any]) {
 
 END
-      custom_type.fields.each do |field|
+      type_definition.fields.each do |field|
         io << ident ident "#{field.name} = #{type_from_json field.type, "json[#{field.name.inspect}]"}\n"
       end
       io << ident <<-END
@@ -72,7 +72,7 @@ func toJSON() -> [String: Any] {
     var json = [String: Any]()
 
 END
-      custom_type.fields.each do |field|
+      type_definition.fields.each do |field|
         io << ident ident "json[\"#{field.name}\"] = #{type_to_json field.type, field.name}\n"
       end
       io << ident <<-END
@@ -103,7 +103,7 @@ END
     when AST::ArrayType
       "[]"
     when AST::TypeReference
-      ct = @ast.custom_types.find {|x| x.name == t.name }.not_nil!
+      ct = @ast.type_definitions.find {|x| x.name == t.name }.not_nil!
       "#{ct.name}()"
     else
       raise "Unknown type"
@@ -135,7 +135,7 @@ END
     when AST::ArrayType
       "(#{src} as! [AnyObject]).map({(el) -> #{native_type t.base} in return #{type_from_json t.base, "el"}})"
     when AST::TypeReference
-      ct = @ast.custom_types.find {|x| x.name == t.name }.not_nil!
+      ct = @ast.type_definitions.find {|x| x.name == t.name }.not_nil!
       "#{ct.name}(json: #{src} as! [String: Any])"
     else
       raise "Unknown type"
