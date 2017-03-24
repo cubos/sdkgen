@@ -9,33 +9,38 @@ class API {
 
 END
 
+
+    @io << "\n"
+    @io << ident "enum ErrorType: String {\n"
+    @ast.errors.each do |error|
+        @io << ident ident "case #{error} = #{error.inspect}\n" 
+    end
+    @io << ident ident "case ConnectionError = \"ConnectionError\" \n"
+    @io << ident ident "case UnknownError = \"UnknownError\" \n" 
+    @io << ident "}"
+    @io << "\n\n"
+
     @ast.custom_types.each do |custom_type|
       @io << ident generate_custom_type_interface(custom_type)
       @io << "\n\n"
     end
 
-    # static func logIn(email: String, callback: @escaping (_ result: String, _ error: APIInternal.Error?) -> Void) {
-
-    # }
     @ast.operations.each do |op|
       args = op.args.map {|arg| "#{arg.name}: #{native_type arg.type}" }
 
       if op.return_type.is_a? AST::VoidPrimitiveType
-        args << "callback: @escaping (_ error: APIInternal.Error?) -> Void"
+        args << "callback:  ((_ error: APIInternal.Error?) -> Void)?"
       else
         ret = op.return_type
         unless ret.is_a? AST::OptionalType
           ret = AST::OptionalType.new ret
         end
-        args << "callback: @escaping (_ result: #{native_type ret}, _ error: APIInternal.Error?) -> Void"
+        args << "callback: ((_ result: #{native_type ret}, _ error: APIInternal.Error?) -> Void)?"
       end
       @io << ident(String.build do |io|
         io << "static public func #{op.fnName}(#{args.join(", ")}) {\n"
         io << ident(String.build do |io|
-#           io << <<-END
-# var args = [String:Any]()
 
-# END
       if op.args.size != 0
         io << "var args = [String: Any]()\n"
       else
@@ -49,9 +54,9 @@ END
 
 APIInternal.makeRequest(#{op.fnName.inspect}, args) { result, error in
     if error != nil {
-        callback(#{"nil, " unless op.return_type.is_a? AST::VoidPrimitiveType}error);
+        callback?(#{"nil, " unless op.return_type.is_a? AST::VoidPrimitiveType}error);
     } else {
-        callback(#{"(#{type_from_json op.return_type, "result"}), " unless op.return_type.is_a? AST::VoidPrimitiveType}nil);
+        callback?(#{"(#{type_from_json op.return_type, "result"}), " unless op.return_type.is_a? AST::VoidPrimitiveType}nil);
     }
 }
 
@@ -69,15 +74,34 @@ class APIInternal {
     static var baseUrl = "api.nutriserie.com.br/user"
     
     class Error {
-        var type: String
+        var type: API.ErrorType
         var message: String
         
-        init(_ type: String, _ message: String) {
+        init(_ type: API.ErrorType, _ message: String) {
             self.type = type
             self.message = message
         }
+        
+        init(json: [String: Any]) {
+            self.type = API.ErrorType(rawValue: json["type"] as! String) ?? API.ErrorType.UnknownError
+            self.message = json["message"] as! String
+        }
     }
     
+    class HTTPResponse {
+        var ok: Bool!
+        var deviceId: String!
+        var result: Any?
+        var error: Error?
+        
+        init(json: [String: Any]) {
+            self.ok = json["ok"] as! Bool
+            self.deviceId = json["deviceId"] as! String
+            self.result = json["result"] is NSNull ? nil : json["result"]!
+            self.error = json["error"] is NSNull ? nil: (Error(json: json["error"] as! [String: Any]))
+        }
+    }
+
     static func device() -> [String: Any] {
         var device = [String: Any]()
         device["platform"] = "ios"
@@ -89,7 +113,7 @@ class APIInternal {
             device["version"] = "unknown"
         }
         device["language"] = Locale.preferredLanguages[0]
-        if let deviceId = UserDefaults.standard.value(forKey: "device-id") as? String {
+        if let deviceId = deviceID  {
             device["id"] = deviceId
         }
         return device
@@ -135,7 +159,21 @@ class APIInternal {
         return formatter.string(from: date)
     }
     
+    static var deviceID: String? {
+        return UserDefaults.standard.value(forKey: "device-id") as? String
+    }
+    
+    static func saveDeviceID(_ id: String) {
+        UserDefaults.standard.setValue(id, forKey: "device-id")
+        UserDefaults.standard.synchronize()
+    }
+
+    static func isNull(value: Any?) -> Bool {
+        return value == nil || value is NSNull
+    }
+
     static func makeRequest(_ name: String, _ args: [String: Any], callback: @escaping (_ result: Any?, _ error: Error?) -> Void) {
+        let api = SessionManager.default
         
         let body = [
             "id": randomBytesHex(len: 16),
@@ -144,21 +182,22 @@ class APIInternal {
             "args": args
             ] as [String : Any]
         
-         Alamofire.request("https://\\(baseUrl)/\\(name)", method: .post, parameters: body, encoding: JSONEncoding.default).validate().responseJSON { response in
-            switch response.result {
-            case .failure(let err):
-                callback(nil, Error("Connection", err.localizedDescription))
-                break
-            case .success(let value):
-                let body = value as! [String: Any]
-                if body["ok"] as! Bool {
-                    callback(body["result"]!, nil)
-                } else {
-                    let error = body["error"] as! [String: String]
-                    callback(nil, Error(error["type"]!, error["message"]!))
-                }
-                break
+         api.request("https://\\(baseUrl)/\\(name)", method: .post, parameters: body, encoding: JSONEncoding.default).responseJSON { response in
+            
+            guard let responseValue = response.result.value else {
+                callback(nil, Error(API.ErrorType.ConnectionError, "no result value"))
+                return
             }
+            
+            let response = HTTPResponse(json: responseValue as! [String: Any])
+            saveDeviceID(response.deviceId)
+            
+            guard response.error == nil && response.ok else {
+                callback(nil, response.error)
+                return
+            }
+            
+            callback(response.result, nil)
         }
     }
 }
