@@ -79,8 +79,7 @@ abstract class TypeScriptTarget < Target
     when AST::TypeReference
       String::Builder.build do |io|
         io << "{\n"
-        ct = @ast.type_definitions.find {|x| x.name == t.name }.not_nil!
-        ct.fields.each do |field|
+        (t.ref.as AST::TypeDefinition).fields.each do |field|
           io << ident "#{field.name}: #{type_from_json(field.type, "#{src}.#{field.name}")},"
           io << "\n"
         end
@@ -110,8 +109,7 @@ abstract class TypeScriptTarget < Target
     when AST::TypeReference
       String::Builder.build do |io|
         io << "{\n"
-        ct = @ast.type_definitions.find {|x| x.name == t.name }.not_nil!
-        ct.fields.each do |field|
+        (t.ref.as AST::TypeDefinition).fields.each do |field|
           io << ident "#{field.name}: #{type_to_json(field.type, "#{src}.#{field.name}")},"
           io << "\n"
         end

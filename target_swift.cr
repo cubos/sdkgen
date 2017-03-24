@@ -103,8 +103,7 @@ END
     when AST::ArrayType
       "[]"
     when AST::TypeReference
-      ct = @ast.type_definitions.find {|x| x.name == t.name }.not_nil!
-      "#{ct.name}()"
+      "#{t.ref.name}()"
     else
       raise "Unknown type"
     end
@@ -135,8 +134,7 @@ END
     when AST::ArrayType
       "(#{src} as! [AnyObject]).map({(el) -> #{native_type t.base} in return #{type_from_json t.base, "el"}})"
     when AST::TypeReference
-      ct = @ast.type_definitions.find {|x| x.name == t.name }.not_nil!
-      "#{ct.name}(json: #{src} as! [String: Any])"
+      "#{t.ref.name}(json: #{src} as! [String: Any])"
     else
       raise "Unknown type"
     end
