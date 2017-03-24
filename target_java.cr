@@ -53,10 +53,10 @@ abstract class JavaTarget < Target
     t.name
   end
 
-  def generate_custom_type_interface(custom_type)
+  def generate_type_definition_interface(type_definition)
     String.build do |io|
-      io << "public static class #{custom_type.name} {\n"
-      custom_type.fields.each do |field|
+      io << "public static class #{type_definition.name} {\n"
+      type_definition.fields.each do |field|
         io << ident "public #{native_type field.type} #{field.name};\n"
       end
       io << ident <<-END
@@ -66,7 +66,7 @@ public JSONObject toJSON() {
         return new JSONObject() {{
 
 END
-      custom_type.fields.each do |field|
+      type_definition.fields.each do |field|
         io << ident ident ident ident "put(\"#{field.name}\", #{type_to_json field.type, field.name});\n"
       end
       io << ident <<-END
@@ -77,12 +77,12 @@ END
     }
 }
 
-public static #{custom_type.name} fromJSON(final JSONObject json) {
+public static #{type_definition.name} fromJSON(final JSONObject json) {
     try {
-        return new #{custom_type.name}() {{
+        return new #{type_definition.name}() {{
 
 END
-      custom_type.fields.each do |field|
+      type_definition.fields.each do |field|
         io << ident ident ident ident "#{field.name} = #{type_from_json field.type, get_field_from_json_object(field.type, "json", field.name.inspect)};\n"
       end
       io << ident <<-END
@@ -90,7 +90,7 @@ END
         }};
     } catch (JSONException e) {
         e.printStackTrace();
-        return new #{custom_type.name}();
+        return new #{type_definition.name}();
     }
 }
 
@@ -139,7 +139,7 @@ END
     when AST::ArrayType
       "new #{native_type t}() {{ JSONArray ary = #{src}; for (int i = 0; i < ary.length(); ++i) add(#{type_from_json(t.base, get_field_from_json_object(t.base, "ary", "i"))}); }}"
     when AST::TypeReference
-      ct = @ast.custom_types.find {|x| x.name == t.name }.not_nil!
+      ct = @ast.type_definitions.find {|x| x.name == t.name }.not_nil!
       "#{ct.name}.fromJSON(#{src})"
     else
       raise "Unknown type"

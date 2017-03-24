@@ -29,10 +29,10 @@ abstract class TypeScriptTarget < Target
     t.name
   end
 
-  def generate_custom_type_interface(custom_type)
+  def generate_type_definition_interface(type_definition)
     String.build do |io|
-      io << "export interface #{custom_type.name} {\n"
-      custom_type.fields.each do |field|
+      io << "export interface #{type_definition.name} {\n"
+      type_definition.fields.each do |field|
         io << ident "#{field.name}: #{native_type field.type};\n"
       end
       io << "}"
@@ -79,7 +79,7 @@ abstract class TypeScriptTarget < Target
     when AST::TypeReference
       String::Builder.build do |io|
         io << "{\n"
-        ct = @ast.custom_types.find {|x| x.name == t.name }.not_nil!
+        ct = @ast.type_definitions.find {|x| x.name == t.name }.not_nil!
         ct.fields.each do |field|
           io << ident "#{field.name}: #{type_from_json(field.type, "#{src}.#{field.name}")},"
           io << "\n"
@@ -110,7 +110,7 @@ abstract class TypeScriptTarget < Target
     when AST::TypeReference
       String::Builder.build do |io|
         io << "{\n"
-        ct = @ast.custom_types.find {|x| x.name == t.name }.not_nil!
+        ct = @ast.type_definitions.find {|x| x.name == t.name }.not_nil!
         ct.fields.each do |field|
           io << ident "#{field.name}: #{type_to_json(field.type, "#{src}.#{field.name}")},"
           io << "\n"
