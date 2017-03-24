@@ -30,8 +30,7 @@ end
 
 source = sources[0]
 
-lexer = Lexer.new(source)
-parser = Parser.new(lexer)
+parser = Parser.new(source)
 ast = parser.parse
 ast.semantic
 
