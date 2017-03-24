@@ -56,8 +56,11 @@ module AST
   end
 
   class TypeReference < Type
+    property! ref : TypeDefinition | EnumDefinition
+
     def semantic(ast)
-      unless ast.type_definitions.find {|t| t.name == name } || ast.enum_definitions.find {|t| t.name == name }
+      @ref = ast.type_definitions.find {|t| t.name == name } || ast.enum_definitions.find {|t| t.name == name }
+      unless @ref
         raise "Could not find type '#{name}'"
       end
     end
@@ -71,6 +74,7 @@ module AST
   abstract class Operation
     def semantic(ast)
       args.each &.semantic(ast)
+      return_type.semantic(ast)
     end
 
     def pretty_name
