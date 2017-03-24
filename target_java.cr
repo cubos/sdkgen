@@ -49,14 +49,14 @@ abstract class JavaTarget < Target
     "ArrayList<#{native_type_not_primitive(t.base)}>"
   end
 
-  def native_type(t : AST::CustomTypeReference)
+  def native_type(t : AST::TypeReference)
     t.name
   end
 
-  def generate_custom_type_interface(custom_type)
+  def generate_type_definition_interface(type_definition)
     String.build do |io|
-      io << "public static class #{custom_type.name} {\n"
-      custom_type.fields.each do |field|
+      io << "public static class #{type_definition.name} {\n"
+      type_definition.fields.each do |field|
         io << ident "public #{native_type field.type} #{field.name};\n"
       end
       io << ident <<-END
@@ -66,7 +66,7 @@ public JSONObject toJSON() {
         return new JSONObject() {{
 
 END
-      custom_type.fields.each do |field|
+      type_definition.fields.each do |field|
         io << ident ident ident ident "put(\"#{field.name}\", #{type_to_json field.type, field.name});\n"
       end
       io << ident <<-END
@@ -77,12 +77,12 @@ END
     }
 }
 
-public static #{custom_type.name} fromJSON(final JSONObject json) {
+public static #{type_definition.name} fromJSON(final JSONObject json) {
     try {
-        return new #{custom_type.name}() {{
+        return new #{type_definition.name}() {{
 
 END
-      custom_type.fields.each do |field|
+      type_definition.fields.each do |field|
         io << ident ident ident ident "#{field.name} = #{type_from_json field.type, get_field_from_json_object(field.type, "json", field.name.inspect)};\n"
       end
       io << ident <<-END
@@ -90,7 +90,7 @@ END
         }};
     } catch (JSONException e) {
         e.printStackTrace();
-        return new #{custom_type.name}();
+        return new #{type_definition.name}();
     }
 }
 
@@ -115,7 +115,7 @@ END
       "#{src}.isNull(#{name}) ? null : #{get_field_from_json_object(t.base, src, name)}"
     when AST::ArrayType
       "#{src}.getJSONArray(#{name})"
-    when AST::CustomTypeReference
+    when AST::TypeReference
       "#{src}.getJSONObject(#{name})"
     else
       raise "Unknown type"
@@ -138,9 +138,8 @@ END
       "#{src} == null ? null : #{type_from_json(t.base, src)}"
     when AST::ArrayType
       "new #{native_type t}() {{ JSONArray ary = #{src}; for (int i = 0; i < ary.length(); ++i) add(#{type_from_json(t.base, get_field_from_json_object(t.base, "ary", "i"))}); }}"
-    when AST::CustomTypeReference
-      ct = @ast.custom_types.find {|x| x.name == t.name }.not_nil!
-      "#{ct.name}.fromJSON(#{src})"
+    when AST::TypeReference
+      "#{t.ref.name}.fromJSON(#{src})"
     else
       raise "Unknown type"
     end
@@ -162,7 +161,7 @@ END
       "#{src} == null ? null : #{type_to_json(t.base, src)}"
     when AST::ArrayType
       "new JSONArray() {{ for (#{native_type t.base} el : #{src}) put(#{type_to_json t.base, "el"}); }}"
-    when AST::CustomTypeReference
+    when AST::TypeReference
       "#{src}.toJSON()"
     else
       raise "Unknown type"
