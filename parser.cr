@@ -1,5 +1,6 @@
 require "./lexer"
 require "./ast"
+require "./ast_semantic"
 
 class Parser
 
@@ -19,7 +20,7 @@ class Parser
       when TypeKeywordToken
         api.type_definitions << parse_type_definition_definition
       when EnumKeywordToken
-        api.enums << parse_enum
+        api.enum_definitions << parse_enum
       when GetKeywordToken, FunctionKeywordToken, SubscribeKeywordToken
         api.operations << parse_operation
       when GlobalOptionToken
@@ -80,7 +81,7 @@ class Parser
     expect EnumKeywordToken
     next_token
 
-    e = AST::Enum.new
+    e = AST::EnumDefinition.new
     name_token = expect(IdentifierToken)
     unless name_token.name[0].uppercase?
       raise ParserException.new "The enum name must start with an uppercase letter, but found '#{name_token.name}' at #{name_token.location}"
