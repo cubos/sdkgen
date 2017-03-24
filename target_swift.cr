@@ -131,7 +131,7 @@ END
     when AST::VoidPrimitiveType
       "nil"
     when AST::OptionalType
-      "#{src} is NSNull ? nil : (#{type_from_json(t.base, src)})"
+      "APIInternal.isNull(value: #{src}) ? nil : (#{type_from_json(t.base, src)})"
     when AST::ArrayType
       "(#{src} as! [AnyObject]).map({(el) -> #{native_type t.base} in return #{type_from_json t.base, "el"}})"
     when AST::CustomTypeReference
