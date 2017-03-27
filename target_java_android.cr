@@ -294,6 +294,10 @@ END
 
                             try {
                                 JSONObject body = new JSONObject(response.body().string());
+
+                                SharedPreferences pref = context().getSharedPreferences("api", Context.MODE_PRIVATE);
+                                pref.edit().putString("deviceId", body.getString("deviceId")).apply();
+
                                 if (!body.getBoolean("ok")) {
                                     String type = body.getJSONObject("error").getString("type");
                                     String message = body.getJSONObject("error").getString("message");
