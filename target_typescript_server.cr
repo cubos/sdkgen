@@ -101,6 +101,7 @@ export function start(port: number) {
 
                 r.table("devices").insert({
                   id: context.device.id,
+                  date: r.now(),
                   ...deviceInfo
                 }).then();
               } else {
