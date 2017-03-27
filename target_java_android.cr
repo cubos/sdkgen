@@ -165,6 +165,7 @@ END
         private static boolean initialized = false;
 
         private static void initialize() {
+            initialized = true;
             Stetho.initializeWithDefaults(context());
         }
 
@@ -232,7 +233,7 @@ END
         private static JSONObject device() throws JSONException {
             JSONObject device = new JSONObject();
             device.put("platform", "android");
-            device.put("fingerprint", "" + Settings.Secure.ANDROID_ID);
+            device.put("fingerprint", "" + Secure.getString(context().getContentResolver(), Secure.ANDROID_ID));
             device.put("platformVersion", "Android " + Build.VERSION.RELEASE + "(API " + Build.VERSION.SDK_INT + ") on " + Build.BRAND + " " + Build.MODEL);
             try {
                 device.put("version", context().getPackageManager().getPackageInfo(context().getPackageName(), 0).versionName);
