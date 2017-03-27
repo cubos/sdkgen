@@ -94,12 +94,7 @@ export function start(port: number) {
             const startTime = process.hrtime();
 
             (async () => {
-              const deviceInfo = {
-                  platform: request.device.platform,
-                  platformVersion: request.device.platformVersion,
-                  version: request.device.version,
-                  language: request.device.language
-              };
+              const {id, ...deviceInfo} = context.device;
 
               if (!context.device.id) {
                 context.device.id = crypto.randomBytes(32).toString("hex");
