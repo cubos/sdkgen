@@ -15,6 +15,9 @@ import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
 
+import com.facebook.stetho.Stetho;
+import com.facebook.stetho.okhttp3.StethoInterceptor;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -155,8 +158,15 @@ END
 
     private static class Internal {
         private static final String baseUrl = #{@ast.options.url.inspect};
-        private static final OkHttpClient http = new OkHttpClient();
+        private static final OkHttpClient http = new OkHttpClient.Builder()
+            .addNetworkInterceptor(new StethoInterceptor())
+            .build();
         private static final SecureRandom random = new SecureRandom();
+        private static boolean initialized = false;
+
+        private static void initialize() {
+            Stetho.initializeWithDefaults(context());
+        }
 
         private static Context context() {
             try {
@@ -249,6 +259,8 @@ END
         }
 
         private static void makeRequest(String name, JSONObject args, final RequestCallback callback) {
+            if (!initialized) initialize();
+
             JSONObject body = new JSONObject();
             try {
                 body.put("id", randomBytesHex(16));
