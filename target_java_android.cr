@@ -47,7 +47,7 @@ public class API {
 END
 
     @ast.type_definitions.each do |type_definition|
-      @io << ident generate_type_definition_interface(type_definition)
+      @io << ident generate_type_definition_type(type_definition)
       @io << "\n\n"
     end
 
