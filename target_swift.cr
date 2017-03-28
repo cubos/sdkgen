@@ -33,7 +33,7 @@ abstract class SwiftTarget < Target
     t.name
   end
 
-  def generate_type_definition_interface(type_definition)
+  def generate_type_definition_type(type_definition)
     String.build do |io|
       io << "class #{type_definition.name} {\n"
       type_definition.fields.each do |field|
