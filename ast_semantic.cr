@@ -1,82 +1,151 @@
 
-module AST
-  abstract class PrimitiveType < Type
-    def semantic(ast)
+module Semantic
+  class Visitor
+    def initialize(@ast : AST::ApiDescription)
     end
 
-    def check_recursive_type(ast, stack)
-    end
-  end
-
-  class OptionalType < Type
-    def semantic(ast)
-      @base.semantic(ast)
+    def visit(node : AST::ApiDescription)
+      node.type_definitions.each {|e| visit e }
+      node.operations.each {|e| visit e }
     end
 
-    def check_recursive_type(ast, stack)
-      @base.check_recursive_type(ast, stack)
-    end
-  end
-
-  class ArrayType < Type
-    def semantic(ast)
-      @base.semantic(ast)
+    def visit(op : AST::Operation)
+      op.args.each {|arg| visit arg }
+      visit op.return_type
     end
 
-    def check_recursive_type(ast, stack)
-      @base.check_recursive_type(ast, stack)
+    def visit(field : AST::Field)
+      visit field.type
     end
-  end
 
-  class ApiDescription
-    def semantic
-      type_definitions.each &.semantic(self)
-      operations.each &.semantic(self)
+    def visit(definition : AST::TypeDefinition)
+      visit definition.type
     end
-  end
 
-  class Field
-    def semantic(ast)
-      type.semantic(ast)
+    def visit(t : AST::StructType)
+      t.fields.each {|field| visit field }
+    end
+
+    def visit(t : AST::ArrayType)
+      visit t.base
+    end
+
+    def visit(t : AST::OptionalType)
+      visit t.base
+    end
+
+    def visit(t : AST::PrimitiveType | AST::EnumType | AST::TypeReference)
     end
   end
 
-  class TypeDefinition
-    def semantic(ast)
-      fields.each &.semantic(ast)
-      check_recursive_type(ast, [] of TypeDefinition)
-    end
-
-    def check_recursive_type(ast, stack)
-      raise "Cannot allow recursive type #{stack.map(&.name).join(" -> ")} -> #{name}" if stack.find &.== self
-      stack << self
-      fields.each {|field| field.type.check_recursive_type(ast, stack) }
-      stack.pop
-    end
-  end
-
-  class TypeReference < Type
-    property! ref : TypeDefinition | EnumDefinition
-
-    def semantic(ast)
-      @ref = ast.type_definitions.find {|t| t.name == name } || ast.enum_definitions.find {|t| t.name == name }
-      unless @ref
-        raise "Could not find type '#{name}'"
+  class CheckEveryTypeDefined < Visitor
+    def visit(ref : AST::TypeReference)
+      definition = @ast.type_definitions.find {|t| t.name == ref.name }
+      unless definition
+        raise "Could not find type '#{ref.name}'"
       end
+      ref.type = definition.type
+      super
+    end
+  end
+
+  class CheckNoRecursiveTypes < Visitor
+    @path = [] of String
+    @root_type : AST::Type?
+
+    def visit(definition : AST::TypeDefinition)
+      @path = [definition.name]
+      @root_type = definition.type
+      super
+      @root_type = nil
     end
 
-    def check_recursive_type(ast, stack)
-      ref = ast.type_definitions.find {|t| t.name == name }
-      ref.check_recursive_type(ast, stack) if ref
+    def visit(field : AST::Field)
+      @path.push field.name
+      super
+      @path.pop
     end
+
+    def visit(ref : AST::TypeReference)
+      if ref.type == @root_type
+        @path.push(@path[0])
+        raise "Detected recursive type #{@path.join(" -> ")}"
+      end
+      visit ref.type
+      super
+    end
+  end
+
+  class CheckDefineOnlyStructOrEnum < Visitor
+    def visit(definition : AST::TypeDefinition)
+      t = definition.type
+      unless t.is_a? AST::StructType || t.is_a? AST::EnumType
+        raise "Can't define 'definition.name' to be something other than a struct or an enum"
+      end
+      super
+    end
+  end
+
+  class GiveStructAndEnumTypeNames < Visitor
+    @path = [] of String
+
+    def visit(definition : AST::TypeDefinition)
+      @path = [definition.name]
+      super
+    end
+
+    def visit(field : AST::Field)
+      @path.push field.name
+      super
+      @path.pop
+    end
+
+    def visit(t : AST::StructType)
+      t.name = @path.join("_")
+      super
+    end
+  end
+
+  class CollectStructAndEnumTypes < Visitor
+    def visit(t : AST::StructType)
+      @ast.struct_types << t
+      super
+    end
+
+    def visit(t : AST::EnumType)
+      @ast.enum_types << t
+      super
+    end
+  end
+end
+
+module AST
+  class ApiDescription
+    property struct_types = [] of AST::StructType
+    property enum_types = [] of AST::EnumType
+
+    def semantic
+      Semantic::CheckEveryTypeDefined.new(self).visit(self)
+      Semantic::CheckNoRecursiveTypes.new(self).visit(self)
+      Semantic::CheckDefineOnlyStructOrEnum.new(self).visit(self)
+      Semantic::GiveStructAndEnumTypeNames.new(self).visit(self)
+      Semantic::CollectStructAndEnumTypes.new(self).visit(self)
+    end
+  end
+
+  class TypeReference
+    property! type : Type
+  end
+
+  class StructType
+    property! name : String
+  end
+
+  class EnumType
+    property! name : String
   end
 
   abstract class Operation
-    def semantic(ast)
-      args.each &.semantic(ast)
-      return_type.semantic(ast)
-    end
-
     def pretty_name
       name
     end
