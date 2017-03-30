@@ -9,19 +9,13 @@ class API {
 
 END
 
-    #generate error index
-    @io << "\n"
-    @io << ident "enum ErrorType: String {\n"
-    @ast.errors.each do |error|
-        @io << ident ident "case #{error} = #{error.inspect}\n" 
+    @ast.struct_types.each do |t|
+      @io << ident generate_struct_type(t)
+      @io << "\n\n"
     end
-    @io << ident ident "case ConnectionError = \"ConnectionError\" \n"
-    @io << ident ident "case UnknownError = \"UnknownError\" \n" 
-    @io << ident "}"
-    @io << "\n\n"
 
-    @ast.type_definitions.each do |type_definition|
-      @io << ident generate_type_definition_type(type_definition)
+    @ast.enum_types.each do |t|
+      @io << ident generate_enum_type(t)
       @io << "\n\n"
     end
 
@@ -72,28 +66,28 @@ END
 
 class APIInternal {
     static var baseUrl = "api.nutriserie.com.br/user"
-    
+
     class Error {
         var type: API.ErrorType
         var message: String
-        
+
         init(_ type: API.ErrorType, _ message: String) {
             self.type = type
             self.message = message
         }
-        
+
         init(json: [String: Any]) {
             self.type = API.ErrorType(rawValue: json["type"] as! String) ?? API.ErrorType.UnknownError
             self.message = json["message"] as! String
         }
     }
-    
+
     class HTTPResponse {
         var ok: Bool!
         var deviceId: String!
         var result: Any?
         var error: Error?
-        
+
         init(json: [String: Any]) {
             self.ok = json["ok"] as! Bool
             self.deviceId = json["deviceId"] as! String
@@ -118,13 +112,13 @@ class APIInternal {
         }
         return device
     }
-    
+
     static func randomBytesHex(len: Int) -> String {
         var randomBytes = [UInt8](repeating: 0, count: len)
         let _ = SecRandomCopyBytes(kSecRandomDefault, len, &randomBytes)
         return randomBytes.map({String(format: "%02hhx", $0)}).joined(separator: "")
     }
-    
+
     static func decodeDate(str: String) -> Date {
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
@@ -132,7 +126,7 @@ class APIInternal {
         formatter.dateFormat = "yyyy-MM-dd"
         return formatter.date(from: str)!
     }
-    
+
     static func encodeDate(date: Date) -> String {
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
@@ -140,7 +134,7 @@ class APIInternal {
         formatter.dateFormat = "yyyy-MM-dd"
         return formatter.string(from: date)
     }
-    
+
     static func decodeDateTime(str: String) -> Date {
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
@@ -149,7 +143,7 @@ class APIInternal {
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
         return formatter.date(from: str)!
     }
-    
+
     static func encodeDateTime(date: Date) -> String {
         let formatter = DateFormatter()
         formatter.calendar = Calendar(identifier: .gregorian)
@@ -158,11 +152,11 @@ class APIInternal {
         formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
         return formatter.string(from: date)
     }
-    
+
     static var deviceID: String? {
         return UserDefaults.standard.value(forKey: "device-id") as? String
     }
-    
+
     static func saveDeviceID(_ id: String) {
         UserDefaults.standard.setValue(id, forKey: "device-id")
         UserDefaults.standard.synchronize()
@@ -174,29 +168,29 @@ class APIInternal {
 
     static func makeRequest(_ name: String, _ args: [String: Any], callback: @escaping (_ result: Any?, _ error: Error?) -> Void) {
         let api = SessionManager.default
-        
+
         let body = [
             "id": randomBytesHex(len: 16),
             "device": device(),
             "name": name,
             "args": args
             ] as [String : Any]
-        
+
          api.request("https://\\(baseUrl)/\\(name)", method: .post, parameters: body, encoding: JSONEncoding.default).responseJSON { response in
-            
+
             guard let responseValue = response.result.value else {
                 callback(nil, Error(API.ErrorType.ConnectionError, "no result value"))
                 return
             }
-            
+
             let response = HTTPResponse(json: responseValue as! [String: Any])
             saveDeviceID(response.deviceId)
-            
+
             guard response.error == nil && response.ok else {
                 callback(nil, response.error)
                 return
             }
-            
+
             callback(response.result, nil)
         }
     }
