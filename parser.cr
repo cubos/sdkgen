@@ -267,14 +267,16 @@ class Parser
     end
     next_token
 
-    while @token.is_a? ArraySymbolToken
-      next_token
-      result = AST::ArrayType.new(result)
-    end
+    while @token.is_a? ArraySymbolToken || @token.is_a? OptionalSymbolToken
+      if @token.is_a? ArraySymbolToken
+        next_token
+        result = AST::ArrayType.new(result)
+      end
 
-    if @token.is_a?(OptionalSymbolToken)
-      next_token
-      result = AST::OptionalType.new(result)
+      if @token.is_a?(OptionalSymbolToken)
+        next_token
+        result = AST::OptionalType.new(result)
+      end
     end
 
     result
