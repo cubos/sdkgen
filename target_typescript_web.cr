@@ -11,8 +11,13 @@ const baseUrl = #{@ast.options.url.inspect};
 
 END
 
-    @ast.type_definitions.each do |type_definition|
-      @io << generate_type_definition_type(type_definition)
+    @ast.struct_types.each do |t|
+      @io << generate_struct_type(t)
+      @io << "\n\n"
+    end
+
+    @ast.enum_types.each do |t|
+      @io << generate_enum_type(t)
       @io << "\n\n"
     end
 

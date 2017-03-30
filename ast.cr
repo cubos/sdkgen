@@ -1,6 +1,7 @@
 
 module AST
   abstract class Type
+    include AST
   end
 
   abstract class PrimitiveType < Type
@@ -45,17 +46,32 @@ module AST
     end
   end
 
+  class EnumType < Type
+    property values = [] of String
+  end
+
+  class StructType < Type
+    property fields = [] of Field
+  end
+
+  class TypeDefinition
+    include AST
+    property! name : String
+    property! type : Type
+  end
+
+  class TypeReference < Type
+    property name
+    def initialize(@name : String)
+    end
+  end
+
   class ApiDescription
+    include AST
     property type_definitions = [] of TypeDefinition
-    property enum_definitions = [] of EnumDefinition
     property operations = [] of Operation
     property options = Options.new
     property errors = [] of String
-  end
-
-  class EnumDefinition
-    property! name : String
-    property values = [] of String
   end
 
   class Options
@@ -63,6 +79,7 @@ module AST
   end
 
   class Field
+    include AST
     property! name : String
     property! type : Type
     property secret = false
@@ -72,18 +89,8 @@ module AST
     end
   end
 
-  class TypeDefinition
-    property! name : String
-    property fields = [] of Field
-  end
-
-  class TypeReference < Type
-    property name
-    def initialize(@name : String)
-    end
-  end
-
   abstract class Operation
+    include AST
     property! name : String
     property args = [] of Field
     property! return_type : Type
