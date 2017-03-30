@@ -125,6 +125,13 @@ module AST
     property enum_types = [] of AST::EnumType
 
     def semantic
+      error_types_enum = AST::EnumType.new
+      error_types_enum.values = errors
+      error_types_enum_def = AST::TypeDefinition.new
+      error_types_enum_def.name = "ErrorType"
+      error_types_enum_def.type = error_types_enum
+      type_definitions << error_types_enum_def
+
       Semantic::CheckEveryTypeDefined.new(self).visit(self)
       Semantic::CheckNoRecursiveTypes.new(self).visit(self)
       Semantic::CheckDefineOnlyStructOrEnum.new(self).visit(self)
