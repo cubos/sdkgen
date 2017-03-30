@@ -68,8 +68,7 @@ module Semantic
 
     def visit(ref : AST::TypeReference)
       if ref.type == @root_type
-        @path.push(@path[0])
-        raise "Detected recursive type #{@path.join(" -> ")}"
+        raise "Detected type recursion: #{@path.join(" -> ")}"
       end
       visit ref.type
       super
