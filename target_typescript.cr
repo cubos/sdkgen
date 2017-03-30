@@ -25,18 +25,22 @@ abstract class TypeScriptTarget < Target
     native_type(t.base) + "[]"
   end
 
-  def native_type(t : AST::TypeReference)
+  def native_type(t : AST::StructType | AST::EnumType | AST::TypeReference)
     t.name
   end
 
-  def generate_type_definition_type(type_definition)
+  def generate_struct_type(t)
     String.build do |io|
-      io << "export interface #{type_definition.name} {\n"
-      type_definition.fields.each do |field|
+      io << "export interface #{t.name} {\n"
+      t.fields.each do |field|
         io << ident "#{field.name}: #{native_type field.type};\n"
       end
       io << "}"
     end
+  end
+
+  def generate_enum_type(t)
+    "export type #{t.name} = #{t.values.map(&.inspect).join(" | ")};"
   end
 
   def operation_ret(op : AST::GetOperation | AST::FunctionOperation)
@@ -76,15 +80,19 @@ abstract class TypeScriptTarget < Target
       "#{src} === null || #{src} === undefined ? null : #{type_from_json(t.base, src)}"
     when AST::ArrayType
       t.base.is_a?(AST::TypeReference) ? "#{src}.map(e => (#{type_from_json(t.base, "e")}))" : "#{src}.map(e => #{type_from_json(t.base, "e")})"
-    when AST::TypeReference
+    when AST::StructType
       String::Builder.build do |io|
         io << "{\n"
-        (t.ref.as AST::TypeDefinition).fields.each do |field|
+        t.fields.each do |field|
           io << ident "#{field.name}: #{type_from_json(field.type, "#{src}.#{field.name}")},"
           io << "\n"
         end
         io << "}"
       end
+    when AST::EnumType
+      "#{src}"
+    when AST::TypeReference
+      type_from_json(t.type, src)
     else
       raise "Unknown type"
     end
@@ -106,15 +114,19 @@ abstract class TypeScriptTarget < Target
       "#{src} === null || #{src} === undefined ? null : #{type_to_json(t.base, src)}"
     when AST::ArrayType
       t.base.is_a?(AST::TypeReference) ? "#{src}.map(e => (#{type_to_json(t.base, "e")}))" : "#{src}.map(e => #{type_to_json(t.base, "e")})"
-    when AST::TypeReference
+    when AST::StructType
       String::Builder.build do |io|
         io << "{\n"
-        (t.ref.as AST::TypeDefinition).fields.each do |field|
+        t.fields.each do |field|
           io << ident "#{field.name}: #{type_to_json(field.type, "#{src}.#{field.name}")},"
           io << "\n"
         end
         io << "}"
       end
+    when AST::EnumType
+      "#{src}"
+    when AST::TypeReference
+      type_to_json(t.type, src)
     else
       raise "Unknown type"
     end

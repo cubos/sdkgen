@@ -32,7 +32,7 @@ class Parser
   def parse
     api = AST::ApiDescription.new
     while @token
-      case multi_expect(ImportKeywordToken, TypeKeywordToken, EnumKeywordToken, GetKeywordToken, FunctionKeywordToken, SubscribeKeywordToken, GlobalOptionToken, ErrorKeywordToken)
+      case multi_expect(ImportKeywordToken, TypeKeywordToken, GetKeywordToken, FunctionKeywordToken, SubscribeKeywordToken, GlobalOptionToken, ErrorKeywordToken)
       when ImportKeywordToken
         next_token
         token = expect StringLiteralToken
@@ -41,8 +41,6 @@ class Parser
         next_token
       when TypeKeywordToken
         api.type_definitions << parse_type_definition
-      when EnumKeywordToken
-        api.enum_definitions << parse_enum
       when GetKeywordToken, FunctionKeywordToken, SubscribeKeywordToken
         api.operations << parse_operation
       when GlobalOptionToken
@@ -99,13 +97,7 @@ class Parser
     expect EnumKeywordToken
     next_token
 
-    e = AST::EnumDefinition.new
-    name_token = expect(IdentifierToken)
-    unless name_token.name[0].uppercase?
-      raise ParserException.new "The enum name must start with an uppercase letter, but found '#{name_token.name}' at #{name_token.location}"
-    end
-    e.name = name_token.name
-    next_token
+    e = AST::EnumType.new
 
     expect CurlyOpenSymbolToken
     next_token
@@ -113,8 +105,8 @@ class Parser
     while true
       case token = multi_expect(IdentifierToken, CurlyCloseSymbolToken)
       when IdentifierToken
-        unless token.name[0].uppercase?
-          raise ParserException.new "The enum value must start with an uppercase letter, but found '#{name_token.name}' at #{name_token.location}"
+        unless token.name[0].lowercase?
+          raise ParserException.new "The enum value must start with an lowercase letter, but found '#{token.name}' at #{token.location}"
         end
         e.values << token.name
         next_token
@@ -137,8 +129,15 @@ class Parser
     t.name = name_token.name
     next_token
 
+    t.type = parse_type
+    t
+  end
+
+  def parse_struct
     expect CurlyOpenSymbolToken
     next_token
+
+    t = AST::StructType.new
 
     while true
       case token = multi_expect(IdentifierToken, CurlyCloseSymbolToken)
@@ -234,7 +233,11 @@ class Parser
   end
 
   def parse_type(allow_void = true)
-    result = case token = multi_expect(PrimitiveTypeToken, IdentifierToken)
+    result = case token = multi_expect(CurlyOpenSymbolToken, EnumKeywordToken, PrimitiveTypeToken, IdentifierToken)
+    when CurlyOpenSymbolToken
+      return parse_struct
+    when EnumKeywordToken
+      return parse_enum
     when IdentifierToken
       unless token.name[0].uppercase?
         raise ParserException.new "Expected a type but found '#{token.name}', at #{token.location}"

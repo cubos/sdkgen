@@ -64,7 +64,7 @@ class Lexer
     return make_token(PrimitiveTypeToken.new("void")) if literal_match("void")
 
     if current_char!.letter?
-      while current_char && (current_char!.letter? || current_char!.number? || current_char! == '_')
+      while current_char && (current_char!.letter? || current_char!.number?)
         next_char
       end
       return make_token(IdentifierToken.new(@raw[@start...@pos]))
@@ -72,7 +72,7 @@ class Lexer
 
     if current_char! == '$'
       next_char
-      while current_char && (current_char!.letter? || current_char!.number? || current_char! == '_')
+      while current_char && (current_char!.letter? || current_char!.number?)
         next_char
       end
       return make_token(GlobalOptionToken.new(@raw[@start+1...@pos]))
