@@ -104,6 +104,11 @@ module Semantic
       t.name = @path.join("_")
       super
     end
+
+    def visit(t : AST::EnumType)
+      t.name = @path.join("_")
+      super
+    end
   end
 
   class CollectStructAndEnumTypes < Visitor
