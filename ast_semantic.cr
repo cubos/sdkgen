@@ -75,16 +75,6 @@ module Semantic
     end
   end
 
-  class CheckDefineOnlyStructOrEnum < Visitor
-    def visit(definition : AST::TypeDefinition)
-      t = definition.type
-      unless t.is_a? AST::StructType || t.is_a? AST::EnumType
-        raise "Can't define 'definition.name' to be something other than a struct or an enum"
-      end
-      super
-    end
-  end
-
   class GiveStructAndEnumTypeNames < Visitor
     @path = [] of String
 
@@ -138,7 +128,6 @@ module AST
 
       Semantic::CheckEveryTypeDefined.new(self).visit(self)
       Semantic::CheckNoRecursiveTypes.new(self).visit(self)
-      Semantic::CheckDefineOnlyStructOrEnum.new(self).visit(self)
       Semantic::GiveStructAndEnumTypeNames.new(self).visit(self)
       Semantic::CollectStructAndEnumTypes.new(self).visit(self)
     end
