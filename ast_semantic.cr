@@ -119,6 +119,7 @@ module AST
     property enum_types = [] of AST::EnumType
 
     def semantic
+      errors << "Fatal"
       error_types_enum = AST::EnumType.new
       error_types_enum.values = errors
       error_types_enum_def = AST::TypeDefinition.new
