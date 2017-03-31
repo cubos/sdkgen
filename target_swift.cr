@@ -29,8 +29,12 @@ abstract class SwiftTarget < Target
     "[#{native_type(t.base)}]"
   end
 
-  def native_type(t : AST::StructType | AST::EnumType | AST::TypeReference)
+  def native_type(t : AST::StructType | AST::EnumType)
     t.name
+  end
+
+  def native_type(ref : AST::TypeReference)
+    native_type ref.type
   end
 
   def generate_struct_type(t)
