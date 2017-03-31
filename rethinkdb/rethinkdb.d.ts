@@ -1,4 +1,28 @@
 
+interface DBDevice {
+    id: string;
+    type: "android" | "ios" | "web";
+    platform: any;
+    screen: {width: number, height: number};
+    version: string;
+    language: string;
+}
+
+interface DBApiCall {
+    id: string;
+    name: string;
+    args: object;
+    executionId: string;
+    running: boolean;
+    device: DBDevice;
+    date: Date;
+    duration: number;
+    host: string;
+    ok: boolean;
+    result: any;
+    error: {type: string, message: string} | null;
+}
+
 interface Sorting {}
 
 interface R extends RDB {
@@ -23,6 +47,8 @@ interface R extends RDB {
 
 interface RDB {
     table(name: string): RTable<any>
+    table(name: "devices"): RTable<DBDevice>;
+    table(name: "api_calls"): RTable<DBApiCall>;
     tableList(): RArray<string>
     tableDrop(name: string): RDatum<{tables_dropped: 1, config_changes: {old_val: R_TableConfig, new_val: null}}>
     tableCreate(name: string, opts?: R_TableCreateOptions): RDatum<{tables_created: 1, config_changes: {old_val: null, new_val: R_TableConfig}}>
@@ -86,6 +112,9 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
     not(): RDatum<boolean>
     and(...objs: any[]): RDatum<boolean>
     or(...objs: any[]): RDatum<boolean>
+
+    coerceTo(type: "array"): RArray<any>
+    coerceTo(type: "string"): RDatum<string>
 }
 
 interface RArray<T> extends RDatum<T[]> {
