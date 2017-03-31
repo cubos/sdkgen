@@ -237,15 +237,28 @@ END
 
         private static JSONObject device() throws JSONException {
             JSONObject device = new JSONObject();
-            device.put("platform", "android");
+            device.put("type", "android");
             device.put("fingerprint", "" + Secure.getString(context().getContentResolver(), Secure.ANDROID_ID));
-            device.put("platformVersion", "Android " + Build.VERSION.RELEASE + "(API " + Build.VERSION.SDK_INT + ") on " + Build.BRAND + " " + Build.MODEL);
+            device.put("platform", new JSONObject() {{
+                put("version", Build.VERSION.RELEASE);
+                put("sdkVersion", Build.VERSION.SDK_INT);
+                put("brand", Build.BRAND);
+                put("model", Build.MODEL);
+            }});
             try {
                 device.put("version", context().getPackageManager().getPackageInfo(context().getPackageName(), 0).versionName);
             } catch (PackageManager.NameNotFoundException e) {
                 device.put("version", "unknown");
             }
             device.put("language", language());
+            device.put("screen", new JSONObject() {{
+                WindowManager manager = (WindowManager) context().getSystemService(Context.WINDOW_SERVICE);
+                Display display = manager.getDefaultDisplay();
+                Point size = new Point();
+                display.getSize(size);
+                put("width", size.x);
+                put("height", size.y);
+            }});
             SharedPreferences pref = context().getSharedPreferences("api", Context.MODE_PRIVATE);
             if (pref.contains("deviceId"))
                 device.put("id", pref.getString("deviceId", null));
