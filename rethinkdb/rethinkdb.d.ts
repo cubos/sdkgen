@@ -27,6 +27,8 @@ interface Sorting {}
 
 interface R extends RDB {
     db(name: string): RDB
+    dbList(): RArray<string>
+    dbCreate(name: string): RDatum<{}>
     expr<X>(obj: any): RDatum<X>
     uuid(): RDatum<string>
     range(): RStream<number>
@@ -101,6 +103,7 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
 
     filter(obj: any): RDatum<T>
     filter(criteria: (obj: any) => boolean | RDatum<boolean>): RDatum<T>
+    contains(obj: any): RDatum<boolean>
 
     eq(other: any): RDatum<boolean>
     ne(other: any): RDatum<boolean>
@@ -125,6 +128,7 @@ interface RArray<T> extends RDatum<T[]> {
     filter(obj: DeepPartial<RDatumfy<T>>): RArray<T>
     filter(criteria: (obj: RDatum<T>) => boolean | RDatum<boolean>): RArray<T>
     limit(other: any): RArray<T>
+    contains(obj: T): RDatum<boolean>
 }
 
 interface RStream<T> extends PromiseLike<T[]>, RStreamOrDatum<T[]> {
