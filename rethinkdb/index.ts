@@ -1,7 +1,9 @@
 
 let r: R;
+let dbName: string;
 
 export function connect(db: string, host: string = "rethinkdb") {
+    dbName = db;
     r = require("rethinkdbdash")({
         db: db,
         pingInterval: 20,
@@ -23,6 +25,10 @@ export interface ConfigureOptions {
 }
 
 export async function configure(options: ConfigureOptions) {
+    if (await r.not(r.dbList().contains(dbName))) {
+        await r.dbCreate(dbName);
+    }
+
     const tables = Object.keys(options.tables);
     const realTables = await r.tableList();
 
