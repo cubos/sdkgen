@@ -49,8 +49,17 @@ function device() {
   const agent = parser.getResult();
   const me = document.currentScript as HTMLScriptElement;
   const device: any = {
-    platform: "web",
-    platformVersion: `${agent.browser.name} ${agent.browser.version} on ${agent.os.name} ${agent.os.version}`,
+    type: "web",
+    platform: {
+       browser: agent.browser.name,
+       browserVersion: agent.browser.version,
+       os: agent.os.name,
+       osVersion: agent.os.version
+    },
+    screen: {
+      width: screen.width,
+      height: screen.height
+    },
     version: me ? me.src : "",
     language: navigator.language
   };
@@ -89,7 +98,7 @@ async function makeRequest({name, args}: {name: string, args: any}) {
         }
       } catch (e) {
         console.error(e);
-        reject({type: "ServerError", message: e.toString()});
+        reject({type: "Fatal", message: e.toString()});
       }
     };
     req.send(JSON.stringify(body));
