@@ -102,7 +102,7 @@ export function start(port: number) {
         let data = "";
         req.on("data", chunk => data += chunk.toString());
         req.on("end", () => {
-          try {
+          (async () => {
             const request = JSON.parse(data);
             const context: Context = {
               device: request.device,
@@ -110,137 +110,126 @@ export function start(port: number) {
             };
             const startTime = process.hrtime();
 
-            (async () => {
-              const {id, ...deviceInfo} = context.device;
+            const {id, ...deviceInfo} = context.device;
 
-              if (!context.device.id) {
-                context.device.id = crypto.randomBytes(20).toString("hex");
+            if (!context.device.id) {
+              context.device.id = crypto.randomBytes(20).toString("hex");
 
-                r.table("devices").insert({
-                  id: context.device.id,
-                  date: r.now(),
-                  ...deviceInfo
-                }).then();
+              r.table("devices").insert({
+                id: context.device.id,
+                date: r.now(),
+                ...deviceInfo
+              }).then();
+            } else {
+              r.table("devices").get(context.device.id).update(deviceInfo).then();
+            }
+
+            const executionId = crypto.randomBytes(20).toString("hex");
+
+            let call: DBApiCall = {
+              id: `${request.id}-${context.device.id}`,
+              name: request.name,
+              args: request.args,
+              executionId: executionId,
+              running: true,
+              device: context.device,
+              date: context.startTime,
+              duration: 0,
+              host: os.hostname(),
+              ok: true,
+              result: null as any,
+              error: null as {type: string, message: string}|null
+            };
+
+            if (clearForLogging[call.name])
+              clearForLogging[call.name](call);
+
+            async function tryLock(): Promise<boolean> {
+              const priorCall = await r.table("api_calls").get(call.id);
+              if (priorCall === null) {
+                const res = await r.table("api_calls").insert(call);
+                return res.inserted > 0 ? true : await tryLock();
+              }
+              if (!priorCall.running) {
+                call = priorCall;
+                return true;
+              }
+              if (priorCall.executionId === executionId) {
+                return true;
+              }
+              return false;
+            }
+
+            for (let i = 0; i < 30; ++i) {
+              if (tryLock()) break;
+              await sleep(100);
+            }
+
+            if (call.running) {
+              if (call.executionId !== executionId) {
+                call.ok = false;
+                call.error = {
+                  type: "CallExecutionTimeout",
+                  message: "Timeout while waiting for execution somewhere else"
+                };
               } else {
-                r.table("devices").get(context.device.id).update(deviceInfo).then();
-              }
-
-              const executionId = crypto.randomBytes(20).toString("hex");
-
-              let call: DBApiCall = {
-                id: `${request.id}@${context.device.id}`,
-                name: request.name,
-                args: request.args,
-                executionId: executionId,
-                running: true,
-                device: context.device,
-                date: context.startTime,
-                duration: 0,
-                host: os.hostname(),
-                ok: true,
-                result: null as any,
-                error: null as {type: string, message: string}|null
-              };
-
-              if (clearForLogging[call.name])
-                clearForLogging[call.name](call);
-
-              async function tryLock(): Promise<boolean> {
-                const priorCall = await r.table("api_calls").get(call.id);
-                if (priorCall === null) {
-                  const res = await r.table("api_calls").insert(call);
-                  return res.inserted > 0 ? true : await tryLock();
-                }
-                if (!priorCall.running) {
-                  call = priorCall;
-                  return true;
-                }
-                if (priorCall.executionId === executionId) {
-                  return true;
-                }
-                return false;
-              }
-
-              for (let i = 0; i < 30; ++i) {
-                if (tryLock()) break;
-                await sleep(100);
-              }
-
-              if (call.running) {
-                if (call.executionId !== executionId) {
+                try {
+                  call.result = await fnExec[call.name](context, call.args);
+                } catch (err) {
                   call.ok = false;
-                  call.error = {
-                    type: "CallExecutionTimeout",
-                    message: "Timeout while waiting for execution somewhere else"
-                  };
-                } else {
-                  try {
-                    call.result = await fnExec[call.name](context, call.args);
-                  } catch (err) {
-                    call.ok = false;
-                    if (err.type) {
-                      call.error = {
-                        type: err.type,
-                        message: err.message
-                      };
-                    } else {
-                      call.error = {
-                        type: "bug",
-                        message: err.toString()
-                      };
-                    }
+                  if (err.type) {
+                    call.error = {
+                      type: err.type,
+                      message: err.message
+                    };
+                  } else {
+                    call.error = {
+                      type: "bug",
+                      message: err.toString()
+                    };
                   }
                 }
               }
+            }
 
-              const deltaTime = process.hrtime(startTime);
-              call.duration = deltaTime[0] + deltaTime[1] * 1e-9;
+            const deltaTime = process.hrtime(startTime);
+            call.duration = deltaTime[0] + deltaTime[1] * 1e-9;
 
-              const response = {
-                id: call.id,
-                ok: call.ok,
-                executed: call.executionId === executionId,
-                deviceId: call.device.id,
-                startTime: call.date,
-                duration: call.duration,
-                host: call.host,
-                result: call.result,
-                error: call.error
-              };
+            const response = {
+              id: call.id,
+              ok: call.ok,
+              executed: call.executionId === executionId,
+              deviceId: call.device.id,
+              startTime: call.date,
+              duration: call.duration,
+              host: call.host,
+              result: call.result,
+              error: call.error
+            };
 
-              console.log({
-                request,
-                response
-              });
-
-              res.writeHead(200);
-              res.write(JSON.stringify(response));
-              res.end();
-
-              await r.table("api_calls").get(call.id).update(call);
-
-              let log = `${call.id} [${call.duration.toFixed(6)}s] ${call.name}() -> `;
-              if (call.ok)
-                log += "OK"
-              else
-                log += call.error ? call.error.type : "???"
-
-              console.log(log)
-            })().catch(err => {
-              console.error(err);
-              res.writeHead(500);
-              res.end();
-            });
-          } catch (err) {
-            console.error(err);
-            res.writeHead(400);
+            res.writeHead(200);
+            res.write(JSON.stringify(response));
             res.end();
-          }
+
+            await r.table("api_calls").get(call.id).update(call);
+
+            let log = `${moment().format("YYYY-MM-DD HH:mm:ss")} ${call.id} [${call.duration.toFixed(6)}s] ${call.name}() -> `;
+            if (call.ok)
+              log += "OK"
+            else
+              log += call.error ? call.error.type : "???"
+
+            console.log(log)
+          })().catch(err => {
+            console.error(err);
+            res.writeHead(500);
+            res.end();
+          });
         });
         break;
       }
       default: {
-        res.writeHead(400);
+        res.writeHead(500);
         res.end();
       }
     }
