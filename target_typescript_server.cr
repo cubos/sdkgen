@@ -219,7 +219,7 @@ export function start(port: number) {
 
               await r.table("api_calls").get(call.id).update(call);
 
-              let log = `${call.id} [${call.duration.toFixed(6)}s] #{call.name}() -> `;
+              let log = `${call.id} [${call.duration.toFixed(6)}s] ${call.name}() -> `;
               if (call.ok)
                 log += "OK"
               else
