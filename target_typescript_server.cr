@@ -46,6 +46,18 @@ END
     end
     @io << "};\n\n"
 
+    @io << "const clearForLogging: {[name: string]: (call: DBApiCall) => void} = {\n"
+    @ast.operations.each do |op|
+      cmds_args = String.build {|io| emit_clear_for_logging(io, op, "call.args") }
+
+      if cmds_args != ""
+        @io << "  " << op.pretty_name << ": async (call: DBApiCall) => {\n"
+        @io << ident ident cmds_args
+        @io << "  },\n"
+      end
+    end
+    @io << "};\n\n"
+
     @io << "export const err = {\n"
     @ast.errors.each do |error|
       @io << "  #{error}: (message: string = \"\") => { throw {type: #{error.inspect}, message}; },\n"
@@ -102,7 +114,7 @@ export function start(port: number) {
               const {id, ...deviceInfo} = context.device;
 
               if (!context.device.id) {
-                context.device.id = crypto.randomBytes(32).toString("hex");
+                context.device.id = crypto.randomBytes(20).toString("hex");
 
                 r.table("devices").insert({
                   id: context.device.id,
@@ -113,10 +125,10 @@ export function start(port: number) {
                 r.table("devices").get(context.device.id).update(deviceInfo).then();
               }
 
-              const executionId = crypto.randomBytes(32).toString("hex");
+              const executionId = crypto.randomBytes(20).toString("hex");
 
               let call: DBApiCall = {
-                id: `${context.device.id}_${request.id}`,
+                id: `${request.id}@${context.device.id}`,
                 name: request.name,
                 args: request.args,
                 executionId: executionId,
@@ -129,6 +141,9 @@ export function start(port: number) {
                 result: null as any,
                 error: null as {type: string, message: string}|null
               };
+
+              if (clearForLogging[name])
+                clearForLogging[name](call);
 
               async function tryLock(): Promise<boolean> {
                 const priorCall = await r.table("api_calls").get(call.id);
@@ -203,6 +218,14 @@ export function start(port: number) {
               res.end();
 
               await r.table("api_calls").get(call.id).update(call);
+
+              let log = `${call.id} [${call.duration.toFixed(6)}s] #{call.name}() -> `;
+              if (call.ok)
+                log += "OK"
+              else
+                log += call.error.type
+
+              console.log(log)
             })().catch(err => {
               console.error(err);
               res.writeHead(500);
@@ -239,6 +262,43 @@ END
     end
 
     "(#{args.join(", ")})"
+  end
+
+  @i = 0
+  def emit_clear_for_logging(io : IO, t : AST::Type | AST::Operation | AST::Field, path : String)
+    case t
+    when AST::Operation
+      t.args.each do |field|
+        emit_clear_for_logging(io, field, "#{path}.#{field.name}")
+      end
+    when AST::StructType
+      t.fields.each do |field|
+        emit_clear_for_logging(io, field, "#{path}.#{field.name}")
+      end
+    when AST::Field
+      if t.secret
+        io << "#{path} = \"<secret>\";\n"
+      else
+        emit_clear_for_logging(io, t.type, path)
+      end
+    when AST::TypeReference
+      emit_clear_for_logging(io, t.type, path)
+    when AST::OptionalType
+      cmd = String.build {|io| emit_clear_for_logging(io, t.base, path) }
+      if cmd != ""
+        io << "if (#{path}) {\n" << ident(cmd) << "}\n"
+      end
+    when AST::ArrayType
+      var = ('i' + @i).to_s
+      @i += 1
+      cmd = String.build {|io| emit_clear_for_logging(io, t.base, "#{path}[#{var}]") }
+      @i -= 1
+      if cmd != ""
+        io << "for (let #{var} = 0; #{var} < #{path}.length; ++#{var}) {\n" << ident(cmd) << "}\n"
+      end
+    when AST::BytesPrimitiveType
+      io << "#{path} = `<${#{path}.length} bytes>`;\n"
+    end
   end
 end
 

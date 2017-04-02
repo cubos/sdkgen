@@ -170,7 +170,7 @@ class APIInternal {
         let api = SessionManager.default
 
         let body = [
-            "id": randomBytesHex(len: 16),
+            "id": randomBytesHex(len: 8),
             "device": device(),
             "name": name,
             "args": args
