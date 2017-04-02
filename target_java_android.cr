@@ -4,16 +4,20 @@ class JavaAndroidTarget < JavaTarget
   def gen
     @io << <<-END
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Point;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
 
 import com.facebook.stetho.Stetho;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
@@ -235,10 +239,11 @@ END
             return bcp47Tag.toString();
         }
 
+        @SuppressLint("HardwareIds")
         private static JSONObject device() throws JSONException {
             JSONObject device = new JSONObject();
             device.put("type", "android");
-            device.put("fingerprint", "" + Secure.getString(context().getContentResolver(), Secure.ANDROID_ID));
+            device.put("fingerprint", "" + Settings.Secure.getString(context().getContentResolver(), Settings.Secure.ANDROID_ID));
             device.put("platform", new JSONObject() {{
                 put("version", Build.VERSION.RELEASE);
                 put("sdkVersion", Build.VERSION.SDK_INT);
