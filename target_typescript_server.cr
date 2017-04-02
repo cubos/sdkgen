@@ -223,7 +223,7 @@ export function start(port: number) {
               if (call.ok)
                 log += "OK"
               else
-                log += call.error.type
+                log += call.error ? call.error.type : "???"
 
               console.log(log)
             })().catch(err => {
