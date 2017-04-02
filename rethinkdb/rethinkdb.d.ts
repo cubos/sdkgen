@@ -11,7 +11,7 @@ interface DBDevice {
 interface DBApiCall {
     id: string;
     name: string;
-    args: object;
+    args: any;
     executionId: string;
     running: boolean;
     device: DBDevice;
