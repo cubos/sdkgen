@@ -142,8 +142,8 @@ export function start(port: number) {
                 error: null as {type: string, message: string}|null
               };
 
-              if (clearForLogging[name])
-                clearForLogging[name](call);
+              if (clearForLogging[call.name])
+                clearForLogging[call.name](call);
 
               async function tryLock(): Promise<boolean> {
                 const priorCall = await r.table("api_calls").get(call.id);
