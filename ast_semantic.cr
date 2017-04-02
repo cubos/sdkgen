@@ -68,10 +68,36 @@ module Semantic
 
     def visit(ref : AST::TypeReference)
       if ref.type == @root_type
-        raise "Detected type recursion: #{@path.join(" -> ")}"
+        raise "Detected type recursion: #{@path.join(".")}"
       end
       visit ref.type
       super
+    end
+  end
+
+  class CheckDontReturnSecret < Visitor
+    @inreturn = false
+    @path = [] of String
+
+    def visit(op : AST::Operation)
+      @inreturn = true
+      @path.push op.name + "()"
+      visit op.return_type
+      @path.pop
+      @inreturn = false
+    end
+
+    def visit(ref : AST::TypeReference)
+      visit ref.type
+    end
+
+    def visit(field : AST::Field)
+      @path.push field.name
+      if @inreturn && field.secret
+        raise "Can't return a secret value at #{@path.join(".")}"
+      end
+      super
+      @path.pop
     end
   end
 
@@ -129,6 +155,7 @@ module AST
 
       Semantic::CheckEveryTypeDefined.new(self).visit(self)
       Semantic::CheckNoRecursiveTypes.new(self).visit(self)
+      Semantic::CheckDontReturnSecret.new(self).visit(self)
       Semantic::GiveStructAndEnumTypeNames.new(self).visit(self)
       Semantic::CollectStructAndEnumTypes.new(self).visit(self)
     end

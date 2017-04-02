@@ -282,7 +282,7 @@ END
 
             JSONObject body = new JSONObject();
             try {
-                body.put("id", randomBytesHex(16));
+                body.put("id", randomBytesHex(8));
                 body.put("device", device());
                 body.put("name", name);
                 body.put("args", args);
