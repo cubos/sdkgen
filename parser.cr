@@ -105,9 +105,6 @@ class Parser
     while true
       case token = multi_expect(IdentifierToken, CurlyCloseSymbolToken)
       when IdentifierToken
-        unless token.name[0].lowercase?
-          raise ParserException.new "The enum value must start with an lowercase letter, but found '#{token.name}' at #{token.location}"
-        end
         e.values << token.name
         next_token
       when CurlyCloseSymbolToken
