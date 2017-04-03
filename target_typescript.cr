@@ -83,7 +83,7 @@ abstract class TypeScriptTarget < Target
     when AST::OptionalType
       "#{src} === null || #{src} === undefined ? null : #{type_from_json(t.base, src)}"
     when AST::ArrayType
-      t.base.is_a?(AST::TypeReference) ? "#{src}.map(e => (#{type_from_json(t.base, "e")}))" : "#{src}.map(e => #{type_from_json(t.base, "e")})"
+      t.base.is_a?(AST::TypeReference) ? "#{src}.map((e: any) => (#{type_from_json(t.base, "e")}))" : "#{src}.map((e: any) => #{type_from_json(t.base, "e")})"
     when AST::StructType
       String::Builder.build do |io|
         io << "{\n"
