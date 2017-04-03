@@ -129,7 +129,7 @@ export function start(port: number) {
             let call: DBApiCall = {
               id: `${request.id}-${context.device.id}`,
               name: request.name,
-              args: request.args,
+              args: JSON.parse(JSON.stringify(request.args)),
               executionId: executionId,
               running: true,
               device: context.device,
@@ -174,7 +174,7 @@ export function start(port: number) {
                 };
               } else {
                 try {
-                  call.result = await fnExec[call.name](context, call.args);
+                  call.result = await fnExec[request.name](context, request.args);
                 } catch (err) {
                   call.ok = false;
                   if (err.type) {
