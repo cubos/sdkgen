@@ -83,7 +83,8 @@ abstract class TypeScriptTarget < Target
     when AST::OptionalType
       "#{src} === null || #{src} === undefined ? null : #{type_from_json(t.base, src)}"
     when AST::ArrayType
-      t.base.is_a?(AST::TypeReference) ? "#{src}.map((e: any) => (#{type_from_json(t.base, "e")}))" : "#{src}.map((e: any) => #{type_from_json(t.base, "e")})"
+      inner = type_from_json(t.base, "e")
+      inner[0] == '{' ? "#{src}.map((e: any) => (#{inner}))" : "#{src}.map((e: any) => #{inner})"
     when AST::StructType
       String::Builder.build do |io|
         io << "{\n"
@@ -117,7 +118,8 @@ abstract class TypeScriptTarget < Target
     when AST::OptionalType
       "#{src} === null || #{src} === undefined ? null : #{type_to_json(t.base, src)}"
     when AST::ArrayType
-      t.base.is_a?(AST::TypeReference) ? "#{src}.map(e => (#{type_to_json(t.base, "e")}))" : "#{src}.map(e => #{type_to_json(t.base, "e")})"
+      inner = type_to_json(t.base, "e")
+      inner[0] == '{' ? "#{src}.map(e => (#{inner}))" : "#{src}.map(e => #{inner})"
     when AST::StructType
       String::Builder.build do |io|
         io << "{\n"
