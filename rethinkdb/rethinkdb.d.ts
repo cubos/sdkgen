@@ -149,7 +149,7 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
     max(): RDatum<any>
     max(idx: string): RDatum<any>
 
-    group<K extends keyof T>(idx: K): RGroupedStream<T[K], T>
+    group(idx: string): RGroupedStream<any, any>
     ungroup(): RArray<{group: any, reduction: any}>
     forEach(func: (e: RDatum<any>) => any): RDatum<{}>
 }
