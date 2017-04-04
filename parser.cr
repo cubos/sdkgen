@@ -230,18 +230,19 @@ class Parser
   end
 
   def parse_type(allow_void = true)
-    result = case token = multi_expect(CurlyOpenSymbolToken, EnumKeywordToken, PrimitiveTypeToken, IdentifierToken)
+    case token = multi_expect(CurlyOpenSymbolToken, EnumKeywordToken, PrimitiveTypeToken, IdentifierToken)
     when CurlyOpenSymbolToken
-      return parse_struct
+      result = parse_struct
     when EnumKeywordToken
-      return parse_enum
+      result = parse_enum
     when IdentifierToken
       unless token.name[0].uppercase?
         raise ParserException.new "Expected a type but found '#{token.name}', at #{token.location}"
       end
-      AST::TypeReference.new(token.name)
+      result = AST::TypeReference.new(token.name)
+      next_token
     when PrimitiveTypeToken
-      case token.name
+      result = case token.name
       when "string";   AST::StringPrimitiveType.new
       when "int";      AST::IntPrimitiveType.new
       when "uint";     AST::UIntPrimitiveType.new
@@ -259,21 +260,19 @@ class Parser
       else
         raise "BUG! Should handle primitive #{token.name}"
       end
+      next_token
     else
       raise "never"
     end
-    next_token
 
     while @token.is_a? ArraySymbolToken || @token.is_a? OptionalSymbolToken
-      if @token.is_a? ArraySymbolToken
-        next_token
+      case @token
+      when ArraySymbolToken
         result = AST::ArrayType.new(result)
-      end
-
-      if @token.is_a?(OptionalSymbolToken)
-        next_token
+      when OptionalSymbolToken
         result = AST::OptionalType.new(result)
       end
+      next_token
     end
 
     result
