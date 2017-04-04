@@ -23,7 +23,7 @@ interface DBApiCall {
     error: {type: string, message: string} | null;
 }
 
-interface R_Sorting {}
+interface R_Sorting<T> { __dummy: string }
 
 interface R extends RDB {
     db(name: string): RDB
@@ -43,13 +43,17 @@ interface R extends RDB {
     and(...objs: any[]): RDatum<boolean>
     or(...objs: any[]): RDatum<boolean>
     now(): RDatum<Date>
-    asc(name: string): R_Sorting
-    desc(name: string): R_Sorting
+    asc<T>(name: T): R_Sorting<T>
+    desc<T>(name: T): R_Sorting<T>
     args(array: any): any
     row: RTableRow<any>
     minval: RDatum<never>
     maxval: RDatum<never>
     error(message: string): RDatum<never>
+    union<T1, T2>(stream1: RStream<T1>, stream2: RStream<T2>): RStream<T1 | T2>
+    union<T1, T2, T3>(stream1: RStream<T1>, stream2: RStream<T2>, stream3: RStream<T3>): RStream<T1 | T2 | T3>
+    union(...streams: any[]): RArray<any>
+    js(code: string): RDatum<any>
 }
 
 interface RDB {
@@ -85,7 +89,6 @@ interface R_TableCreateOptions {
 
 interface RStreamOrDatum<T> {
     count(): RDatum<number>
-    orderBy(field: string | R_Sorting): RArray<any>
 }
 
 interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
@@ -95,25 +98,31 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
     default<X>(val: any): RDatum<X>
     <K extends keyof T>(idx: K): RDatum<T[K]>
     (idx: number | RDatum<any>): RDatum<any>
+    orderBy(field: string | R_Sorting<string>): RArray<any>
     merge(op: (e: RDatum<any>) => any): RDatum<any>
     merge(op: any): RDatum<any>
     map(func: (e: RDatum<any>) => any): RArray<any>
     concatMap(func: (e: RDatum<any>) => any): RArray<any>
     sub(other: any): RDatum<any>
+    div(other: any): RDatum<number>
     add(...others: any[]): RDatum<any>
+    mul(...others: any[]): RDatum<number>
     append(other: any): RDatum<T>
     limit(other: any): RDatum<any>
+    round(): RDatum<number>
+    floor(): RDatum<number>
+    ceil(): RDatum<number>
 
     filter(criteria: (obj: any) => boolean | RDatum<boolean>): RDatum<T>
     filter(obj: any): RDatum<T>
     contains(obj: any): RDatum<boolean>
 
-    eq(other: any): RDatum<boolean>
-    ne(other: any): RDatum<boolean>
-    gt(other: any): RDatum<boolean>
-    lt(other: any): RDatum<boolean>
-    ge(other: any): RDatum<boolean>
-    le(other: any): RDatum<boolean>
+    eq(other: T | RDatum<T>): RDatum<boolean>
+    ne(other: T | RDatum<T>): RDatum<boolean>
+    gt(other: T | RDatum<T>): RDatum<boolean>
+    lt(other: T | RDatum<T>): RDatum<boolean>
+    ge(other: T | RDatum<T>): RDatum<boolean>
+    le(other: T | RDatum<T>): RDatum<boolean>
 
     not(): RDatum<boolean>
     and(...objs: any[]): RDatum<boolean>
@@ -140,7 +149,9 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
     max(): RDatum<any>
     max(idx: string): RDatum<any>
 
+    group<K extends keyof T>(idx: K): RGroupedStream<T[K], T>
     ungroup(): RArray<{group: any, reduction: any}>
+    forEach(func: (e: RDatum<any>) => any): RDatum<{}>
 }
 
 interface RArray<T> extends RDatum<T[]> {
@@ -148,13 +159,14 @@ interface RArray<T> extends RDatum<T[]> {
     <K extends keyof T>(idx: K): RArray<T[K]>
     map(func: (e: RDatum<T>) => any): RArray<any>
     concatMap(func: (e: RDatum<T>) => any): RArray<any>
-    orderBy(field: string | R_Sorting): RArray<T>
+    orderBy<K extends keyof T>(field: K | R_Sorting<K>): RArray<T>
     append(other: T): RArray<T>
     filter(criteria: (obj: RDatum<T>) => boolean | RDatum<boolean>): RArray<T>
     filter(obj: DeepPartial<RDatumfy<T>>): RArray<T>
     limit(other: any): RArray<T>
     contains(obj: T): RDatum<boolean>
     reduce(func: (a: RDatum<T>, b: RDatum<T>) => any): RDatum<T>
+    distinct(): RArray<T>
 
     setInsert(other: any): RArray<T>
     setUnion(other: any): RArray<T>
@@ -174,6 +186,7 @@ interface RArray<T> extends RDatum<T[]> {
     max<K extends keyof T>(idx: K): RDatum<T[K]>
 
     group<K extends keyof T>(idx: K): RGroupedStream<T[K], T>
+    forEach(func: (e: RDatum<T>) => any): RDatum<{}>
 }
 
 interface RStream<T> extends PromiseLike<T[]>, RStreamOrDatum<T[]> {
@@ -181,13 +194,14 @@ interface RStream<T> extends PromiseLike<T[]>, RStreamOrDatum<T[]> {
     (field: string): RArray<any>
     map(func: (arg: RDatum<T>) => any): RStream<any>
     concatMap(func: (arg: RDatum<T>) => any): RStream<any>
-    orderBy(field: string | R_Sorting): RArray<T>
-    orderBy(options: {index: string | R_Sorting}): RStream<T>
+    orderBy(field: keyof T | R_Sorting<keyof T>): RArray<T>
+    orderBy(options: {index: string | R_Sorting<any>}): RStream<T>
     coerceTo(type: "array"): RArray<T>
     filter(criteria: (obj: RDatum<T>) => boolean | RDatum<boolean>): RStream<T>
     filter(obj: DeepPartial<RDatumfy<T>>): RStream<T>
     limit(other: any): RStream<T>
     reduce(func: (a: RDatum<T>, b: RDatum<T>) => any): RDatum<T>
+    distinct(): RArray<T>
 
     sum(): RDatum<T>
     sum<K extends keyof T>(idx: K): RDatum<T[K]>
@@ -199,6 +213,7 @@ interface RStream<T> extends PromiseLike<T[]>, RStreamOrDatum<T[]> {
     max<K extends keyof T>(idx: K): RDatum<T[K]>
 
     group<K extends keyof T>(idx: K): RGroupedStream<T[K], T>
+    forEach(func: (e: RDatum<T>) => any): RDatum<{}>
 }
 
 interface RGroupedStream<G, T> extends RArray<T> {
@@ -268,7 +283,7 @@ interface R_IndexStatus {
     query: string
 }
 
-type RInsertObj<T> = RDatumfy<T> | RDatum<T> | RStream<T> | RDatum<T[]> | RDatumfy<T>[] | (() => RInsertObj<T>)
+type RInsertObj<T> = RDatum<T> | RStream<T> | RDatum<T[]> | RDatumfy<T>[] | (() => RInsertObj<T>) | RDatumfy<T>
 
 interface RTable<T extends object> extends RTableSlice<T> {
     get(id: any): RTableRow<T>
@@ -277,7 +292,7 @@ interface RTable<T extends object> extends RTableSlice<T> {
 
     indexList(): RArray<string>
     indexCreate(name: string, func: (obj: RDatum<T>) => any, opts?: {multi?: boolean, geo?: boolean}): RDatum<{created: 1}>
-    indexCreate<K extends keyof T>(name: K, opts?: {multi?: boolean, geo?: boolean}): RDatum<{created: 1}>
+    indexCreate(name: keyof T, opts?: {multi?: boolean, geo?: boolean}): RDatum<{created: 1}>
     indexDrop(name: string): RDatum<{dropped: 1}>
     indexStatus(...names: string[]): RArray<R_IndexStatus>
 
@@ -285,5 +300,5 @@ interface RTable<T extends object> extends RTableSlice<T> {
     getAll(id1: any, id2: any, opts?: {index: string}): RTableSlice<T>
     getAll(id1: any, id2: any, id3: any, opts?: {index: string}): RTableSlice<T>
     getAll(id1: any, id2: any, id3: any, id4: any, opts?: {index: string}): RTableSlice<T>
-    between(lower: any, upper: any, opts?: {index: string}): RTableSlice<T>
+    between(lower: any, upper: any, opts?: {index: string, leftBound?: "closed" | "opened", rightBound?: "closed" | "opened"}): RTableSlice<T>
 }
