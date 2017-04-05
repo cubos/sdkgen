@@ -29,7 +29,7 @@ interface R extends RDB {
     db(name: string): RDB
     dbList(): RArray<string>
     dbCreate(name: string): RDatum<{}>
-    expr<X>(obj: any): RDatum<X>
+    expr(obj: any): RDatum<any>
     uuid(): RDatum<string>
     range(): RStream<number>
     range(count: number): RStream<number>
@@ -102,6 +102,7 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
     merge(op: (e: RDatum<any>) => any): RDatum<any>
     merge(op: any): RDatum<any>
     map(func: (e: RDatum<any>) => any): RArray<any>
+    merge(func: (e: RDatum<any>) => any): RArray<any>
     concatMap(func: (e: RDatum<any>) => any): RArray<any>
     sub(other: any): RDatum<any>
     div(other: any): RDatum<number>
@@ -158,6 +159,7 @@ interface RArray<T> extends RDatum<T[]> {
     (idx: number | RDatum<any>): RDatum<T>
     <K extends keyof T>(idx: K): RArray<T[K]>
     map(func: (e: RDatum<T>) => any): RArray<any>
+    merge(func: (e: RDatum<T>) => any): RArray<any>
     concatMap(func: (e: RDatum<T>) => any): RArray<any>
     orderBy<K extends keyof T>(field: K | R_Sorting<K>): RArray<T>
     append(other: T): RArray<T>
@@ -193,6 +195,7 @@ interface RStream<T> extends PromiseLike<T[]>, RStreamOrDatum<T[]> {
     (idx: number): RDatum<T>
     (field: string): RArray<any>
     map(func: (arg: RDatum<T>) => any): RStream<any>
+    merge(func: (arg: RDatum<T>) => any): RStream<any>
     concatMap(func: (arg: RDatum<T>) => any): RStream<any>
     orderBy(field: keyof T | R_Sorting<keyof T>): RArray<T>
     orderBy(options: {index: string | R_Sorting<any>}): RStream<T>
