@@ -315,13 +315,13 @@ END
 
                 @Override
                 public void onResponse(Call call, final Response response) throws IOException {
-                    final String body = response.body().string();
+                    final String stringBody = response.body().string();
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
                             if (response.code() >= 500) {
                                 try {
-                                    Log.e("API Fatal", body);
+                                    Log.e("API Fatal", stringBody);
                                 } catch (IOException e) {
                                     e.printStackTrace();
                                 }
@@ -330,7 +330,7 @@ END
                             }
 
                             try {
-                                JSONObject body = new JSONObject(body);
+                                JSONObject body = new JSONObject(stringBody);
 
                                 SharedPreferences pref = context().getSharedPreferences("api", Context.MODE_PRIVATE);
                                 pref.edit().putString("deviceId", body.getString("deviceId")).apply();
