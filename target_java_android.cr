@@ -320,11 +320,7 @@ END
                         @Override
                         public void run() {
                             if (response.code() >= 500) {
-                                try {
-                                    Log.e("API Fatal", stringBody);
-                                } catch (IOException e) {
-                                    e.printStackTrace();
-                                }
+                                Log.e("API Fatal", stringBody);
                                 callback.onFailure("HTTP " + response.code());
                                 return;
                             }
@@ -342,7 +338,7 @@ END
                                 } else {
                                     callback.onResult(body);
                                 }
-                            } catch (JSONException | IOException e) {
+                            } catch (JSONException e) {
                                 e.printStackTrace();
                                 callback.onError("bug", e.getMessage());
                             }
