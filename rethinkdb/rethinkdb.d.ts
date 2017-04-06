@@ -36,9 +36,13 @@ interface R extends RDB {
     range(initial: number, count: number): RStream<number>
     epochTime(epoch: number): RDatum<Date>
     add(...objs: any[]): RDatum<any>
-    branch(cond1: any, case1: any, otherwise: any): RDatum<any>
-    branch(cond1: any, case1: any, cond2: any, case2: any, otherwise: any): RDatum<any>
-    branch(cond1: any, case1: any, cond2: any, case2: any, cond3: any, case3: any, otherwise: any): RDatum<any>
+    branch(c1: any, v1: any, otherwise: any): RDatum<any>
+    branch(c1: any, v1: any, c2: any, v2: any, otherwise: any): RDatum<any>
+    branch(c1: any, v1: any, c2: any, v2: any, c3: any, v3: any, otherwise: any): RDatum<any>
+    branch(c1: any, v1: any, c2: any, v2: any, c3: any, v3: any, c4: any, v4: any, otherwise: any): RDatum<any>
+    branch(c1: any, v1: any, c2: any, v2: any, c3: any, v3: any, c4: any, v4: any, c5: any, v5: any, otherwise: any): RDatum<any>
+    branch(c1: any, v1: any, c2: any, v2: any, c3: any, v3: any, c4: any, v4: any, c5: any, v5: any, c6: any, v6: any, otherwise: any): RDatum<any>
+    branch(c1: any, v1: any, c2: any, v2: any, c3: any, v3: any, c4: any, v4: any, c5: any, v5: any, c6: any, v6: any, c7: any, v7: any, otherwise: any): RDatum<any>
     not(obj: any): RDatum<boolean>
     and(...objs: any[]): RDatum<boolean>
     or(...objs: any[]): RDatum<boolean>
@@ -93,12 +97,12 @@ interface RStreamOrDatum<T> {
 
 interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
     do<X extends RPrimitive>(func: (obj: this) => X): RDatum<X>
-    do<X>(func: (obj: this) => any): RDatum<X>
+    do(func: (obj: this) => any): RDatum<any>
     default<X extends RPrimitive>(val: X): RDatum<T|X>
     default<X>(val: any): RDatum<X>
     <K extends keyof T>(idx: K): RDatum<T[K]>
     (idx: number | RDatum<any>): RDatum<any>
-    orderBy(field: string | R_Sorting<string>): RArray<any>
+    orderBy(field: string | R_Sorting<string> | ((e: RDatum<any>) => any)): RArray<any>
     merge(op: (e: RDatum<any>) => any): RDatum<any>
     merge(op: any): RDatum<any>
     map(func: (e: RDatum<any>) => any): RArray<any>
@@ -161,7 +165,7 @@ interface RArray<T> extends RDatum<T[]> {
     map(func: (e: RDatum<T>) => any): RArray<any>
     merge(func: (e: RDatum<T>) => any): RArray<any>
     concatMap(func: (e: RDatum<T>) => any): RArray<any>
-    orderBy<K extends keyof T>(field: K | R_Sorting<K>): RArray<T>
+    orderBy(field: keyof T | R_Sorting<keyof T> | ((e: RDatum<T>) => any)): RArray<T>
     append(other: T): RArray<T>
     filter(criteria: (obj: RDatum<T>) => boolean | RDatum<boolean>): RArray<T>
     filter(obj: DeepPartial<RDatumfy<T>>): RArray<T>
@@ -197,7 +201,7 @@ interface RStream<T> extends PromiseLike<T[]>, RStreamOrDatum<T[]> {
     map(func: (arg: RDatum<T>) => any): RStream<any>
     merge(func: (arg: RDatum<T>) => any): RStream<any>
     concatMap(func: (arg: RDatum<T>) => any): RStream<any>
-    orderBy(field: keyof T | R_Sorting<keyof T>): RArray<T>
+    orderBy(field: keyof T | R_Sorting<keyof T> | ((e: RDatum<T>) => any)): RArray<T>
     orderBy(options: {index: string | R_Sorting<any>}): RStream<T>
     coerceTo(type: "array"): RArray<T>
     filter(criteria: (obj: RDatum<T>) => boolean | RDatum<boolean>): RStream<T>
@@ -247,6 +251,8 @@ interface RTableSlice<T extends object> extends RStream<T> {
     update<Opts extends R_UpdateOptions & {returnChanges: true | "always"}>(obj: RUpdateObj<T>, options: Opts): RDatum<R_UpdateResult & {changes: {new_val: T, old_val: T}[]}>
     update(obj: RUpdateObj<T>, options?: R_UpdateOptions): RDatum<R_UpdateResult>
     delete(): RDatum<{}>
+    filter(criteria: (obj: RDatum<T>) => boolean | RDatum<boolean>): RTableSlice<T>
+    filter(obj: DeepPartial<RDatumfy<T>>): RTableSlice<T>
 }
 
 interface RTableRow<T extends object> extends RDatum<T> {
