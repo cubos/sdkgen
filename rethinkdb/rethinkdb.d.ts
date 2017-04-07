@@ -99,7 +99,7 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
     do<X extends RPrimitive>(func: (obj: this) => X): RDatum<X>
     do(func: (obj: this) => any): RDatum<any>
     default<X extends RPrimitive>(val: X): RDatum<T|X>
-    default<X>(val: any): RDatum<X>
+    default(val: any): RDatum<any>
     <K extends keyof T>(idx: K): RDatum<T[K]>
     (idx: number | RDatum<any>): RDatum<any>
     orderBy(field: string | R_Sorting<string> | ((e: RDatum<any>) => any)): RArray<any>
