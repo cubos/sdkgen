@@ -107,6 +107,10 @@ async function makeRequest({name, args}: {name: string, args: any}) {
 
 END
   end
+
+  def native_type(t : AST::OptionalType)
+    native_type(t.base) + " | null | undefined"
+  end
 end
 
 Target.register(TypeScriptWebTarget, language: "ts", is_server: false)
