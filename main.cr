@@ -3,19 +3,21 @@ require "./parser"
 require "./ast_to_s"
 require "./target_java_android"
 require "./target_swift_ios"
-require "./target_typescript_server"
+require "./target_typescript_nodeserver"
 require "./target_typescript_web"
 require "option_parser"
 require "file_utils"
 
 is_server = false
 destination = ""
+target_name = ""
 sources = [] of String
 
 OptionParser.parse! do |parser|
   parser.banner = "Usage: salute [arguments]"
-  parser.on("-s", "--server", "Generates server-side code") { is_server = true }
+  # parser.on("-s", "--server", "Generates server-side code") { is_server = true }
   parser.on("-o NAME", "--output=NAME", "Specifies the output file") { |name| destination = name }
+  parser.on("-t TARGET", "--target=TARGET", "Specifies the target platform") { |target| target_name = target }
   parser.on("-h", "--help", "Show this help") { puts parser }
   parser.unknown_args {|args| sources = args }
 end
@@ -39,5 +41,10 @@ if destination == ""
   exit
 end
 
+if target_name == ""
+  STDERR.puts "You must specify a target"
+  exit
+end
+
 FileUtils.mkdir_p(File.dirname(destination))
-Target.process(ast, destination, is_server: is_server)
+Target.process(ast, destination, target_name)
