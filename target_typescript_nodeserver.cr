@@ -292,4 +292,4 @@ END
   end
 end
 
-Target.register(TypeScriptServerTarget, language: "ts", is_server: true)
+Target.register(TypeScriptServerTarget, target_name: "typescript_nodeserver")

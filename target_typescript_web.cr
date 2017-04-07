@@ -109,4 +109,4 @@ END
   end
 end
 
-Target.register(TypeScriptWebTarget, language: "ts", is_server: false)
+Target.register(TypeScriptWebTarget, target_name: "typescript_web")
