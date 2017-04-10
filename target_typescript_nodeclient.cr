@@ -10,7 +10,7 @@ import {version as nodeVersion} from "process";
 
 const baseUrl = #{@ast.options.url.inspect};
 let gDeviceId = null;
-let gDevicePath = "deviceId";
+let gDevicePath = "/root/config/deviceId";
 
 END
 
@@ -81,13 +81,15 @@ async function setDeviceId(newDeviceId){
 async function device() {
   const device: any = {
     type: "node",
-    platform: nodeVersion,
+    platform: {
+      nodeVersion: nodeVersion,
+    },
     screen: {
-      width: 1,
-      height: 1
+      width: 0,
+      height: 0
     },
     version: "0.0.0",
-    language: "en_US"
+    language: "en-US"
   };
 
   const deviceId = await getDeviceId();
@@ -133,7 +135,7 @@ async function makeRequest({name, args}: {name: string, args: any}) {
           reject({type: "Fatal", message: err.toString()});
         }
       }
-    );    
+    );
   });
 }
 
