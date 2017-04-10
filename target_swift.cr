@@ -150,7 +150,6 @@ END
     when AST::OptionalType
       "APIInternal.isNull(value: #{src}) ? nil : (#{type_from_json(t.base, src)})"
     when AST::ArrayType
-      #"(#{src} as! [AnyObject]).map({(el) -> #{native_type t.base} in return #{type_from_json t.base, "el"}})"
       "(#{src} as! [AnyObject]).map({ #{type_from_json t.base, "$0"} })"
     when AST::StructType
       "#{t.name}(json: #{src} as! [String: Any])"
