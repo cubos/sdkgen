@@ -23,13 +23,10 @@ END
       args = op.args.map {|arg| "#{arg.name}: #{native_type arg.type}" }
 
       if op.return_type.is_a? AST::VoidPrimitiveType
-        args << "callback:  ((_ error: APIInternal.Error?) -> Void)?"
+         args << "callback: ((_ result: APIInternal.Result<Void>) -> Void)?"
       else
         ret = op.return_type
-        unless ret.is_a? AST::OptionalType
-          ret = AST::OptionalType.new ret
-        end
-        args << "callback: ((_ result: #{native_type ret}, _ error: APIInternal.Error?) -> Void)?"
+        args << "callback: ((_ result: APIInternal.Result<#{native_type ret}>) -> Void)?"
       end
       @io << ident(String.build do |io|
         io << "static public func #{op.pretty_name}(#{args.join(", ")}) {\n"
@@ -42,31 +39,53 @@ END
       end
 
       op.args.each do |arg|
-        io << "args[\"#{arg.name}\"] = #{type_to_json arg.type, arg.name}\n"
+        io << "args[\"#{arg.name}\"] = #{type_to_json arg.type, arg.name}\n\n"
       end
-          io << <<-END
 
-APIInternal.makeRequest(#{op.pretty_name.inspect}, args) { result, error in
-    if error != nil {
-        callback?(#{"nil, " unless op.return_type.is_a? AST::VoidPrimitiveType}error);
-    } else {
-        callback?(#{"(#{type_from_json op.return_type, "result"}), " unless op.return_type.is_a? AST::VoidPrimitiveType}nil);
-    }
-}
+        io << "APIInternal.makeRequest(#{op.pretty_name.inspect}, args) {  response in \n"
 
-END
-        end)
+        io << ident(String.build do |io|
+            io << "switch response {\n"
+            io << <<-END
+            case .failure(let error):
+                callback?(APIInternal.Result.failure(error))\n
+            END
+
+            if op.return_type.is_a? AST::VoidPrimitiveType
+                io << <<-END
+                case .success:
+                    callback?(APIInternal.Result.success())\n
+                END
+            else
+                io << <<-END
+                case .success(let value):
+                    let returnObject = #{type_from_json(op.return_type, "value")}
+                    callback?(APIInternal.Result.success(returnObject))\n
+                END
+            end
+            io << "}\n"
+        end) # end of make request body indentation. 
+        
+
+
+        io << "}\n\n"
+       end)
         io << "}"
       end)
       @io << "\n\n"
     end
 
+
     @io << <<-END
 }
 
 class APIInternal {
-    static var baseUrl = "api.nutriserie.com.br/user"
+    static var baseUrl = #{@ast.options.url.inspect}
 
+    enum Result<T> {
+        case success(T)
+        case failure(Error)
+    }
     class Error {
         var type: API.ErrorType
         var message: String
@@ -77,7 +96,7 @@ class APIInternal {
         }
 
         init(json: [String: Any]) {
-            self.type = API.ErrorType(rawValue: json["type"] as! String) ?? API.ErrorType.UnknownError
+            self.type = API.ErrorType(rawValue: json["type"] as! String) ?? API.ErrorType.Fatal
             self.message = json["message"] as! String
         }
     }
@@ -166,32 +185,32 @@ class APIInternal {
         return value == nil || value is NSNull
     }
 
-    static func makeRequest(_ name: String, _ args: [String: Any], callback: @escaping (_ result: Any?, _ error: Error?) -> Void) {
+    static func makeRequest(_ name: String, _ args: [String: Any], callback: @escaping (Result<Any?>) -> Void) {
         let api = SessionManager.default
-
+        
         let body = [
-            "id": randomBytesHex(len: 8),
+            "id": randomBytesHex(len: 16),
             "device": device(),
             "name": name,
             "args": args
             ] as [String : Any]
-
+        
          api.request("https://\\(baseUrl)/\\(name)", method: .post, parameters: body, encoding: JSONEncoding.default).responseJSON { response in
-
+            
             guard let responseValue = response.result.value else {
-                callback(nil, Error(API.ErrorType.ConnectionError, "no result value"))
+                let error = Error(API.ErrorType.Connection, "no result value")
+                callback(Result.failure(error))
                 return
             }
-
+            
             let response = HTTPResponse(json: responseValue as! [String: Any])
             saveDeviceID(response.deviceId)
-
+            
             guard response.error == nil && response.ok else {
-                callback(nil, response.error)
+                callback(Result.failure(response.error!))
                 return
             }
-
-            callback(response.result, nil)
+            callback(Result.success(response.result))
         }
     }
 }
