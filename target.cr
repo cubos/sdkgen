@@ -3,7 +3,7 @@ require "./lexer"
 require "./parser"
 
 abstract class Target
-  @@targets = {} of {String, Bool} => Target.class
+  @@targets = {} of String => Target.class
 
   def initialize(@output : String, @ast : AST::ApiDescription)
     @io = IO::Memory.new
@@ -16,19 +16,14 @@ abstract class Target
 
   abstract def gen
 
-  def self.register(target, language, is_server = false)
-    @@targets[{language, is_server}] = target
+  def self.register(target, target_name)
+    @@targets[target_name] = target
   end
 
-  def self.process(ast, output, is_server = false)
-    match = output.match(/\.(\w+)$/)
-    unless match
-      raise "Unrecognized extension for '#{output}'"
-    end
-    language = match[1]
-    target = @@targets[{language, is_server}]?
+  def self.process(ast, output, target_name)
+    target = @@targets[target_name]?
     unless target
-      raise "Language extension '.#{language}' is not supported"
+      raise "Target '#{target_name}' is not supported"
     end
     t = target.new(output, ast)
     t.gen
