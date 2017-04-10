@@ -16,7 +16,6 @@ sources = [] of String
 
 OptionParser.parse! do |parser|
   parser.banner = "Usage: salute [arguments]"
-  # parser.on("-s", "--server", "Generates server-side code") { is_server = true }
   parser.on("-o NAME", "--output=NAME", "Specifies the output file") { |name| destination = name }
   parser.on("-t TARGET", "--target=TARGET", "Specifies the target platform") { |target| target_name = target }
   parser.on("-h", "--help", "Show this help") { puts parser }
