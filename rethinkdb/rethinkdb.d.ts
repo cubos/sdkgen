@@ -106,6 +106,8 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
     merge(op: (e: RDatum<any>) => any): RDatum<any>
     merge(op: any): RDatum<any>
     map(func: (e: RDatum<any>) => any): RArray<any>
+    map<U>(other: RArray<U> | RStream<U>, func: (e: RDatum<any>, x: RDatum<U>) => any): RArray<any>
+    map(other: any, func: (e: RDatum<any>, x: RDatum<any>) => any): RArray<any>
     concatMap(func: (e: RDatum<any>) => any): RArray<any>
     sub(other: any): RDatum<any>
     div(other: any): RDatum<number>
@@ -162,6 +164,8 @@ interface RArray<T> extends RDatum<T[]> {
     (idx: number | RDatum<any>): RDatum<T>
     <K extends keyof T>(idx: K): RArray<T[K]>
     map(func: (e: RDatum<T>) => any): RArray<any>
+    map<U>(other: RArray<U> | RStream<U>, func: (e: RDatum<T>, x: RDatum<U>) => any): RArray<any>
+    map(other: any, func: (e: RDatum<T>, x: RDatum<any>) => any): RArray<any>
     merge(func: (e: RDatum<T>) => any): RArray<any>
     concatMap(func: (e: RDatum<T>) => any): RArray<any>
     orderBy(field: keyof T | R_Sorting<keyof T> | ((e: RDatum<T>) => any)): RArray<T>
@@ -198,6 +202,8 @@ interface RStream<T> extends PromiseLike<T[]>, RStreamOrDatum<T[]> {
     (idx: number): RDatum<T>
     (field: string): RArray<any>
     map(func: (arg: RDatum<T>) => any): RStream<any>
+    map<U>(other: RArray<U> | RStream<U>, func: (e: RDatum<T>, x: RDatum<U>) => any): RArray<any>
+    map(other: any, func: (e: RDatum<T>, x: RDatum<any>) => any): RArray<any>
     merge(func: (arg: RDatum<T>) => any): RStream<any>
     concatMap(func: (arg: RDatum<T>) => any): RStream<any>
     orderBy(field: keyof T | R_Sorting<keyof T> | ((e: RDatum<T>) => any)): RArray<T>
