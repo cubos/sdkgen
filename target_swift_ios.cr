@@ -199,4 +199,4 @@ END
   end
 end
 
-Target.register(SwiftIosTarget, language: "swift", is_server: false)
+Target.register(SwiftIosTarget, target_name: "swift_ios")
