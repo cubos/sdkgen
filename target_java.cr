@@ -129,8 +129,12 @@ END
       "#{src}.isNull(#{name}) ? null : #{get_field_from_json_object(t.base, src, name)}"
     when AST::ArrayType
       "#{src}.getJSONArray(#{name})"
-    when AST::TypeReference
+    when AST::EnumType
+      "#{src}.getString(#{name})"
+    when AST::StructType
       "#{src}.getJSONObject(#{name})"
+    when AST::TypeReference
+      get_field_from_json_object(t.type, src, name)
     else
       raise "Unknown type"
     end
