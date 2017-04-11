@@ -298,6 +298,7 @@ interface RTable<T extends object> extends RTableSlice<T> {
     get(id: any): RTableRow<T>
     insert<Opts extends R_InsertOptions<T> & {returnChanges: true | "always"}>(obj: RInsertObj<T>, options: Opts): RDatum<R_InsertResult & {changes: {new_val: T, old_val: T}[]}>
     insert(obj: RInsertObj<T>, options?: R_InsertOptions<T>): RDatum<R_InsertResult>
+    replace(obj: RInsertObj<T>): RDatum<R_InsertResult>
 
     indexList(): RArray<string>
     indexCreate(name: string, func: (obj: RDatum<T>) => any, opts?: {multi?: boolean, geo?: boolean}): RDatum<{created: 1}>
