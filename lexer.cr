@@ -46,22 +46,22 @@ class Lexer
     return make_token(CommaSymbolToken.new) if literal_match(",")
     return make_token(EqualSymbolToken.new) if literal_match("=")
 
-    return make_token(ImportKeywordToken.new) if literal_match("import")
-    return make_token(TypeKeywordToken.new) if literal_match("type")
-    return make_token(EnumKeywordToken.new) if literal_match("enum")
-    return make_token(GetKeywordToken.new) if literal_match("get")
-    return make_token(FunctionKeywordToken.new) if literal_match("function")
-    return make_token(SubscribeKeywordToken.new) if literal_match("subscribe")
-    return make_token(ErrorKeywordToken.new) if literal_match("error")
-    return make_token(PrimitiveTypeToken.new("bool")) if literal_match("bool")
-    return make_token(PrimitiveTypeToken.new("int")) if literal_match("int")
-    return make_token(PrimitiveTypeToken.new("uint")) if literal_match("uint")
-    return make_token(PrimitiveTypeToken.new("float")) if literal_match("float")
-    return make_token(PrimitiveTypeToken.new("string")) if literal_match("string")
-    return make_token(PrimitiveTypeToken.new("datetime")) if literal_match("datetime")
-    return make_token(PrimitiveTypeToken.new("date")) if literal_match("date")
-    return make_token(PrimitiveTypeToken.new("bytes")) if literal_match("bytes")
-    return make_token(PrimitiveTypeToken.new("void")) if literal_match("void")
+    return make_token(ImportKeywordToken.new) if word_match("import")
+    return make_token(TypeKeywordToken.new) if word_match("type")
+    return make_token(EnumKeywordToken.new) if word_match("enum")
+    return make_token(GetKeywordToken.new) if word_match("get")
+    return make_token(FunctionKeywordToken.new) if word_match("function")
+    return make_token(SubscribeKeywordToken.new) if word_match("subscribe")
+    return make_token(ErrorKeywordToken.new) if word_match("error")
+    return make_token(PrimitiveTypeToken.new("bool")) if word_match("bool")
+    return make_token(PrimitiveTypeToken.new("int")) if word_match("int")
+    return make_token(PrimitiveTypeToken.new("uint")) if word_match("uint")
+    return make_token(PrimitiveTypeToken.new("float")) if word_match("float")
+    return make_token(PrimitiveTypeToken.new("string")) if word_match("string")
+    return make_token(PrimitiveTypeToken.new("datetime")) if word_match("datetime")
+    return make_token(PrimitiveTypeToken.new("date")) if word_match("date")
+    return make_token(PrimitiveTypeToken.new("bytes")) if word_match("bytes")
+    return make_token(PrimitiveTypeToken.new("void")) if word_match("void")
 
     if current_char!.letter?
       while current_char && (current_char!.letter? || current_char!.number?)
@@ -131,7 +131,14 @@ class Lexer
     str.each_char.with_index.each do |c, i|
       return false unless @raw[@pos+i]? == c
     end
+
     @pos += str.size
+  end
+
+  private def word_match(str : String)
+    after = @raw[@pos+str.size]?
+    return false if after && after.letter?
+    return literal_match(str)
   end
 
   private def string_match
