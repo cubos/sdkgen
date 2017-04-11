@@ -30,7 +30,11 @@ dependencies {
 publishing {
     repositories {
         maven {
-            url 'https://mymavenrepo.com/repo/4XBKk8BMCyMc24joS8Od/'
+            url 'https://maven.cubos.io/'
+            credentials {
+                username 'cubos'
+                password '4XBKk8BMCyMc24joS8Od'
+            }
         }
     }
 
