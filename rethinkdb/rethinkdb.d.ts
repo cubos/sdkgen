@@ -106,7 +106,6 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
     merge(op: (e: RDatum<any>) => any): RDatum<any>
     merge(op: any): RDatum<any>
     map(func: (e: RDatum<any>) => any): RArray<any>
-    merge(func: (e: RDatum<any>) => any): RArray<any>
     concatMap(func: (e: RDatum<any>) => any): RArray<any>
     sub(other: any): RDatum<any>
     div(other: any): RDatum<number>
