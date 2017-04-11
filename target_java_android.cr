@@ -405,4 +405,4 @@ END
   end
 end
 
-Target.register(JavaAndroidTarget, language: "java", is_server: false)
+Target.register(JavaAndroidTarget, target_name: "java_android")

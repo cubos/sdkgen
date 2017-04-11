@@ -250,6 +250,7 @@ interface RTableSlice<T extends object> extends RStream<T> {
     update(obj: (obj: RDatum<T>) => any, options?: R_UpdateOptions): RDatum<R_UpdateResult>
     update<Opts extends R_UpdateOptions & {returnChanges: true | "always"}>(obj: RUpdateObj<T>, options: Opts): RDatum<R_UpdateResult & {changes: {new_val: T, old_val: T}[]}>
     update(obj: RUpdateObj<T>, options?: R_UpdateOptions): RDatum<R_UpdateResult>
+    replace(obj: RInsertObj<T>): RDatum<R_InsertResult>
     delete(): RDatum<{}>
     filter(criteria: (obj: RDatum<T>) => boolean | RDatum<boolean>): RTableSlice<T>
     filter(obj: DeepPartial<RDatumfy<T>>): RTableSlice<T>
@@ -260,6 +261,7 @@ interface RTableRow<T extends object> extends RDatum<T> {
     update(obj: (obj: RDatum<T>) => any, options?: R_UpdateOptions): RDatum<R_UpdateResult>
     update<Opts extends R_UpdateOptions & {returnChanges: true | "always"}>(obj: RUpdateObj<T>, options: Opts): RDatum<R_UpdateResult & {changes: {new_val: T, old_val: T}[]}>
     update(obj: RUpdateObj<T>, options?: R_UpdateOptions): RDatum<R_UpdateResult>
+    replace(obj: RInsertObj<T>): RDatum<R_InsertResult>
     delete(): RDatum<{}>
 }
 
