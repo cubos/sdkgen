@@ -109,6 +109,11 @@ module Semantic
       super
     end
 
+    def visit(operation : AST::Operation)
+      @path = [operation.name]
+      super
+    end
+
     def visit(field : AST::Field)
       @path.push field.name
       super
