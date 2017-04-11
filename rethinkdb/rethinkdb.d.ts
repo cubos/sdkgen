@@ -262,6 +262,8 @@ interface RTableRow<T extends object> extends RDatum<T> {
     update(obj: RUpdateObj<T>, options?: R_UpdateOptions): RDatum<R_UpdateResult>
     replace(obj: RInsertObj<T>): RDatum<R_InsertResult>
     delete(): RDatum<{}>
+    eq(other: T | RDatum<T> | null): RDatum<boolean>
+    ne(other: T | RDatum<T> | null): RDatum<boolean>
 }
 
 interface R_InsertOptions<T extends object> {
