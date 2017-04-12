@@ -64,8 +64,8 @@ END
                 END
             end
             io << "}\n"
-        end) # end of make request body indentation. 
-        
+        end) # end of make request body indentation.
+
 
 
         io << "}\n\n"
@@ -187,25 +187,25 @@ class APIInternal {
 
     static func makeRequest(_ name: String, _ args: [String: Any], callback: @escaping (Result<Any?>) -> Void) {
         let api = SessionManager.default
-        
+
         let body = [
-            "id": randomBytesHex(len: 16),
+            "id": randomBytesHex(len: 8),
             "device": device(),
             "name": name,
             "args": args
             ] as [String : Any]
-        
+
          api.request("https://\\(baseUrl)/\\(name)", method: .post, parameters: body, encoding: JSONEncoding.default).responseJSON { response in
-            
+
             guard let responseValue = response.result.value else {
                 let error = Error(API.ErrorType.Connection, "no result value")
                 callback(Result.failure(error))
                 return
             }
-            
+
             let response = HTTPResponse(json: responseValue as! [String: Any])
             saveDeviceID(response.deviceId)
-            
+
             guard response.error == nil && response.ok else {
                 callback(Result.failure(response.error!))
                 return
