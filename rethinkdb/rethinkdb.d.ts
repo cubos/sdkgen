@@ -35,6 +35,8 @@ interface R extends RDB {
     range(count: number): RStream<number>
     range(initial: number, count: number): RStream<number>
     epochTime(epoch: number): RDatum<Date>
+    time(year: number | RDatum<number>, month: number | RDatum<number>, day: number | RDatum<number>, tz: string | RDatum<string>): RDatum<Date>
+    time(year: number | RDatum<number>, month: number | RDatum<number>, day: number | RDatum<number>, hour: number | RDatum<number>, minute: number | RDatum<number>, second: number | RDatum<number>, tz: string | RDatum<string>): RDatum<Date>
     add(...objs: any[]): RDatum<any>
     branch(c1: any, v1: any, otherwise: any): RDatum<any>
     branch(c1: any, v1: any, c2: any, v2: any, otherwise: any): RDatum<any>
@@ -118,6 +120,8 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
     round(): RDatum<number>
     floor(): RDatum<number>
     ceil(): RDatum<number>
+    without(field: any): RDatum<any>
+    pluck(...field: any[]): RDatum<any>
 
     filter(criteria: (obj: any) => boolean | RDatum<boolean>): RDatum<T>
     filter(obj: any): RDatum<T>
@@ -133,6 +137,13 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
     not(): RDatum<boolean>
     and(...objs: any[]): RDatum<boolean>
     or(...objs: any[]): RDatum<boolean>
+
+    year(): RDatum<number>
+    month(): RDatum<number>
+    day(): RDatum<number>
+    hours(): RDatum<number>
+    minutes(): RDatum<number>
+    seconds(): RDatum<number>
 
     split(by: string): RArray<any>
     coerceTo(type: "array"): RArray<any>
@@ -158,6 +169,8 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
     group(idx: string): RGroupedStream<any, any>
     ungroup(): RArray<{group: any, reduction: any}>
     forEach(func: (e: RDatum<any>) => any): RDatum<{}>
+
+    fold(base: any, func: (acc: RDatum<any>, row: RDatum<any>) => any, options?: {emit: (state: RDatum<any>, row: RDatum<any>, newState: RDatum<any>) => any}): RDatum<any>
 }
 
 interface RArray<T> extends RDatum<T[]> {
