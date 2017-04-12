@@ -11,8 +11,8 @@ abstract class JavaTarget < Target
     when AST::IntPrimitiveType;      "Integer"
     when AST::UIntPrimitiveType;     "Integer"
     when AST::FloatPrimitiveType;    "Double"
-    when AST::DatePrimitiveType;     "Date"
-    when AST::DateTimePrimitiveType; "Date"
+    when AST::DatePrimitiveType;     "Calendar"
+    when AST::DateTimePrimitiveType; "Calendar"
     when AST::BoolPrimitiveType;     "Boolean"
     when AST::BytesPrimitiveType;    "byte[]"
     when AST::VoidPrimitiveType;     "void"
@@ -129,8 +129,12 @@ END
       "#{src}.isNull(#{name}) ? null : #{get_field_from_json_object(t.base, src, name)}"
     when AST::ArrayType
       "#{src}.getJSONArray(#{name})"
-    when AST::TypeReference
+    when AST::EnumType
+      "#{src}.getString(#{name})"
+    when AST::StructType
       "#{src}.getJSONObject(#{name})"
+    when AST::TypeReference
+      get_field_from_json_object(t.type, src, name)
     else
       raise "Unknown type"
     end
@@ -149,7 +153,7 @@ END
     when AST::VoidPrimitiveType
       "null"
     when AST::OptionalType
-      "#{src} == null ? null : #{type_from_json(t.base, src)}"
+      type_from_json(t.base, src)
     when AST::ArrayType
       "new #{native_type t}() {{ JSONArray ary = #{src}; for (int i = 0; i < ary.length(); ++i) add(#{type_from_json(t.base, get_field_from_json_object(t.base, "ary", "i"))}); }}"
     when AST::StructType

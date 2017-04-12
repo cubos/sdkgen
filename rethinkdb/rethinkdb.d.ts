@@ -35,6 +35,8 @@ interface R extends RDB {
     range(count: number): RStream<number>
     range(initial: number, count: number): RStream<number>
     epochTime(epoch: number): RDatum<Date>
+    time(year: number | RDatum<number>, month: number | RDatum<number>, day: number | RDatum<number>, tz: string | RDatum<string>): RDatum<Date>
+    time(year: number | RDatum<number>, month: number | RDatum<number>, day: number | RDatum<number>, hour: number | RDatum<number>, minute: number | RDatum<number>, second: number | RDatum<number>, tz: string | RDatum<string>): RDatum<Date>
     add(...objs: any[]): RDatum<any>
     branch(c1: any, v1: any, otherwise: any): RDatum<any>
     branch(c1: any, v1: any, c2: any, v2: any, otherwise: any): RDatum<any>
@@ -106,7 +108,8 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
     merge(op: (e: RDatum<any>) => any): RDatum<any>
     merge(op: any): RDatum<any>
     map(func: (e: RDatum<any>) => any): RArray<any>
-    merge(func: (e: RDatum<any>) => any): RArray<any>
+    map<U>(other: RArray<U> | RStream<U>, func: (e: RDatum<any>, x: RDatum<U>) => any): RArray<any>
+    map(other: any, func: (e: RDatum<any>, x: RDatum<any>) => any): RArray<any>
     concatMap(func: (e: RDatum<any>) => any): RArray<any>
     sub(other: any): RDatum<any>
     div(other: any): RDatum<number>
@@ -117,6 +120,8 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
     round(): RDatum<number>
     floor(): RDatum<number>
     ceil(): RDatum<number>
+    without(field: any): RDatum<any>
+    pluck(...field: any[]): RDatum<any>
 
     filter(criteria: (obj: any) => boolean | RDatum<boolean>): RDatum<T>
     filter(obj: any): RDatum<T>
@@ -132,6 +137,13 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
     not(): RDatum<boolean>
     and(...objs: any[]): RDatum<boolean>
     or(...objs: any[]): RDatum<boolean>
+
+    year(): RDatum<number>
+    month(): RDatum<number>
+    day(): RDatum<number>
+    hours(): RDatum<number>
+    minutes(): RDatum<number>
+    seconds(): RDatum<number>
 
     split(by: string): RArray<any>
     coerceTo(type: "array"): RArray<any>
@@ -157,12 +169,16 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
     group(idx: string): RGroupedStream<any, any>
     ungroup(): RArray<{group: any, reduction: any}>
     forEach(func: (e: RDatum<any>) => any): RDatum<{}>
+
+    fold(base: any, func: (acc: RDatum<any>, row: RDatum<any>) => any, options?: {emit: (state: RDatum<any>, row: RDatum<any>, newState: RDatum<any>) => any}): RDatum<any>
 }
 
 interface RArray<T> extends RDatum<T[]> {
     (idx: number | RDatum<any>): RDatum<T>
     <K extends keyof T>(idx: K): RArray<T[K]>
     map(func: (e: RDatum<T>) => any): RArray<any>
+    map<U>(other: RArray<U> | RStream<U>, func: (e: RDatum<T>, x: RDatum<U>) => any): RArray<any>
+    map(other: any, func: (e: RDatum<T>, x: RDatum<any>) => any): RArray<any>
     merge(func: (e: RDatum<T>) => any): RArray<any>
     concatMap(func: (e: RDatum<T>) => any): RArray<any>
     orderBy(field: keyof T | R_Sorting<keyof T> | ((e: RDatum<T>) => any)): RArray<T>
@@ -199,6 +215,8 @@ interface RStream<T> extends PromiseLike<T[]>, RStreamOrDatum<T[]> {
     (idx: number): RDatum<T>
     (field: string): RArray<any>
     map(func: (arg: RDatum<T>) => any): RStream<any>
+    map<U>(other: RArray<U> | RStream<U>, func: (e: RDatum<T>, x: RDatum<U>) => any): RArray<any>
+    map(other: any, func: (e: RDatum<T>, x: RDatum<any>) => any): RArray<any>
     merge(func: (arg: RDatum<T>) => any): RStream<any>
     concatMap(func: (arg: RDatum<T>) => any): RStream<any>
     orderBy(field: keyof T | R_Sorting<keyof T> | ((e: RDatum<T>) => any)): RArray<T>
@@ -250,6 +268,7 @@ interface RTableSlice<T extends object> extends RStream<T> {
     update(obj: (obj: RDatum<T>) => any, options?: R_UpdateOptions): RDatum<R_UpdateResult>
     update<Opts extends R_UpdateOptions & {returnChanges: true | "always"}>(obj: RUpdateObj<T>, options: Opts): RDatum<R_UpdateResult & {changes: {new_val: T, old_val: T}[]}>
     update(obj: RUpdateObj<T>, options?: R_UpdateOptions): RDatum<R_UpdateResult>
+    replace(obj: RInsertObj<T>): RDatum<R_InsertResult>
     delete(): RDatum<{}>
     filter(criteria: (obj: RDatum<T>) => boolean | RDatum<boolean>): RTableSlice<T>
     filter(obj: DeepPartial<RDatumfy<T>>): RTableSlice<T>
@@ -260,7 +279,10 @@ interface RTableRow<T extends object> extends RDatum<T> {
     update(obj: (obj: RDatum<T>) => any, options?: R_UpdateOptions): RDatum<R_UpdateResult>
     update<Opts extends R_UpdateOptions & {returnChanges: true | "always"}>(obj: RUpdateObj<T>, options: Opts): RDatum<R_UpdateResult & {changes: {new_val: T, old_val: T}[]}>
     update(obj: RUpdateObj<T>, options?: R_UpdateOptions): RDatum<R_UpdateResult>
+    replace(obj: RInsertObj<T>): RDatum<R_InsertResult>
     delete(): RDatum<{}>
+    eq(other: T | RDatum<T> | null): RDatum<boolean>
+    ne(other: T | RDatum<T> | null): RDatum<boolean>
 }
 
 interface R_InsertOptions<T extends object> {

@@ -108,7 +108,7 @@ function randomBytesHex(len: number) {
 async function makeRequest({name, args}: {name: string, args: any}) {
   return new Promise<any>(async (resolve, reject) => {
     const body = {
-      id: randomBytesHex(16),
+      id: randomBytesHex(8),
       device: await device(),
       name: name,
       args: args
