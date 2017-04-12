@@ -81,7 +81,7 @@ async function makeRequest({name, args}: {name: string, args: any}) {
     const req = new XMLHttpRequest();
     req.open("POST", "https://" + baseUrl + "/" + name);
     const body = {
-      id: randomBytesHex(16),
+      id: randomBytesHex(8),
       device: device(),
       name: name,
       args: args
