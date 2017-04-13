@@ -115,18 +115,18 @@ module Semantic
     end
 
     def visit(field : AST::Field)
-      @path.push field.name
+      @path.push field.name[0].upcase + field.name[1..-1]
       super
       @path.pop
     end
 
     def visit(t : AST::StructType)
-      t.name = @path.join("_")
+      t.name = @path.join("")
       super
     end
 
     def visit(t : AST::EnumType)
-      t.name = @path.join("_")
+      t.name = @path.join("")
       super
     end
   end
