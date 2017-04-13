@@ -15,9 +15,7 @@ buildscript {
 allprojects {
     repositories {
         jcenter()
-        maven {
-            url 'https://mymavenrepo.com/repo/4XBKk8BMCyMc24joS8Od/'
-        }
+        maven url 'https://mymavenrepo.com/repo/4XBKk8BMCyMc24joS8Od/'
     }
 }
 
