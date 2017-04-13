@@ -90,7 +90,12 @@ END
 
   def generate_enum_type(t)
     String.build do |io|
-      io << "enum #{t.name}: String {\n"
+      if t.name == "ErrorType"
+        io << "enum #{t.name}: String,Error {\n"
+      else
+        io << "enum #{t.name}: String {\n"
+      end
+
       t.values.each do |value|
         io << ident "case #{value} = #{value.inspect}\n"
       end
