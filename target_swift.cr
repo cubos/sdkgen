@@ -90,7 +90,12 @@ END
 
   def generate_enum_type(t)
     String.build do |io|
-      io << "enum #{t.name}: String {\n"
+      if t.name == "ErrorType"
+        io << "enum #{t.name}: String,Error {\n"
+      else
+        io << "enum #{t.name}: String {\n"
+      end
+
       t.values.each do |value|
         io << ident "case #{value} = #{value.inspect}\n"
       end
@@ -119,7 +124,7 @@ END
     when AST::StructType
       "#{t.name}()"
     when AST::EnumType
-      "#{t.name}(rawValue: \"\")"
+      "#{t.name}.#{t.values[0]}"#(rawValue: \"\")"
     when AST::TypeReference
       default_value(t.type)
     else
@@ -154,7 +159,7 @@ END
     when AST::StructType
       "#{t.name}(json: #{src} as! [String: Any])"
     when AST::EnumType
-      "#{t.name}(rawValue: #{src} as! String)"
+      "#{t.name}(rawValue: #{src} as! String)!"
     when AST::TypeReference
       type_from_json(t.type, src)
     else
