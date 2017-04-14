@@ -87,7 +87,7 @@ public static #{t.name} fromJSON(final JSONObject json) {
 
 END
       t.fields.each do |field|
-        io << ident ident ident ident "#{field.name} = #{type_from_json field.type, get_field_from_json_object(field.type, "json", field.name.inspect)};\n"
+        io << ident ident ident ident "#{field.name} = #{type_from_json field.type, "json", field.name.inspect};\n"
       end
       io << ident <<-END
 
@@ -113,55 +113,34 @@ END
     end
   end
 
-  def get_field_from_json_object(t : AST::Type, src : String, name : String)
+  def type_from_json(t : AST::Type, obj : String, name : String)
     case t
-    when AST::StringPrimitiveType, AST::DatePrimitiveType, AST::DateTimePrimitiveType, AST::BytesPrimitiveType
-      "#{src}.getString(#{name})"
+    when AST::StringPrimitiveType
+      "#{obj}.getString(#{name})"
     when AST::IntPrimitiveType, AST::UIntPrimitiveType
-      "#{src}.getInt(#{name})"
+      "#{obj}.getInt(#{name})"
     when AST::FloatPrimitiveType
-      "#{src}.getDouble(#{name})"
+      "#{obj}.getDouble(#{name})"
     when AST::BoolPrimitiveType
-      "#{src}.getBoolean(#{name})"
-    when AST::VoidPrimitiveType
-      "#{src}.get(#{name})"
-    when AST::OptionalType
-      "#{src}.isNull(#{name}) ? null : #{get_field_from_json_object(t.base, src, name)}"
-    when AST::ArrayType
-      "#{src}.getJSONArray(#{name})"
-    when AST::EnumType
-      "#{src}.getString(#{name})"
-    when AST::StructType
-      "#{src}.getJSONObject(#{name})"
-    when AST::TypeReference
-      get_field_from_json_object(t.type, src, name)
-    else
-      raise "Unknown type"
-    end
-  end
-
-  def type_from_json(t : AST::Type, src : String)
-    case t
-    when AST::StringPrimitiveType, AST::IntPrimitiveType, AST::UIntPrimitiveType, AST::FloatPrimitiveType, AST::BoolPrimitiveType
-      "#{src}"
+      "#{obj}.getBoolean(#{name})"
     when AST::DatePrimitiveType
-      "Internal.decodeDate(#{src})"
+      "Internal.decodeDate(#{obj}.getString(#{name}))"
     when AST::DateTimePrimitiveType
-      "Internal.decodeDateTime(#{src})"
+      "Internal.decodeDateTime(#{obj}.getString(#{name}))"
     when AST::BytesPrimitiveType
-      "Base64.decode(#{src}, Base64.DEFAULT)"
+      "Base64.decode(#{obj}.getString(#{name}), Base64.DEFAULT)"
     when AST::VoidPrimitiveType
       "null"
     when AST::OptionalType
-      type_from_json(t.base, src)
+      "#{obj}.isNull(#{name}) ? null : #{type_from_json(t.base, obj, name)}"
     when AST::ArrayType
-      "new #{native_type t}() {{ JSONArray ary = #{src}; for (int i = 0; i < ary.length(); ++i) add(#{type_from_json(t.base, get_field_from_json_object(t.base, "ary", "i"))}); }}"
+      "new #{native_type t}() {{ JSONArray ary = #{obj}.getJSONArray(#{name}); for (int i = 0; i < ary.length(); ++i) add(#{type_from_json(t.base, "ary", "i")}); }}"
     when AST::StructType
-      "#{t.name}.fromJSON(#{src})"
+      "#{t.name}.fromJSON(#{obj}.getJSONObject(#{name}))"
     when AST::EnumType
-      "#{t.values.map {|v| "#{src} == #{v.inspect} ? #{t.name}.#{v} : " }.join}null"
+      "#{t.values.map {|v| "#{obj}.getString(#{name}) == #{v.inspect} ? #{t.name}.#{v} : " }.join}null"
     when AST::TypeReference
-      type_from_json(t.type, src)
+      type_from_json(t.type, obj, name)
     else
       raise "Unknown type"
     end
