@@ -82,8 +82,7 @@ END
     }};
 } catch (JSONException e) {
     e.printStackTrace();
-    callback.onFinished();
-    callback.onError("bug", e.getMessage());
+    callback.onResult(ErrorType.Fatal, e.getMessage()#{op.return_type.is_a?(AST::VoidPrimitiveType) ? "" : ", null"});
     return;
 }
 END
@@ -92,38 +91,33 @@ END
 
 Internal.makeRequest(#{op.pretty_name.inspect}, args, new Internal.RequestCallback() {
     @Override
-    public void onResult(final JSONObject result) {
-        callback.onFinished();
+    public void onResult(final ErrorType type, final String message, final JSONObject result) {
 
 END
           if op.return_type.is_a? AST::VoidPrimitiveType
             io << <<-END
-        callback.onResult();
+        if (type != null) {
+            callback.onResult(type, message);
+        } else {
+            callback.onResult(null, null);
+        }
 
 END
           else
             io << <<-END
-        try {
-            callback.onResult(#{type_from_json op.return_type, "result", "result".inspect});
-        } catch (JSONException e) {
-            e.printStackTrace();
-            callback.onError("bug", e.getMessage());
+        if (type != null) {
+            callback.onResult(type, message, null);
+        } else {
+            try {
+                callback.onResult(null, null, #{type_from_json op.return_type, "result", "result".inspect});
+            } catch (JSONException e) {
+                e.printStackTrace();
+                callback.onResult(ErrorType.Fatal, e.getMessage(), null);
+            }
         }
 END
           end
           io << <<-END
-    }
-
-    @Override
-    public void onError(String type, String message) {
-        callback.onFinished();
-        callback.onError(type, message);
-    }
-
-    @Override
-    public void onFailure(String message) {
-        callback.onFinished();
-        callback.onError("Connection", message);
     }
 });
 END
@@ -136,33 +130,23 @@ END
     @io << <<-END
 
     public interface Callback<T> {
-        void onFinished();
-        void onResult(T result);
-        void onError(String type, String message);
+        void onResult(ErrorType error, String message, T result);
     }
 
     public interface IntCallback {
-        void onFinished();
-        void onResult(int result);
-        void onError(String type, String message);
+        void onResult(ErrorType error, String message, int result);
     }
 
     public interface DoubleCallback {
-        void onFinished();
-        void onResult(double result);
-        void onError(String type, String message);
+        void onResult(ErrorType error, String message, double result);
     }
 
     public interface BooleanCallback {
-        void onFinished();
-        void onResult(boolean result);
-        void onError(String type, String message);
+        void onResult(ErrorType error, String message, boolean result);
     }
 
     public interface VoidCallback {
-        void onFinished();
-        void onResult();
-        void onError(String type, String message);
+        void onResult(ErrorType error, String message);
     }
 
     private static class Internal {
@@ -277,9 +261,7 @@ END
         }
 
         private interface RequestCallback {
-            void onResult(JSONObject result);
-            void onError(String type, String message);
-            void onFailure(String message);
+            void onResult(ErrorType type, String message, JSONObject result);
         }
 
         private static void makeRequest(String name, JSONObject args, final RequestCallback callback) {
@@ -293,7 +275,7 @@ END
                 body.put("args", args);
             } catch (JSONException e) {
                 e.printStackTrace();
-                callback.onError("bug", e.getMessage());
+                callback.onResult(ErrorType.Fatal, e.getMessage(), null);
             }
 
             Request request = new Request.Builder()
@@ -308,7 +290,7 @@ END
                         @Override
                         public void run() {
                             e.printStackTrace();
-                            callback.onFailure(e.getMessage());
+                            callback.onResult(ErrorType.Fatal, e.getMessage(), null);
                         }
                     });
                 }
@@ -321,7 +303,7 @@ END
                         public void run() {
                             if (response.code() >= 500) {
                                 Log.e("API Fatal", stringBody);
-                                callback.onFailure("HTTP " + response.code());
+                                callback.onResult(ErrorType.Fatal, "HTTP " + response.code(), null);
                                 return;
                             }
 
@@ -332,15 +314,15 @@ END
                                 pref.edit().putString("deviceId", body.getString("deviceId")).apply();
 
                                 if (!body.getBoolean("ok")) {
-                                    String type = body.getJSONObject("error").getString("type");
-                                    String message = body.getJSONObject("error").getString("message");
-                                    callback.onError(type, message);
+                                    JSONObject error = body.getJSONObject("error");
+                                    String message = error.getString("message");
+                                    callback.onResult(#{type_from_json(@ast.enum_types.find {|e| e.name == "ErrorType"}.not_nil!, "error", "type".inspect)}, message, null);
                                 } else {
-                                    callback.onResult(body);
+                                    callback.onResult(null, null, body);
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
-                                callback.onError("bug", e.getMessage());
+                                callback.onResult(ErrorType.Fatal, e.getMessage(), null);
                             }
                         }
                     });
