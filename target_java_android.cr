@@ -104,7 +104,7 @@ END
           else
             io << <<-END
         try {
-            callback.onResult(#{type_from_json op.return_type, get_field_from_json_object(op.return_type, "result", "result".inspect)});
+            callback.onResult(#{type_from_json op.return_type, "result", "result".inspect});
         } catch (JSONException e) {
             e.printStackTrace();
             callback.onError("bug", e.getMessage());
