@@ -101,6 +101,19 @@ module Semantic
     end
   end
 
+  class CheckNamingForGettersReturningBool < Visitor
+    def visit(op : AST::GetOperation)
+      super
+      is_bool = op.return_type.is_a? AST::BoolPrimitiveType
+      has_bool_name = op.name =~ /^(is|has|can|may|should)/
+      if is_bool && !has_bool_name
+        raise "Get operation '#{op.name}' returns bool but isn't named accordingly"
+      elsif !is_bool && has_bool_name
+        raise "Get operation '#{op.name}' doesn't return bool but its name suggest it does"
+      end
+    end
+  end
+
   class GiveStructAndEnumTypeNames < Visitor
     @path = [] of String
 
@@ -162,6 +175,7 @@ module AST
       Semantic::CheckEveryTypeDefined.new(self).visit(self)
       Semantic::CheckNoRecursiveTypes.new(self).visit(self)
       Semantic::CheckDontReturnSecret.new(self).visit(self)
+      Semantic::CheckNamingForGettersReturningBool.new(self).visit(self)
       Semantic::GiveStructAndEnumTypeNames.new(self).visit(self)
       Semantic::CollectStructAndEnumTypes.new(self).visit(self)
     end
