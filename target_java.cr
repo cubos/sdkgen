@@ -59,7 +59,7 @@ abstract class JavaTarget < Target
 
   def generate_struct_type(t)
     String.build do |io|
-      io << "public static class #{t.name} {\n"
+      io << "public static class #{t.name} implements Parcelable {\n"
       t.fields.each do |field|
         io << ident "public #{native_type field.type} #{field.name};\n"
       end
@@ -82,21 +82,51 @@ END
 }
 
 public static #{t.name} fromJSON(final JSONObject json) {
-    try {
-        return new #{t.name}() {{
+    return new #{t.name}(json);
+}
 
+protected #{t.name}(final JSONObject json) {
+    try {
 END
       t.fields.each do |field|
-        io << ident ident ident ident "#{field.name} = #{type_from_json field.type, "json", field.name.inspect};\n"
+        io << ident ident ident "#{field.name} = #{type_from_json field.type, "json", field.name.inspect};\n"
       end
       io << ident <<-END
 
-        }};
     } catch (JSONException e) {
         e.printStackTrace();
-        return new #{t.name}();
     }
 }
+
+protected #{t.name}(Parcel in) {
+    try {
+        fromJSON(new JSONObject(in.readString()));
+    } catch (JSONException e) {
+        e.printStackTrace();
+    }
+}
+
+@Override
+public void writeToParcel(Parcel dest, int flags) {
+    dest.writeString(toJSON().toString());
+}
+
+@Override
+public int describeContents() {
+    return 0;
+}
+
+public static final Parcelable.Creator<#{t.name}> CREATOR = new Parcelable.Creator<#{t.name}>() {
+    @Override
+    public #{t.name} createFromParcel(Parcel in) {
+        return new #{t.name}(in);
+    }
+
+    @Override
+    public #{t.name}[] newArray(int size) {
+        return new #{t.name}[size];
+    }
+};
 
 END
       io << "}"
