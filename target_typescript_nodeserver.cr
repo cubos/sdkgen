@@ -187,7 +187,7 @@ export function start(port: number) {
                     };
                   } else {
                     call.error = {
-                      type: "bug",
+                      type: "Fatal",
                       message: err.toString()
                     };
                   }
