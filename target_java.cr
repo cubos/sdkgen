@@ -103,7 +103,12 @@ END
 
 protected #{t.name}(Parcel in) {
     try {
-        fromJSON(new JSONObject(in.readString()));
+        final JSONOnject json = new JSONObject(in.readString());
+END
+      t.fields.each do |field|
+        io << ident ident ident "#{field.name} = #{type_from_json field.type, "json", field.name.inspect};\n"
+      end
+      io << ident <<-END
     } catch (JSONException e) {
         e.printStackTrace();
     }
