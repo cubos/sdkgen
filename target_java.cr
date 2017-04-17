@@ -176,7 +176,7 @@ END
     when AST::StructType
       "#{t.name}.fromJSON(#{obj}.getJSONObject(#{name}))"
     when AST::EnumType
-      "#{t.values.map {|v| "#{obj}.getString(#{name}) == #{v.inspect} ? #{t.name}.#{v} : " }.join}null"
+      "#{t.values.map {|v| "#{obj}.getString(#{name}).equals(#{v.inspect}) ? #{t.name}.#{v} : " }.join}null"
     when AST::TypeReference
       type_from_json(t.type, obj, name)
     else
