@@ -49,6 +49,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class API {
+    static public boolean useStaging = false;
 
 END
 
@@ -281,7 +282,7 @@ END
             }
 
             Request request = new Request.Builder()
-                    .url("https://" + baseUrl + "/" + name)
+                    .url("https://" + baseUrl + (API.useStaging ? "-staging" : "") + "/" + name)
                     .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), body.toString()))
                     .build();
 
