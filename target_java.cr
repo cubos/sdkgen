@@ -198,7 +198,7 @@ END
     when AST::StructType
       "#{src}.toJSON()"
     when AST::EnumType
-      "#{t.values.map {|v| "#{src} == #{t.name}.#{v} ? #{v.inspect} : " }.join}null"
+      "#{t.values.map {|v| "#{src} == #{t.name}.#{v} ? #{v.inspect} : " }.join}\"\""
     when AST::TypeReference
       type_to_json(t.type, src)
     else
