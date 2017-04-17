@@ -6,7 +6,7 @@ class TypeScriptServerTarget < TypeScriptTarget
 import http from "http";
 import crypto from "crypto";
 import os from "os";
-import moment from "moment";
+import * as moment from "moment";
 import r from "../rethinkdb";
 
 
