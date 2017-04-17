@@ -95,7 +95,7 @@ export function start(port: number) {
     switch (req.method) {
       case "GET": {
         res.writeHead(200);
-        res.write(`{"ok": true}`);
+        res.write(await r.expr(`{"ok": true}`));
         res.end();
         break;
       }
