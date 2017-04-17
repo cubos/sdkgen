@@ -258,7 +258,7 @@ END
 
         private static String randomBytesHex(int len) {
             String str = new BigInteger(8 * len, random).toString(16);
-            while (str.length() < len) str = "0" + str;
+            while (str.length() < 2*len) str = "0" + str;
             return str;
         }
 
