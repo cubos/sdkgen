@@ -85,6 +85,9 @@ public static #{t.name} fromJSON(final JSONObject json) {
     return new #{t.name}(json);
 }
 
+public #{t.name}() {
+}
+
 protected #{t.name}(final JSONObject json) {
     try {
 END
