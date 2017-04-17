@@ -94,9 +94,11 @@ export function start(port: number) {
 
     switch (req.method) {
       case "GET": {
-        res.writeHead(200);
-        res.write(await r.expr(`{"ok": true}`));
-        res.end();
+        r.expr(`{"ok": true}`).then(result => {
+          res.writeHead(200);
+          res.write(result);
+          res.end();
+        });
         break;
       }
       case "POST": {
