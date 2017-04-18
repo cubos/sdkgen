@@ -22,7 +22,11 @@ abstract class TypeScriptTarget < Target
   end
 
   def native_type(t : AST::ArrayType)
-    native_type(t.base) + "[]"
+    if t.base.is_a? AST::OptionalType
+      "(#{native_type(t.base)})[]"
+    else
+      native_type(t.base) + "[]"
+    end
   end
 
   def native_type(t : AST::StructType | AST::EnumType)
