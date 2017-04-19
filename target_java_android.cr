@@ -18,6 +18,8 @@ import android.os.Parcelable;
 import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
+import java.util.Timer;
+import java.util.TimerTask;
 import android.view.Display;
 import android.view.WindowManager;
 
