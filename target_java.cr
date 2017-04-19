@@ -66,7 +66,7 @@ abstract class JavaTarget < Target
       io << ident <<-END
 
 public int	compareTo(#{t.name} other) {
-    toJSON().toString().compareTo(other.toJSON().toString());
+    return toJSON().toString().compareTo(other.toJSON().toString());
 }
 
 public JSONObject toJSON() {
