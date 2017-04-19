@@ -90,6 +90,7 @@ public #{t.name}() {
 
 protected #{t.name}(final JSONObject json) {
     try {
+
 END
       t.fields.each do |field|
         io << ident ident ident "#{field.name} = #{type_from_json field.type, "json", field.name.inspect};\n"
@@ -104,6 +105,7 @@ END
 protected #{t.name}(Parcel in) {
     try {
         final JSONObject json = new JSONObject(in.readString());
+
 END
       t.fields.each do |field|
         io << ident ident ident "#{field.name} = #{type_from_json field.type, "json", field.name.inspect};\n"
