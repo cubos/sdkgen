@@ -283,7 +283,7 @@ END
                 callback.onResult(ErrorType.Fatal, e.getMessage(), null);
             }
 
-            Request request = new Request.Builder()
+            final Request request = new Request.Builder()
                     .url("https://" + baseUrl + (API.useStaging ? "-staging" : "") + "/" + name)
                     .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), body.toString()))
                     .build();
