@@ -286,51 +286,67 @@ END
                     .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), body.toString()))
                     .build();
 
-            http.newCall(request).enqueue(new okhttp3.Callback() {
+            final boolean shouldReceiveResponse[] = new boolean[1];
+            shouldReceiveResponse[0] = true;
+            final Timer timer = new Timer();
+            final TimerTask task = new TimerTask() {
                 @Override
-                public void onFailure(Call call, final IOException e) {
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                public void run() {
+                    http.newCall(request).enqueue(new okhttp3.Callback() {
                         @Override
-                        public void run() {
-                            e.printStackTrace();
-                            callback.onResult(ErrorType.Fatal, e.getMessage(), null);
-                        }
-                    });
-                }
-
-                @Override
-                public void onResponse(Call call, final Response response) throws IOException {
-                    final String stringBody = response.body().string();
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (response.code() >= 500) {
-                                Log.e("API Fatal", stringBody);
-                                callback.onResult(ErrorType.Fatal, "HTTP " + response.code(), null);
-                                return;
-                            }
-
-                            try {
-                                JSONObject body = new JSONObject(stringBody);
-
-                                SharedPreferences pref = context().getSharedPreferences("api", Context.MODE_PRIVATE);
-                                pref.edit().putString("deviceId", body.getString("deviceId")).apply();
-
-                                if (!body.getBoolean("ok")) {
-                                    JSONObject error = body.getJSONObject("error");
-                                    String message = error.getString("message");
-                                    callback.onResult(#{type_from_json(@ast.enum_types.find {|e| e.name == "ErrorType"}.not_nil!, "error", "type".inspect)}, message, null);
-                                } else {
-                                    callback.onResult(null, null, body);
+                        public void onFailure(Call call, final IOException e) {
+                            if (!shouldReceiveResponse[0]) return;
+                            shouldReceiveResponse[0] = false;
+                            timer.cancel();
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    e.printStackTrace();
+                                    callback.onResult(ErrorType.Fatal, e.getMessage(), null);
                                 }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                                callback.onResult(ErrorType.Fatal, e.getMessage(), null);
-                            }
+                            });
+                        }
+
+                        @Override
+                        public void onResponse(Call call, final Response response) throws IOException {
+                            if (!shouldReceiveResponse[0]) return;
+                            shouldReceiveResponse[0] = false;
+                            timer.cancel();
+                            final String stringBody = response.body().string();
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    if (response.code() >= 500) {
+                                        Log.e("API Fatal", stringBody);
+                                        callback.onResult(ErrorType.Fatal, "HTTP " + response.code(), null);
+                                        return;
+                                    }
+
+                                    try {
+                                        JSONObject body = new JSONObject(stringBody);
+
+                                        SharedPreferences pref = context().getSharedPreferences("api", Context.MODE_PRIVATE);
+                                        pref.edit().putString("deviceId", body.getString("deviceId")).apply();
+
+                                        if (!body.getBoolean("ok")) {
+                                            JSONObject error = body.getJSONObject("error");
+                                            String message = error.getString("message");
+                                            callback.onResult(#{type_from_json(@ast.enum_types.find {|e| e.name == "ErrorType"}.not_nil!, "error", "type".inspect)}, message, null);
+                                        } else {
+                                            callback.onResult(null, null, body);
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                        callback.onResult(ErrorType.Fatal, e.getMessage(), null);
+                                    }
+                                }
+                            });
                         }
                     });
                 }
-            });
+            };
+
+            timer.schedule(task, 0, 1000);
         }
 
         static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US);
