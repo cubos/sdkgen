@@ -59,11 +59,15 @@ abstract class JavaTarget < Target
 
   def generate_struct_type(t)
     String.build do |io|
-      io << "public static class #{t.name} implements Parcelable {\n"
+      io << "public static class #{t.name} implements Parcelable, Comparable<#{t.name}> {\n"
       t.fields.each do |field|
         io << ident "public #{native_type field.type} #{field.name};\n"
       end
       io << ident <<-END
+
+public int	compareTo(#{t.name} other) {
+    toJSON().toString().compareTo(other.toJSON().toString());
+}
 
 public JSONObject toJSON() {
     try {
