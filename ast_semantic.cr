@@ -172,6 +172,11 @@ module AST
       error_types_enum_def.type = error_types_enum
       type_definitions << error_types_enum_def
 
+      op = AST::FunctionOperation.new
+      op.name = "ping"
+      op.return_type = AST::StringPrimitiveType.new
+      operations << op
+
       Semantic::CheckEveryTypeDefined.new(self).visit(self)
       Semantic::CheckNoRecursiveTypes.new(self).visit(self)
       Semantic::CheckDontReturnSecret.new(self).visit(self)
