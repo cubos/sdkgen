@@ -243,6 +243,8 @@ export function start(port: number) {
   });
 }
 
+fn.ping = async (ctx: api.Context) => "pong";
+
 
 END
   end
