@@ -18,8 +18,6 @@ import android.os.Parcelable;
 import android.provider.Settings;
 import android.util.Base64;
 import android.util.Log;
-import java.util.Timer;
-import java.util.TimerTask;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -42,6 +40,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.MediaType;
@@ -155,7 +156,7 @@ END
     }
 
     static public void getDeviceId(final Callback<String> callback) {
-        SharedPreferences pref = context().getSharedPreferences("api", Context.MODE_PRIVATE);
+        SharedPreferences pref = Internal.context().getSharedPreferences("api", Context.MODE_PRIVATE);
         if (pref.contains("deviceId"))
             callback.onResult(null, null, pref.getString("deviceId", null));
         else {
@@ -172,22 +173,22 @@ END
     }
 
     private static class Internal {
-        private static final String baseUrl = #{@ast.options.url.inspect};
-        private static final OkHttpClient http = new OkHttpClient.Builder()
+        static final String baseUrl = #{@ast.options.url.inspect};
+        static final OkHttpClient http = new OkHttpClient.Builder()
             .connectTimeout(3, TimeUnit.SECONDS)
             .writeTimeout(3, TimeUnit.SECONDS)
             .readTimeout(5, TimeUnit.SECONDS)
             .addNetworkInterceptor(new StethoInterceptor())
             .build();
-        private static final SecureRandom random = new SecureRandom();
-        private static boolean initialized = false;
+        static final SecureRandom random = new SecureRandom();
+        static boolean initialized = false;
 
-        private static void initialize() {
+        static void initialize() {
             initialized = true;
             Stetho.initializeWithDefaults(context());
         }
 
-        private static Context context() {
+        static Context context() {
             try {
                 final Class<?> activityThreadClass =
                         Class.forName("android.app.ActivityThread");
@@ -202,7 +203,7 @@ END
             }
         }
 
-        private static String language() {
+        static String language() {
             Locale loc = Locale.getDefault();
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 return loc.toLanguageTag();
@@ -249,7 +250,7 @@ END
         }
 
         @SuppressLint("HardwareIds")
-        private static JSONObject device() throws JSONException {
+        static JSONObject device() throws JSONException {
             JSONObject device = new JSONObject();
             device.put("type", "android");
             device.put("fingerprint", "" + Settings.Secure.getString(context().getContentResolver(), Settings.Secure.ANDROID_ID));
@@ -279,17 +280,17 @@ END
             return device;
         }
 
-        private static String randomBytesHex(int len) {
+        static String randomBytesHex(int len) {
             String str = new BigInteger(8 * len, random).toString(16);
             while (str.length() < 2*len) str = "0" + str;
             return str;
         }
 
-        private interface RequestCallback {
+        interface RequestCallback {
             void onResult(ErrorType type, String message, JSONObject result);
         }
 
-        private static void makeRequest(String name, JSONObject args, final RequestCallback callback) {
+        static void makeRequest(String name, JSONObject args, final RequestCallback callback) {
             if (!initialized) initialize();
 
             JSONObject body = new JSONObject();
