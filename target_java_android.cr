@@ -157,6 +157,9 @@ END
     private static class Internal {
         private static final String baseUrl = #{@ast.options.url.inspect};
         private static final OkHttpClient http = new OkHttpClient.Builder()
+            .connectTimeout(3, TimeUnit.SECONDS)
+            .writeTimeout(3, TimeUnit.SECONDS)
+            .readTimeout(5, TimeUnit.SECONDS)
             .addNetworkInterceptor(new StethoInterceptor())
             .build();
         private static final SecureRandom random = new SecureRandom();
