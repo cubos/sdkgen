@@ -154,6 +154,23 @@ END
         void onResult(ErrorType error, String message);
     }
 
+    static public void getDeviceId(final Callback<String> callback) {
+        SharedPreferences pref = context().getSharedPreferences("api", Context.MODE_PRIVATE);
+        if (pref.contains("deviceId"))
+            callback.onResult(null, null, pref.getString("deviceId", null));
+        else {
+            ping(new Callback<String> {
+                @Override
+                public void onResult(ErrorType error, String message, String result) {
+                    if (error != null)
+                        callback.onResult(error, message, null);
+                    else
+                        getDeviceId(callback);
+                }
+            });
+        }
+    }
+
     private static class Internal {
         private static final String baseUrl = #{@ast.options.url.inspect};
         private static final OkHttpClient http = new OkHttpClient.Builder()
