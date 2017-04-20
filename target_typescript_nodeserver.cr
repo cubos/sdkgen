@@ -179,6 +179,7 @@ export function start(port: number) {
                 try {
                   call.result = await fnExec[request.name](context, request.args);
                 } catch (err) {
+                  console.error(err);
                   call.ok = false;
                   if (err.type) {
                     call.error = {
