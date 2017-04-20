@@ -159,7 +159,7 @@ END
         if (pref.contains("deviceId"))
             callback.onResult(null, null, pref.getString("deviceId", null));
         else {
-            ping(new Callback<String> {
+            ping(new Callback<String>() {
                 @Override
                 public void onResult(ErrorType error, String message, String result) {
                     if (error != null)
