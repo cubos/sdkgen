@@ -167,7 +167,7 @@ class Lexer
         when 't'
           contents << '\t'
         when '"'
-          contents << '\"'
+          contents << '"'
         when '\\'
           contents << '\\'
         when nil
