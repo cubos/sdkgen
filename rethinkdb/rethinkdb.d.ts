@@ -98,6 +98,7 @@ interface RStreamOrDatum<T> {
 }
 
 interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
+    run(): PromiseLike<T>
     do<X extends RPrimitive>(func: (obj: this) => X): RDatum<X>
     do(func: (obj: this) => any): RDatum<any>
     default<X extends RPrimitive>(val: X): RDatum<T|X>
@@ -212,6 +213,7 @@ interface RArray<T> extends RDatum<T[]> {
 }
 
 interface RStream<T> extends PromiseLike<T[]>, RStreamOrDatum<T[]> {
+    run(): PromiseLike<T[]>
     (idx: number): RDatum<T>
     (field: string): RArray<any>
     map(func: (arg: RDatum<T>) => any): RStream<any>
