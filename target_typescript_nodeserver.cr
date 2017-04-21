@@ -93,6 +93,11 @@ export function start(port: number) {
     res.setHeader("Content-Type", "application/json");
 
     switch (req.method) {
+      case "HEAD": {
+        res.writeHead(200);
+        res.end();
+        break;
+      }
       case "GET": {
         r.expr(`{"ok": true}`).then(result => {
           res.writeHead(200);
