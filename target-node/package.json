@@ -9,6 +9,7 @@
   },
   "main": "api.js",
   "types": "api.d.ts",
+  "license": "UNLICENSED",
   "babel": {
     "plugins": [
       "transform-runtime"
