@@ -123,6 +123,7 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
     ceil(): RDatum<number>
     without(field: any): RDatum<any>
     pluck(...field: any[]): RDatum<any>
+    match(regex: string | RDatum<string>): RDatum<any>
 
     filter(criteria: (obj: any) => boolean | RDatum<boolean>): RDatum<T>
     filter(obj: any): RDatum<T>
