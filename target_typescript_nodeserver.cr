@@ -101,30 +101,34 @@ export function start(port: number) {
     res.setHeader("Access-Control-Max-Age", "86400");
     res.setHeader("Content-Type", "application/json");
 
-    let body = "";
-    req.on("body", (chunk: any) => body += chunk.toString());
-    req.on("end", () => {
-      const signatures = req.method! + url.parse(req.url || "").pathname;
-      if (webhooks[signatures]) {
-        webhooks[signatures](body, res);
-        return;
-      }
+    const signature = req.method! + url.parse(req.url || "").pathname;
 
-      switch (req.method) {
-        case "HEAD": {
+    switch (req.method) {
+      case "HEAD": {
+        res.writeHead(200);
+        res.end();
+        break;
+      }
+      case "GET": {
+        if (webhooks[signature]) {
+          webhooks[signature]("", res);
+          break;
+        }
+        r.expr(`{"ok": true}`).then(result => {
           res.writeHead(200);
+          res.write(result);
           res.end();
-          break;
-        }
-        case "GET": {
-          r.expr(`{"ok": true}`).then(result => {
-            res.writeHead(200);
-            res.write(result);
-            res.end();
-          });
-          break;
-        }
-        case "POST": {
+        });
+        break;
+      }
+      case "POST": {
+        let body = "";
+        req.on("body", (chunk: any) => body += chunk.toString());
+        req.on("end", () => {
+          if (webhooks[signature]) {
+            webhooks[signature](body, res);
+            return;
+          }
           (async () => {
             const request = JSON.parse(body);
             const context: Context = {
@@ -249,14 +253,14 @@ export function start(port: number) {
             res.writeHead(500);
             res.end();
           });
-          break;
-        }
-        default: {
-          res.writeHead(500);
-          res.end();
-        }
+        });
+        break;
       }
-    });
+      default: {
+        res.writeHead(500);
+        res.end();
+      }
+    }
   });
 
   server.listen(port, () => {
