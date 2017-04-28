@@ -183,10 +183,6 @@ END
         static final SecureRandom random = new SecureRandom();
         static boolean initialized = false;
 
-        static void test() {
-          Log.d("TESTE", "etacuzao");
-        }
-
         static void initialize() {
             initialized = true;
             Stetho.initializeWithDefaults(context());
