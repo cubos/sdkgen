@@ -6,6 +6,7 @@ class TypeScriptServerTarget < TypeScriptTarget
 import http from "http";
 import crypto from "crypto";
 import os from "os";
+import url from "url";
 import moment from "moment";
 import r from "../rethinkdb";
 
@@ -67,6 +68,14 @@ END
     @io << <<-END
 //////////////////////////////////////////////////////
 
+const webhooks: {
+  [signature: string]: (body: string, res: http.ServerResponse) => void
+} = {}
+
+export function addWebHook(method: "GET" | "POST", path: string, func: (body: string, res: http.ServerResponse) => void) {
+  webhooks[method + path] = func;
+}
+
 export interface Context {
   device: DBDevice;
   startTime: Date;
@@ -92,26 +101,32 @@ export function start(port: number) {
     res.setHeader("Access-Control-Max-Age", "86400");
     res.setHeader("Content-Type", "application/json");
 
-    switch (req.method) {
-      case "HEAD": {
-        res.writeHead(200);
-        res.end();
-        break;
+    let body = "";
+    req.on("body", (chunk: any) => body += chunk.toString());
+    req.on("end", () => {
+      const signatures = req.method! + url.parse(req.url || "").pathname;
+      if (webhooks[signatures]) {
+        webhooks[signatures](body, res);
+        return;
       }
-      case "GET": {
-        r.expr(`{"ok": true}`).then(result => {
+
+      switch (req.method) {
+        case "HEAD": {
           res.writeHead(200);
-          res.write(result);
           res.end();
-        });
-        break;
-      }
-      case "POST": {
-        let data = "";
-        req.on("data", chunk => data += chunk.toString());
-        req.on("end", () => {
+          break;
+        }
+        case "GET": {
+          r.expr(`{"ok": true}`).then(result => {
+            res.writeHead(200);
+            res.write(result);
+            res.end();
+          });
+          break;
+        }
+        case "POST": {
           (async () => {
-            const request = JSON.parse(data);
+            const request = JSON.parse(body);
             const context: Context = {
               device: request.device,
               startTime: new Date
@@ -169,7 +184,7 @@ export function start(port: number) {
             }
 
             for (let i = 0; i < 30; ++i) {
-              if (tryLock()) break;
+              if (await tryLock()) break;
               await sleep(100);
             }
 
@@ -234,14 +249,14 @@ export function start(port: number) {
             res.writeHead(500);
             res.end();
           });
-        });
-        break;
+          break;
+        }
+        default: {
+          res.writeHead(500);
+          res.end();
+        }
       }
-      default: {
-        res.writeHead(500);
-        res.end();
-      }
-    }
+    });
   });
 
   server.listen(port, () => {
