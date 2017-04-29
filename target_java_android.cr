@@ -54,7 +54,6 @@ import java.util.Map;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
@@ -118,9 +117,9 @@ END
       end
           io << <<-END
     }};
-} catch (JSONException e) {
+} catch (final JSONException e) {
     e.printStackTrace();
-    callback.onResult(ErrorType.Fatal, e.getMessage()#{op.return_type.is_a?(AST::VoidPrimitiveType) ? "" : ", null"});
+    callback.onResult(new Error() {{type = ErrorType.Fatal; message = e.getMessage();}}#{op.return_type.is_a?(AST::VoidPrimitiveType) ? "" : ", null"});
     return;
 }
 
@@ -130,28 +129,28 @@ END
 
 Internal.RequestCallback reqCallback = new Internal.RequestCallback() {
     @Override
-    public void onResult(final ErrorType type, final String message, final JSONObject result) {
+    public void onResult(final Error error, final JSONObject result) {
 
 END
           if op.return_type.is_a? AST::VoidPrimitiveType
             io << <<-END
-        if (type != null) {
-            callback.onResult(type, message);
+        if (error != null) {
+            callback.onResult(error);
         } else {
-            callback.onResult(null, null);
+            callback.onResult(null);
         }
 
 END
           else
             io << <<-END
-        if (type != null) {
-            callback.onResult(type, message, null);
+        if (error != null) {
+            callback.onResult(error, null);
         } else {
             try {
-                callback.onResult(null, null, #{type_from_json op.return_type, "result", "result".inspect});
-            } catch (JSONException e) {
+                callback.onResult(null, #{type_from_json op.return_type, "result", "result".inspect});
+            } catch (final JSONException e) {
                 e.printStackTrace();
-                callback.onResult(ErrorType.Fatal, e.getMessage(), null);
+                callback.onResult(new Error() {{type = ErrorType.Fatal; message = e.getMessage();}}, null);
             }
         }
 END
@@ -172,37 +171,46 @@ END
     end
 
     @io << <<-END
-
-    public interface Callback<T> {
-        void onResult(ErrorType error, String message, T result);
+    public static class Error {
+        ErrorType type;
+        String message;
     }
 
-    public interface IntCallback {
-        void onResult(ErrorType error, String message, int result);
+    public abstract static class Callback<T> {
+        int cacheAge = 0;
+        abstract void onResult(Error error, T result);
     }
 
-    public interface DoubleCallback {
-        void onResult(ErrorType error, String message, double result);
+    public abstract static class IntCallback {
+        int cacheAge = 0;
+        abstract void onResult(Error error, int result);
     }
 
-    public interface BooleanCallback {
-        void onResult(ErrorType error, String message, boolean result);
+    public abstract static class DoubleCallback {
+        int cacheAge = 0;
+        abstract void onResult(Error error, double result);
     }
 
-    public interface VoidCallback {
-        void onResult(ErrorType error, String message);
+    public abstract static class BooleanCallback {
+        int cacheAge = 0;
+        abstract void onResult(Error error, boolean result);
+    }
+
+    public abstract static class VoidCallback {
+        int cacheAge = 0;
+        abstract void onResult(Error error);
     }
 
     static public void getDeviceId(final Callback<String> callback) {
         SharedPreferences pref = Internal.context().getSharedPreferences("api", Context.MODE_PRIVATE);
         if (pref.contains("deviceId"))
-            callback.onResult(null, null, pref.getString("deviceId", null));
+            callback.onResult(null, pref.getString("deviceId", null));
         else {
             ping(new Callback<String>() {
                 @Override
-                public void onResult(ErrorType error, String message, String result) {
+                public void onResult(Error error, String result) {
                     if (error != null)
-                        callback.onResult(error, message, null);
+                        callback.onResult(error, null);
                     else
                         getDeviceId(callback);
                 }
@@ -267,7 +275,7 @@ END
                 if (app == null)
                     throw new RuntimeException("");
                 return app;
-            } catch (final ClassNotFoundException | NoSuchMethodException |
+            } catch (ClassNotFoundException | NoSuchMethodException |
                     IllegalArgumentException | InvocationTargetException | IllegalAccessException e) {
                 throw new RuntimeException("Failed to get application from android.app.ActivityThread");
             }
@@ -298,7 +306,7 @@ END
                 }
 
                 return null;
-            } catch (final ClassNotFoundException | NoSuchMethodException | NoSuchFieldException |
+            } catch (ClassNotFoundException | NoSuchMethodException | NoSuchFieldException |
                     IllegalArgumentException | InvocationTargetException | IllegalAccessException e) {
                 throw new RuntimeException("Failed to get current activity from android.app.ActivityThread");
             }
@@ -388,7 +396,7 @@ END
         }
 
         interface RequestCallback {
-            void onResult(ErrorType type, String message, JSONObject result);
+            void onResult(Error error, JSONObject result);
         }
 
         static RequestCallback withLoading(final RequestCallback callback) {
@@ -408,7 +416,7 @@ END
             timer.schedule(task, 800);
             return new RequestCallback() {
                 @Override
-                public void onResult(final ErrorType type, final String message, final JSONObject result) {
+                public void onResult(Error error, JSONObject result) {
                     timer.cancel();
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
@@ -417,7 +425,7 @@ END
                                 progress[0].dismiss();
                         }
                     });
-                    callback.onResult(type, message, result);
+                    callback.onResult(error, result);
                 }
             };
         }
@@ -431,9 +439,9 @@ END
                 body.put("device", device());
                 body.put("name", name);
                 body.put("args", args);
-            } catch (JSONException e) {
+            } catch (final JSONException e) {
                 e.printStackTrace();
-                callback.onResult(ErrorType.Fatal, e.getMessage(), null);
+                callback.onResult(new Error() {{type = ErrorType.Fatal; message = e.getMessage();}}, null);
             }
 
             final Request request = new Request.Builder()
@@ -461,7 +469,7 @@ END
                                 @Override
                                 public void run() {
                                     e.printStackTrace();
-                                    callback.onResult(ErrorType.Fatal, e.getMessage(), null);
+                                    callback.onResult(new Error() {{type = ErrorType.Fatal; message = e.getMessage();}}, null);
                                 }
                             });
                         }
@@ -477,7 +485,7 @@ END
                                 public void run() {
                                     if (response.code() >= 500) {
                                         Log.e("API Fatal", stringBody);
-                                        callback.onResult(ErrorType.Fatal, "HTTP " + response.code(), null);
+                                        callback.onResult(new Error() {{type = ErrorType.Fatal; message = "HTTP " + response.code();}}, null);
                                         return;
                                     }
 
@@ -488,15 +496,18 @@ END
                                         pref.edit().putString("deviceId", body.getString("deviceId")).apply();
 
                                         if (!body.getBoolean("ok")) {
-                                            JSONObject error = body.getJSONObject("error");
-                                            String message = error.getString("message");
-                                            callback.onResult(error.getString("type").equals("NotLoggedIn") ? ErrorType.NotLoggedIn : error.getString("type").equals("LacksPermission") ? ErrorType.LacksPermission : error.getString("type").equals("InvalidArgument") ? ErrorType.InvalidArgument : error.getString("type").equals("WrongLogin") ? ErrorType.WrongLogin : error.getString("type").equals("DoesntExist") ? ErrorType.DoesntExist : error.getString("type").equals("Fatal") ? ErrorType.Fatal : error.getString("type").equals("Connection") ? ErrorType.Connection : null, message, null);
+                                            JSONObject jsonError = body.getJSONObject("error");
+                                            Error error = new Error();
+                                            error.tyṕe = #{type_from_json(@ast.enum_types.find {|e| e.name == "ErrorType"}.not_nil!, "jsonError", "type".inspect)};
+                                            error.message = jsonError.getString("message");
+                                            Log.e("API Error", jsonError.getString("type") + " - " + error.message);
+                                            callback.onResult(error, null);
                                         } else {
-                                            callback.onResult(null, null, body);
+                                            callback.onResult(null, body);
                                         }
-                                    } catch (JSONException e) {
+                                    } catch (final JSONException e) {
                                         e.printStackTrace();
-                                        callback.onResult(ErrorType.Fatal, e.getMessage(), null);
+                                        callback.onResult(new Error() {{type = ErrorType.Fatal; message = e.getMessage();}}, null);
                                     }
                                 }
                             });
