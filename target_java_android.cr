@@ -172,8 +172,8 @@ END
 
     @io << <<-END
     public static class Error {
-        ErrorType type;
-        String message;
+        public ErrorType type;
+        public String message;
     }
 
     public abstract static class Callback<T> {
