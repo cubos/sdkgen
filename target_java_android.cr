@@ -221,29 +221,29 @@ END
         int cacheAge = 0;
         Runnable repeatWithoutCacheRunnable;
 
-        public void repeatWithoutCache() {
+        protected void repeatWithoutCache() {
             repeatWithoutCacheRunnable.run();
         }
     }
 
     public abstract static class Callback<T> extends BaseCallback {
-        abstract void onResult(Error error, T result);
+        public abstract void onResult(Error error, T result);
     }
 
     public abstract static class IntCallback extends BaseCallback {
-        abstract void onResult(Error error, int result);
+        public abstract void onResult(Error error, int result);
     }
 
     public abstract static class DoubleCallback extends BaseCallback {
-        abstract void onResult(Error error, double result);
+        public abstract void onResult(Error error, double result);
     }
 
     public abstract static class BooleanCallback extends BaseCallback {
-        abstract void onResult(Error error, boolean result);
+        public abstract void onResult(Error error, boolean result);
     }
 
     public abstract static class VoidCallback extends BaseCallback {
-        abstract void onResult(Error error);
+        public abstract void onResult(Error error);
     }
 
     static public void getDeviceId(final Callback<String> callback) {
