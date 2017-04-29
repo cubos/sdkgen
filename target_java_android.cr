@@ -512,7 +512,7 @@ END
                         Reservoir.putAsync(signature, new JSONObject() {{
                             try {
                                 put("time", encodeDateTime(new GregorianCalendar()));
-                                put("result", result);
+                                put("result", result.getJSONObject("result"));
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
