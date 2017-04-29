@@ -363,7 +363,12 @@ END
             final TimerTask task = new TimerTask() {
                 @Override
                 public void run() {
-                    progress[0] = ProgressDialog.show(context(), "Aguarde", "Carregando...", true, true);
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            progress[0] = ProgressDialog.show(context(), "Aguarde", "Carregando...", true, true);
+                        }
+                    });
                 }
             };
             timer.schedule(task, 0, 800);
@@ -371,8 +376,13 @@ END
                 @Override
                 public void onResult(final ErrorType type, final String message, final JSONObject result) {
                     timer.cancel();
-                    if (progress[0] != null)
-                        progress[0].dismiss();
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (progress[0] != null)
+                                progress[0].dismiss();
+                        }
+                    });
                     callback.onResult(type, message, result);
                 }
             };
