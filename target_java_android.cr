@@ -268,7 +268,7 @@ END
                 variant = "";
             }
 
-            if (language.isEmpty() || !language.matches("\\p{Alpha}{2,8}")) {
+            if (language.isEmpty() || !language.matches("\\\\p{Alpha}{2,8}")) {
                 language = "und";
             } else if (language.equals("iw")) {
                 language = "he";
@@ -278,11 +278,11 @@ END
                 language = "yi";
             }
 
-            if (!region.matches("\\p{Alpha}{2}|\\p{Digit}{3}")) {
+            if (!region.matches("\\\\p{Alpha}{2}|\\\\p{Digit}{3}")) {
                 region = "";
             }
 
-            if (!variant.matches("\\p{Alnum}{5,8}|\\p{Digit}\\p{Alnum}{3}")) {
+            if (!variant.matches("\\\\p{Alnum}{5,8}|\\\\p{Digit}\\\\p{Alnum}{3}")) {
                 variant = "";
             }
 
