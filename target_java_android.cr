@@ -189,7 +189,7 @@ if ((flags & API.Cache) != 0) {
                         });
                     }
                 };
-                reqCallbackPure.onResult(null, data.getJSONObject("result"));
+                reqCallbackPure.onResult(null, data);
             } catch (JSONException e) {
                 Internal.makeRequest("getProducts", args, reqCallbackSaveCache);
             }
