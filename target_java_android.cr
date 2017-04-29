@@ -163,6 +163,7 @@ END
           io << <<-END
     }
 };
+Internal.initialize();
 if ((flags & API.Loading) != 0) {
     reqCallback = Internal.withLoading(reqCallback);
 }
@@ -307,6 +308,7 @@ END
         }
 
         static void initialize() {
+            if (initialized) return;
             initialized = true;
             Stetho.initializeWithDefaults(context());
             try {
