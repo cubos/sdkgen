@@ -23,6 +23,9 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.anupcowkur.reservoir.Reservoir;
+import com.anupcowkur.reservoir.ReservoirGetCallback;
+import com.anupcowkur.reservoir.ReservoirPutCallback;
 import com.facebook.stetho.Stetho;
 import com.facebook.stetho.okhttp3.StethoInterceptor;
 
@@ -41,6 +44,7 @@ import java.net.UnknownHostException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
+import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.text.ParseException;
@@ -49,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
@@ -104,10 +109,10 @@ END
         io << "static public void #{op.pretty_name}(#{args.join(", ")}) {\n"
         io << ident(String.build do |io|
           if op.args.size == 0
-            io << "JSONObject args = new JSONObject();"
+            io << "final JSONObject args = new JSONObject();"
           else
             io << <<-END
-JSONObject args;
+final JSONObject args;
 try {
     args = new JSONObject() {{
 
@@ -161,7 +166,43 @@ END
 if ((flags & API.Loading) != 0) {
     reqCallback = Internal.withLoading(reqCallback);
 }
-Internal.makeRequest(#{op.pretty_name.inspect}, args, reqCallback);
+if ((flags & API.Cache) != 0) {
+    String signature = "getProducts:" + Internal.hash(args.toString());
+    final Internal.RequestCallback reqCallbackPure = reqCallback;
+    final Internal.RequestCallback reqCallbackSaveCache = Internal.withSavingOnCache(signature, reqCallback);
+    Reservoir.getAsync(signature, String.class, new ReservoirGetCallback<String>() {
+        @Override
+        public void onSuccess(String json) {
+            try {
+                JSONObject data = new JSONObject(json);
+                Calendar time = Internal.decodeDateTime(data.getString("time"));
+                callback.cacheAge = (int)((new GregorianCalendar().getTimeInMillis() - time.getTimeInMillis()) / 1000);
+                callback.repeatWithoutCacheRunnable = new Runnable() {
+                    @Override
+                    public void run() {
+                        Internal.makeRequest("getProducts", args, new Internal.RequestCallback() {
+                            @Override
+                            public void onResult(Error error, JSONObject result) {
+                                callback.cacheAge = 0;
+                                reqCallbackSaveCache.onResult(error, result);
+                            }
+                        });
+                    }
+                };
+                reqCallbackPure.onResult(null, data.getJSONObject("result"));
+            } catch (JSONException e) {
+                Internal.makeRequest("getProducts", args, reqCallbackSaveCache);
+            }
+        }
+
+        @Override
+        public void onFailure(Exception e) {
+            Internal.makeRequest("getProducts", args, reqCallbackSaveCache);
+        }
+    });
+} else {
+    Internal.makeRequest("getProducts", args, reqCallback);
+}
 
 END
         end)
@@ -176,29 +217,33 @@ END
         public String message;
     }
 
-    public abstract static class Callback<T> {
-        public int cacheAge = 0;
-        abstract public void onResult(Error error, T result);
+    public static class BaseCallback {
+        private int cacheAge = 0;
+        Runnable repeatWithoutCacheRunnable;
+
+        public void repeatWithoutCache() {
+            repeatWithoutCacheRunnable.run();
+        }
     }
 
-    public abstract static class IntCallback {
-        public int cacheAge = 0;
-        abstract public void onResult(Error error, int result);
+    public abstract static class Callback<T> extends BaseCallback {
+        abstract void onResult(Error error, T result);
     }
 
-    public abstract static class DoubleCallback {
-        public int cacheAge = 0;
-        abstract public void onResult(Error error, double result);
+    public abstract static class IntCallback extends BaseCallback {
+        abstract void onResult(Error error, int result);
     }
 
-    public abstract static class BooleanCallback {
-        public int cacheAge = 0;
-        abstract public void onResult(Error error, boolean result);
+    public abstract static class DoubleCallback extends BaseCallback {
+        abstract void onResult(Error error, double result);
     }
 
-    public abstract static class VoidCallback {
-        public int cacheAge = 0;
-        abstract public void onResult(Error error);
+    public abstract static class BooleanCallback extends BaseCallback {
+        abstract void onResult(Error error, boolean result);
+    }
+
+    public abstract static class VoidCallback extends BaseCallback {
+        abstract void onResult(Error error);
     }
 
     static public void getDeviceId(final Callback<String> callback) {
@@ -264,6 +309,11 @@ END
         static void initialize() {
             initialized = true;
             Stetho.initializeWithDefaults(context());
+            try {
+                Reservoir.init(context(), 10 * 1024 * 1024 /* 10 MB */);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         static Context context() {
@@ -389,10 +439,32 @@ END
             return device;
         }
 
+        final private static char[] hexArray = "0123456789abcdef".toCharArray();
+        static String bytesToHex(byte[] bytes) {
+            char[] hexChars = new char[bytes.length * 2];
+            for ( int j = 0; j < bytes.length; j++ ) {
+                int v = bytes[j] & 0xFF;
+                hexChars[j * 2] = hexArray[v >>> 4];
+                hexChars[j * 2 + 1] = hexArray[v & 0x0F];
+            }
+            return new String(hexChars);
+        }
+
         static String randomBytesHex(int len) {
-            String str = new BigInteger(8 * len, random).toString(16);
-            while (str.length() < 2*len) str = "0" + str;
-            return str;
+            byte[] bytes = new byte[len];
+            random.nextBytes(bytes);
+            return bytesToHex(bytes);
+        }
+
+        static String hash(String message) {
+            MessageDigest digest;
+            try {
+                digest = MessageDigest.getInstance("SHA-256");
+            } catch (NoSuchAlgorithmException e) {
+                e.printStackTrace();
+                return null;
+            }
+            return bytesToHex(digest.digest(message.getBytes()));
         }
 
         interface RequestCallback {
@@ -425,6 +497,30 @@ END
                                 progress[0].dismiss();
                         }
                     });
+                    callback.onResult(error, result);
+                }
+            };
+        }
+
+        static RequestCallback withSavingOnCache(final String signature, final RequestCallback callback) {
+            return new RequestCallback() {
+                @Override
+                public void onResult(Error error, final JSONObject result) {
+                    if (error == null) {
+                        Reservoir.putAsync(signature, new JSONObject() {{
+                            try {
+                                put("time", encodeDateTime(new GregorianCalendar()));
+                                put("result", result);
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }}.toString(), new ReservoirPutCallback() {
+                            @Override
+                            public void onSuccess() {}
+                            @Override
+                            public void onFailure(Exception e) {}
+                        });
+                    }
                     callback.onResult(error, result);
                 }
             };
