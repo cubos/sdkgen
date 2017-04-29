@@ -371,7 +371,7 @@ END
                     });
                 }
             };
-            timer.schedule(task, 0, 800);
+            timer.schedule(task, 800, 800);
             return new RequestCallback() {
                 @Override
                 public void onResult(final ErrorType type, final String message, final JSONObject result) {
