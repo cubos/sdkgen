@@ -32,10 +32,18 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
+import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -44,7 +52,15 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.X509TrustManager;
+
 import okhttp3.Call;
+import okhttp3.ConnectionPool;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -173,15 +189,47 @@ END
     }
 
     private static class Internal {
-        static final String baseUrl = #{@ast.options.url.inspect};
-        static final OkHttpClient http = new OkHttpClient.Builder()
-            .connectTimeout(3, TimeUnit.SECONDS)
-            .writeTimeout(3, TimeUnit.SECONDS)
-            .readTimeout(5, TimeUnit.SECONDS)
-            .addNetworkInterceptor(new StethoInterceptor())
-            .build();
-        static final SecureRandom random = new SecureRandom();
+        static String baseUrl = "api.zigcore.com.br/pdv";
+        static OkHttpClient http = null;
+        static ConnectionPool connectionPool = new ConnectionPool();
+        static SecureRandom random = new SecureRandom();
         static boolean initialized = false;
+        static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US);
+        static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+
+        static {
+            dateTimeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+            dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+
+            TrustManagerFactory trustManagerFactory;
+            try {
+                trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+                trustManagerFactory.init((KeyStore) null);
+            } catch (NoSuchAlgorithmException | KeyStoreException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+            TrustManager[] trustManagers = trustManagerFactory.getTrustManagers();
+            if (trustManagers.length != 1 || !(trustManagers[0] instanceof X509TrustManager)) {
+                throw new IllegalStateException("Unexpected default trust managers:"
+                        + Arrays.toString(trustManagers));
+            }
+            X509TrustManager trustManager = (X509TrustManager) trustManagers[0];
+
+            SSLSocketFactory sslSocketFactory;
+            try {
+                sslSocketFactory = new TLSSocketFactory();
+            } catch (KeyManagementException | NoSuchAlgorithmException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
+
+            http = new OkHttpClient.Builder()
+                    .connectionPool(connectionPool)
+                    .sslSocketFactory(sslSocketFactory, trustManager)
+                    .addNetworkInterceptor(new StethoInterceptor())
+                    .build();
+        }
 
         static void initialize() {
             initialized = true;
@@ -220,7 +268,7 @@ END
                 variant = "";
             }
 
-            if (language.isEmpty() || !language.matches("\\\\p{Alpha}{2,8}")) {
+            if (language.isEmpty() || !language.matches("\\p{Alpha}{2,8}")) {
                 language = "und";
             } else if (language.equals("iw")) {
                 language = "he";
@@ -230,11 +278,11 @@ END
                 language = "yi";
             }
 
-            if (!region.matches("\\\\p{Alpha}{2}|\\\\p{Digit}{3}")) {
+            if (!region.matches("\\p{Alpha}{2}|\\p{Digit}{3}")) {
                 region = "";
             }
 
-            if (!variant.matches("\\\\p{Alnum}{5,8}|\\\\p{Digit}\\\\p{Alnum}{3}")) {
+            if (!variant.matches("\\p{Alnum}{5,8}|\\p{Digit}\\p{Alnum}{3}")) {
                 variant = "";
             }
 
@@ -309,12 +357,16 @@ END
                     .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), body.toString()))
                     .build();
 
-            final boolean shouldReceiveResponse[] = new boolean[1];
-            shouldReceiveResponse[0] = true;
+            final boolean shouldReceiveResponse[] = new boolean[] {true};
+            final int sentCount[] = new int[] {0};
             final Timer timer = new Timer();
             final TimerTask task = new TimerTask() {
                 @Override
                 public void run() {
+                    sentCount[0] += 1;
+                    if (sentCount[0] % 5 == 0) {
+                        connectionPool.evictAll();
+                    }
                     http.newCall(request).enqueue(new okhttp3.Callback() {
                         @Override
                         public void onFailure(Call call, final IOException e) {
@@ -354,7 +406,7 @@ END
                                         if (!body.getBoolean("ok")) {
                                             JSONObject error = body.getJSONObject("error");
                                             String message = error.getString("message");
-                                            callback.onResult(#{type_from_json(@ast.enum_types.find {|e| e.name == "ErrorType"}.not_nil!, "error", "type".inspect)}, message, null);
+                                            callback.onResult(error.getString("type").equals("NotLoggedIn") ? ErrorType.NotLoggedIn : error.getString("type").equals("LacksPermission") ? ErrorType.LacksPermission : error.getString("type").equals("InvalidArgument") ? ErrorType.InvalidArgument : error.getString("type").equals("WrongLogin") ? ErrorType.WrongLogin : error.getString("type").equals("DoesntExist") ? ErrorType.DoesntExist : error.getString("type").equals("Fatal") ? ErrorType.Fatal : error.getString("type").equals("Connection") ? ErrorType.Connection : null, message, null);
                                         } else {
                                             callback.onResult(null, null, body);
                                         }
@@ -370,14 +422,6 @@ END
             };
 
             timer.schedule(task, 0, 1000);
-        }
-
-        static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US);
-        static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-
-        static {
-            dateTimeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-            dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
         }
 
         static Calendar toCalendar(Date date){
@@ -410,6 +454,63 @@ END
 
         static String encodeDate(Calendar cal) {
             return dateFormat.format(cal.getTime());
+        }
+
+        static private class TLSSocketFactory extends SSLSocketFactory {
+            private SSLSocketFactory internalSSLSocketFactory;
+
+            TLSSocketFactory() throws KeyManagementException, NoSuchAlgorithmException {
+                SSLContext context = SSLContext.getInstance("TLS");
+                context.init(null, null, null);
+                internalSSLSocketFactory = context.getSocketFactory();
+            }
+
+            @Override
+            public String[] getDefaultCipherSuites() {
+                return internalSSLSocketFactory.getDefaultCipherSuites();
+            }
+
+            @Override
+            public String[] getSupportedCipherSuites() {
+                return internalSSLSocketFactory.getSupportedCipherSuites();
+            }
+
+            @Override
+            public Socket createSocket() throws IOException {
+                return enableTLSOnSocket(internalSSLSocketFactory.createSocket());
+            }
+
+            @Override
+            public Socket createSocket(Socket s, String host, int port, boolean autoClose) throws IOException {
+                return enableTLSOnSocket(internalSSLSocketFactory.createSocket(s, host, port, autoClose));
+            }
+
+            @Override
+            public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
+                return enableTLSOnSocket(internalSSLSocketFactory.createSocket(host, port));
+            }
+
+            @Override
+            public Socket createSocket(String host, int port, InetAddress localHost, int localPort) throws IOException, UnknownHostException {
+                return enableTLSOnSocket(internalSSLSocketFactory.createSocket(host, port, localHost, localPort));
+            }
+
+            @Override
+            public Socket createSocket(InetAddress host, int port) throws IOException {
+                return enableTLSOnSocket(internalSSLSocketFactory.createSocket(host, port));
+            }
+
+            @Override
+            public Socket createSocket(InetAddress address, int port, InetAddress localAddress, int localPort) throws IOException {
+                return enableTLSOnSocket(internalSSLSocketFactory.createSocket(address, port, localAddress, localPort));
+            }
+
+            private Socket enableTLSOnSocket(Socket socket) {
+                if (socket != null && (socket instanceof SSLSocket)) {
+                    ((SSLSocket)socket).setEnabledProtocols(new String[] {"TLSv1.2"});
+                }
+                return socket;
+            }
         }
     }
 }
