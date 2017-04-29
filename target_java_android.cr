@@ -5,6 +5,7 @@ class JavaAndroidTarget < JavaTarget
     @io << <<-END
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.Application;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -30,6 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigInteger;
@@ -48,6 +50,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -257,16 +260,47 @@ END
 
         static Context context() {
             try {
-                final Class<?> activityThreadClass =
+                Class<?> activityThreadClass =
                         Class.forName("android.app.ActivityThread");
-                final Method method = activityThreadClass.getMethod("currentApplication");
+                Method method = activityThreadClass.getMethod("currentApplication");
                 Application app = (Application)method.invoke(null, (Object[]) null);
                 if (app == null)
                     throw new RuntimeException("");
                 return app;
             } catch (final ClassNotFoundException | NoSuchMethodException |
                     IllegalArgumentException | InvocationTargetException | IllegalAccessException e) {
-                throw new RuntimeException("");
+                throw new RuntimeException("Failed to get application from android.app.ActivityThread");
+            }
+        }
+
+        static Activity getCurrentActivity() {
+            try {
+                Class<?> activityThreadClass = Class.forName("android.app.ActivityThread");
+                Object activityThread = activityThreadClass.getMethod("currentActivityThread").invoke(null);
+                Field activitiesField = activityThreadClass.getDeclaredField("mActivities");
+                activitiesField.setAccessible(true);
+
+                @SuppressWarnings("unchecked")
+                Map<Object, Object> activities = (Map<Object, Object>) activitiesField.get(activityThread);
+
+                if (activities == null)
+                    return null;
+
+                for (Object activityRecord : activities.values()) {
+                    Class activityRecordClass = activityRecord.getClass();
+                    Field pausedField = activityRecordClass.getDeclaredField("paused");
+                    pausedField.setAccessible(true);
+                    if (!pausedField.getBoolean(activityRecord)) {
+                        Field activityField = activityRecordClass.getDeclaredField("activity");
+                        activityField.setAccessible(true);
+                        return (Activity) activityField.get(activityRecord);
+                    }
+                }
+
+                return null;
+            } catch (final ClassNotFoundException | NoSuchMethodException | NoSuchFieldException |
+                    IllegalArgumentException | InvocationTargetException | IllegalAccessException e) {
+                throw new RuntimeException("Failed to get current activity from android.app.ActivityThread");
             }
         }
 
@@ -366,12 +400,12 @@ END
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                            progress[0] = ProgressDialog.show(context(), "Aguarde", "Carregando...", true, true);
+                            progress[0] = ProgressDialog.show(getCurrentActivity(), "Aguarde", "Carregando...", true, true);
                         }
                     });
                 }
             };
-            timer.schedule(task, 800, 800);
+            timer.schedule(task, 800);
             return new RequestCallback() {
                 @Override
                 public void onResult(final ErrorType type, final String message, final JSONObject result) {
