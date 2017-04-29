@@ -529,7 +529,7 @@ END
         }
 
         static void makeRequest(String name, JSONObject args, final RequestCallback callback) {
-            if (!initialized) initialize();
+            initialize();
 
             JSONObject body = new JSONObject();
             try {
