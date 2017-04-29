@@ -6,6 +6,7 @@ class JavaAndroidTarget < JavaTarget
 
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
@@ -70,6 +71,11 @@ import okhttp3.Response;
 public class API {
     static public boolean useStaging = false;
 
+    static public int Default = 0;
+    static public int Loading = 1;
+    static public int Cache = 2;
+
+
 END
 
     @ast.struct_types.each do |t|
@@ -85,6 +91,13 @@ END
     @ast.operations.each do |op|
       args = op.args.map {|arg| "final #{native_type arg.type} #{arg.name}" }
       args << "final #{callback_type op.return_type} callback"
+      @io << ident(String.build do |io|
+        io << "static public void #{op.pretty_name}(#{args.join(", ")}) {\n"
+        io << "    #{op.pretty_name}(#{(op.args.map {|arg| arg.name } + ["0", "callback"]).join(", ")});\n"
+        io << "}"
+      end)
+      @io << "\n\n"
+      args = args[0..-2] + ["final int flags", args[-1]]
       @io << ident(String.build do |io|
         io << "static public void #{op.pretty_name}(#{args.join(", ")}) {\n"
         io << ident(String.build do |io|
@@ -107,11 +120,12 @@ END
     callback.onResult(ErrorType.Fatal, e.getMessage()#{op.return_type.is_a?(AST::VoidPrimitiveType) ? "" : ", null"});
     return;
 }
+
 END
           end
           io << <<-END
 
-Internal.makeRequest(#{op.pretty_name.inspect}, args, new Internal.RequestCallback() {
+Internal.RequestCallback reqCallback = new Internal.RequestCallback() {
     @Override
     public void onResult(final ErrorType type, final String message, final JSONObject result) {
 
@@ -141,7 +155,12 @@ END
           end
           io << <<-END
     }
-});
+};
+if ((flags & API.Loading) != 0) {
+    reqCallback = Internal.withLoading(reqCallback);
+}
+Internal.makeRequest(#{op.pretty_name.inspect}, args, reqCallback);
+
 END
         end)
         io << "}"
@@ -336,6 +355,27 @@ END
 
         interface RequestCallback {
             void onResult(ErrorType type, String message, JSONObject result);
+        }
+
+        static RequestCallback withLoading(final RequestCallback callback) {
+            final ProgressDialog[] progress = new ProgressDialog[] {null};
+            final Timer timer = new Timer();
+            final TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    progress[0] = ProgressDialog.show(context(), "Aguarde", "Carregando...", true, true);
+                }
+            };
+            timer.schedule(task, 0, 800);
+            return new RequestCallback() {
+                @Override
+                public void onResult(final ErrorType type, final String message, final JSONObject result) {
+                    timer.cancel();
+                    if (progress[0] != null)
+                        progress[0].dismiss();
+                    callback.onResult(type, message, result);
+                }
+            };
         }
 
         static void makeRequest(String name, JSONObject args, final RequestCallback callback) {
