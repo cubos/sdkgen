@@ -167,7 +167,7 @@ if ((flags & API.Loading) != 0) {
     reqCallback = Internal.withLoading(reqCallback);
 }
 if ((flags & API.Cache) != 0) {
-    String signature = "getProducts:" + Internal.hash(args.toString());
+    String signature = "#{op.pretty_name}:" + Internal.hash(args.toString());
     final Internal.RequestCallback reqCallbackPure = reqCallback;
     final Internal.RequestCallback reqCallbackSaveCache = Internal.withSavingOnCache(signature, reqCallback);
     Reservoir.getAsync(signature, String.class, new ReservoirGetCallback<String>() {
@@ -180,7 +180,7 @@ if ((flags & API.Cache) != 0) {
                 callback.repeatWithoutCacheRunnable = new Runnable() {
                     @Override
                     public void run() {
-                        Internal.makeRequest("getProducts", args, new Internal.RequestCallback() {
+                        Internal.makeRequest(#{op.pretty_name.inspect}, args, new Internal.RequestCallback() {
                             @Override
                             public void onResult(Error error, JSONObject result) {
                                 callback.cacheAge = 0;
@@ -191,17 +191,17 @@ if ((flags & API.Cache) != 0) {
                 };
                 reqCallbackPure.onResult(null, data);
             } catch (JSONException e) {
-                Internal.makeRequest("getProducts", args, reqCallbackSaveCache);
+                Internal.makeRequest(#{op.pretty_name.inspect}, args, reqCallbackSaveCache);
             }
         }
 
         @Override
         public void onFailure(Exception e) {
-            Internal.makeRequest("getProducts", args, reqCallbackSaveCache);
+            Internal.makeRequest(#{op.pretty_name.inspect}, args, reqCallbackSaveCache);
         }
     });
 } else {
-    Internal.makeRequest("getProducts", args, reqCallback);
+    Internal.makeRequest(#{op.pretty_name.inspect}, args, reqCallback);
 }
 
 END
