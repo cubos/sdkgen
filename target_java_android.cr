@@ -219,7 +219,7 @@ END
     }
 
     public static class BaseCallback {
-        int cacheAge = 0;
+        public int cacheAge = 0;
         Runnable repeatWithoutCacheRunnable;
 
         protected void repeatWithoutCache() {
