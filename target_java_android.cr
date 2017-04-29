@@ -498,7 +498,7 @@ END
                                         if (!body.getBoolean("ok")) {
                                             JSONObject jsonError = body.getJSONObject("error");
                                             Error error = new Error();
-                                            error.tyṕe = #{type_from_json(@ast.enum_types.find {|e| e.name == "ErrorType"}.not_nil!, "jsonError", "type".inspect)};
+                                            error.type = #{type_from_json(@ast.enum_types.find {|e| e.name == "ErrorType"}.not_nil!, "jsonError", "type".inspect)};
                                             error.message = jsonError.getString("message");
                                             Log.e("API Error", jsonError.getString("type") + " - " + error.message);
                                             callback.onResult(error, null);
