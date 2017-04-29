@@ -177,28 +177,28 @@ END
     }
 
     public abstract static class Callback<T> {
-        int cacheAge = 0;
-        abstract void onResult(Error error, T result);
+        public int cacheAge = 0;
+        abstract public void onResult(Error error, T result);
     }
 
     public abstract static class IntCallback {
-        int cacheAge = 0;
-        abstract void onResult(Error error, int result);
+        public int cacheAge = 0;
+        abstract public void onResult(Error error, int result);
     }
 
     public abstract static class DoubleCallback {
-        int cacheAge = 0;
-        abstract void onResult(Error error, double result);
+        public int cacheAge = 0;
+        abstract public void onResult(Error error, double result);
     }
 
     public abstract static class BooleanCallback {
-        int cacheAge = 0;
-        abstract void onResult(Error error, boolean result);
+        public int cacheAge = 0;
+        abstract public void onResult(Error error, boolean result);
     }
 
     public abstract static class VoidCallback {
-        int cacheAge = 0;
-        abstract void onResult(Error error);
+        public int cacheAge = 0;
+        abstract public void onResult(Error error);
     }
 
     static public void getDeviceId(final Callback<String> callback) {
