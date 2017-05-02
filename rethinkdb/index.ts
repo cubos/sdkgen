@@ -34,8 +34,8 @@ export async function configure(options: ConfigureOptions) {
 
     for (let i = 0; i < realTables.length; ++i) {
         if (tables.indexOf(realTables[i]) >= 0) continue;
-        console.log(`Dropping table ${realTables[i]}...`);
-        await r.tableDrop(realTables[i]);
+        console.log(`WARNING: Should dropping table ${realTables[i]}...`);
+        // await r.tableDrop(realTables[i]);
     }
 
     for (let i = 0; i < tables.length; ++i) {
