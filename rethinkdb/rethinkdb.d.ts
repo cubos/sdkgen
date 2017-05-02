@@ -192,6 +192,7 @@ interface RArray<T> extends RDatum<T[]> {
     contains(obj: T): RDatum<boolean>
     reduce(func: (a: RDatum<T>, b: RDatum<T>) => any): RDatum<T>
     distinct(): RArray<T>
+    sample(count: number | RDatum<number>): RArray<T>
 
     setInsert(other: any): RArray<T>
     setUnion(other: any): RArray<T>
@@ -232,6 +233,7 @@ interface RStream<T> extends PromiseLike<T[]>, RStreamOrDatum<T[]> {
     limit(other: any): RStream<T>
     reduce(func: (a: RDatum<T>, b: RDatum<T>) => any): RDatum<T>
     distinct(): RArray<T>
+    sample(count: number | RDatum<number>): RStream<T>
 
     sum(): RDatum<T>
     sum<K extends keyof T>(idx: K): RDatum<T[K]>
