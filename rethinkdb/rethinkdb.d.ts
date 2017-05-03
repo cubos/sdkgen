@@ -6,6 +6,7 @@ interface DBDevice {
     screen: {width: number, height: number};
     version: string;
     language: string;
+    push?: string
 }
 
 interface DBApiCall {
