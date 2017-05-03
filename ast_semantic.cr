@@ -177,6 +177,14 @@ module AST
       op.return_type = AST::StringPrimitiveType.new
       operations << op
 
+      op = AST::FunctionOperation.new
+      op.name = "setPushToken"
+      op.args = [AST::Field.new]
+      op.args[0].name = "token"
+      op.args[0].type = AST::StringPrimitiveType.new
+      op.return_type = AST::VoidPrimitiveType.new
+      operations << op
+
       Semantic::CheckEveryTypeDefined.new(self).visit(self)
       Semantic::CheckNoRecursiveTypes.new(self).visit(self)
       Semantic::CheckDontReturnSecret.new(self).visit(self)

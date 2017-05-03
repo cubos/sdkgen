@@ -266,6 +266,9 @@ export function start(port: number) {
 
 fn.ping = async (ctx: Context) => "pong";
 
+fn.setPushToken = async (ctx: Context, token: string) => {
+  await r.table("devices").get(ctx.device.id).update({push: token});
+};
 
 END
   end
