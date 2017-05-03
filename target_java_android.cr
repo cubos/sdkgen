@@ -98,12 +98,12 @@ END
     @ast.operations.each do |op|
       args = op.args.map {|arg| "final #{native_type arg.type} #{arg.name}" }
       args << "final #{callback_type op.return_type} callback"
-      #@io << ident(String.build do |io|
-      #  io << "static public void #{op.pretty_name}(#{args.join(", ")}) {\n"
-      #  io << "    #{op.pretty_name}(#{(op.args.map {|arg| arg.name } + ["0", "callback"]).join(", ")});\n"
-      #  io << "}"
-      #end)
-      #@io << "\n\n"
+      @io << ident(String.build do |io|
+        io << "static public void #{op.pretty_name}(#{args.join(", ")}) {\n"
+        io << "    #{op.pretty_name}(#{(op.args.map {|arg| arg.name } + ["0", "callback"]).join(", ")});\n"
+        io << "}"
+      end)
+      @io << "\n\n"
       args = args[0..-2] + ["final int flags", args[-1]]
       @io << ident(String.build do |io|
         io << "static public void #{op.pretty_name}(#{args.join(", ")}) {\n"
@@ -253,7 +253,7 @@ END
     }
 
     private static class Internal {
-        static String baseUrl = "api.zigcore.com.br/pdv";
+        static String baseUrl = #{@ast.options.url.inspect};
         static OkHttpClient http = null;
         static ConnectionPool connectionPool = new ConnectionPool();
         static SecureRandom random = new SecureRandom();
