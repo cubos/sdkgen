@@ -240,7 +240,7 @@ END
         if (pref.contains("deviceId"))
             callback.onResult(null, pref.getString("deviceId", null));
         else {
-            ping(new Callback<String>() {
+            ping(API.Default, new Callback<String>() {
                 @Override
                 public void onResult(Error error, String result) {
                     if (error != null)
