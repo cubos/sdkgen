@@ -264,7 +264,10 @@ END
         static {
             dateTimeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
             dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+            createHttpClient();
+        }
 
+        static void createHttpClient() {
             TrustManagerFactory trustManagerFactory;
             try {
                 trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
@@ -543,7 +546,8 @@ END
                 public void run() {
                     sentCount[0] += 1;
                     if (sentCount[0] % 5 == 0) {
-                        connectionPool.evictAll();
+                        http.dispatcher().executorService().shutdown();
+                        createHttpClient();
                     }
                     http.newCall(request).enqueue(new okhttp3.Callback() {
                         @Override
