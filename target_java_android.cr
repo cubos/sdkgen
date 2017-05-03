@@ -98,12 +98,12 @@ END
     @ast.operations.each do |op|
       args = op.args.map {|arg| "final #{native_type arg.type} #{arg.name}" }
       args << "final #{callback_type op.return_type} callback"
-      @io << ident(String.build do |io|
-        io << "static public void #{op.pretty_name}(#{args.join(", ")}) {\n"
-        io << "    #{op.pretty_name}(#{(op.args.map {|arg| arg.name } + ["0", "callback"]).join(", ")});\n"
-        io << "}"
-      end)
-      @io << "\n\n"
+      #@io << ident(String.build do |io|
+      #  io << "static public void #{op.pretty_name}(#{args.join(", ")}) {\n"
+      #  io << "    #{op.pretty_name}(#{(op.args.map {|arg| arg.name } + ["0", "callback"]).join(", ")});\n"
+      #  io << "}"
+      #end)
+      #@io << "\n\n"
       args = args[0..-2] + ["final int flags", args[-1]]
       @io << ident(String.build do |io|
         io << "static public void #{op.pretty_name}(#{args.join(", ")}) {\n"
@@ -229,18 +229,6 @@ END
 
     public abstract static class Callback<T> extends BaseCallback {
         public abstract void onResult(Error error, T result);
-    }
-
-    public abstract static class IntCallback extends BaseCallback {
-        public abstract void onResult(Error error, int result);
-    }
-
-    public abstract static class DoubleCallback extends BaseCallback {
-        public abstract void onResult(Error error, double result);
-    }
-
-    public abstract static class BooleanCallback extends BaseCallback {
-        public abstract void onResult(Error error, boolean result);
     }
 
     public abstract static class VoidCallback extends BaseCallback {
@@ -711,15 +699,7 @@ END
   end
 
   def callback_type(t : AST::Type)
-    case t
-    when AST::IntPrimitiveType;   "IntCallback"
-    when AST::UIntPrimitiveType;  "IntCallback"
-    when AST::FloatPrimitiveType; "DoubleCallback"
-    when AST::BoolPrimitiveType;  "BooleanCallback"
-    when AST::VoidPrimitiveType;  "VoidCallback"
-    else
-      "Callback<#{native_type_not_primitive(t)}>"
-    end
+    t.is_a?(AST::VoidPrimitiveType) ? "VoidCallback" : "Callback<#{native_type_not_primitive(t)}>"
   end
 end
 
