@@ -255,7 +255,7 @@ END
     private static class Internal {
         static String baseUrl = #{@ast.options.url.inspect};
         static OkHttpClient http = null;
-        static ConnectionPool connectionPool = new ConnectionPool();
+        static ConnectionPool connectionPool;
         static SecureRandom random = new SecureRandom();
         static boolean initialized = false;
         static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US);
@@ -268,6 +268,8 @@ END
         }
 
         static void createHttpClient() {
+            connectionPool = new ConnectionPool();
+
             TrustManagerFactory trustManagerFactory;
             try {
                 trustManagerFactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
