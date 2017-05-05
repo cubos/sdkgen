@@ -547,6 +547,21 @@ END
                 @Override
                 public void run() {
                     sentCount[0] += 1;
+                    if (sentCount[0] >= 22) {
+                        return;
+                    }
+                    if (sentCount[0] >= 25) {
+                        if (!shouldReceiveResponse[0]) return;
+                        shouldReceiveResponse[0] = false;
+                        timer.cancel();
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onResult(new Error() {{type = ErrorType.Connection; message = "Sem Internet";}}, null);
+                            }
+                        });
+                        return;
+                    }
                     if (sentCount[0] % 5 == 0) {
                         http.dispatcher().executorService().shutdown();
                         createHttpClient();
@@ -569,18 +584,16 @@ END
                         @Override
                         public void onResponse(Call call, final Response response) throws IOException {
                             if (!shouldReceiveResponse[0]) return;
+                            if (response.code() != 200) {
+                                Log.e("API", "HTTP " + response.code());
+                                return;
+                            }
                             shouldReceiveResponse[0] = false;
                             timer.cancel();
                             final String stringBody = response.body().string();
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
                                 public void run() {
-                                    if (response.code() >= 500) {
-                                        Log.e("API Fatal", stringBody);
-                                        callback.onResult(new Error() {{type = ErrorType.Fatal; message = "HTTP " + response.code();}}, null);
-                                        return;
-                                    }
-
                                     try {
                                         JSONObject body = new JSONObject(stringBody);
 
@@ -608,7 +621,7 @@ END
                 }
             };
 
-            timer.schedule(task, 0, 1000);
+            timer.schedule(task, 0, 1500);
         }
 
         static Calendar toCalendar(Date date){
