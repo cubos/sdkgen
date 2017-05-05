@@ -192,8 +192,8 @@ export function start(port: number) {
               if (call.executionId !== executionId) {
                 call.ok = false;
                 call.error = {
-                  type: "CallExecutionTimeout",
-                  message: "Timeout while waiting for execution somewhere else"
+                  type: "Fatal",
+                  message: "CallExecutionTimeout: Timeout while waiting for execution somewhere else"
                 };
               } else {
                 try {
@@ -213,6 +213,7 @@ export function start(port: number) {
                     };
                   }
                 }
+                call.running = false;
               }
             }
 
@@ -235,7 +236,7 @@ export function start(port: number) {
             res.write(JSON.stringify(response));
             res.end();
 
-            await r.table("api_calls").get(call.id).update(call);
+            r.table("api_calls").get(call.id).update(call).then();
 
             let log = `${moment().format("YYYY-MM-DD HH:mm:ss")} ${call.id} [${call.duration.toFixed(6)}s] ${call.name}() -> `;
             if (call.ok)
