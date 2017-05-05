@@ -570,7 +570,6 @@ END
                         return;
                     }
                     if (sentCount[0] % 5 == 0) {
-                        http.dispatcher().executorService().shutdown();
                         createHttpClient();
                     }
                     http.newCall(request).enqueue(new okhttp3.Callback() {
