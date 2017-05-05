@@ -294,8 +294,13 @@ END
                 throw new RuntimeException(e);
             }
 
+            Dispatcher dispatcher = new Dispatcher();
+            dispatcher.setMaxRequests(200);
+            dispatcher.setMaxRequestsPerHost(200);
+
             http = new OkHttpClient.Builder()
                     .connectionPool(connectionPool)
+                    .dispatcher(dispatcher)
                     .sslSocketFactory(sslSocketFactory, trustManager)
                     .addNetworkInterceptor(new StethoInterceptor())
                     .build();
