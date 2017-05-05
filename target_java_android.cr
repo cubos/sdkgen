@@ -268,7 +268,7 @@ END
         }
 
         static void createHttpClient() {
-            connectionPool = new ConnectionPool(100);
+            connectionPool = new ConnectionPool(100, 5, TimeUnit.MINUTES);
 
             TrustManagerFactory trustManagerFactory;
             try {
