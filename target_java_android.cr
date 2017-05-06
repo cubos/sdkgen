@@ -79,6 +79,7 @@ import okhttp3.Response;
 
 public class API {
     static public boolean useStaging = false;
+    static public Context serviceContext = null;
 
     static public int Default = 0;
     static public int Loading = 1;
@@ -324,8 +325,12 @@ END
                         Class.forName("android.app.ActivityThread");
                 Method method = activityThreadClass.getMethod("currentApplication");
                 Application app = (Application)method.invoke(null, (Object[]) null);
-                if (app == null)
-                    throw new RuntimeException("");
+                if (app == null) {
+                    if (API.serviceContext != null)
+                        return API.serviceContext;
+                    else
+                        throw new RuntimeException("Failed to get Application, use API.serviceContext to provide a Context");
+                }
                 return app;
             } catch (ClassNotFoundException | NoSuchMethodException |
                     IllegalArgumentException | InvocationTargetException | IllegalAccessException e) {
