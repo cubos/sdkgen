@@ -569,7 +569,7 @@ END
                         });
                         return;
                     }
-                    if (sentCount[0] % 5 == 0) {
+                    if (sentCount[0] % 4 == 0) {
                         createHttpClient();
                     }
                     http.newCall(request).enqueue(new okhttp3.Callback() {
@@ -627,7 +627,7 @@ END
                 }
             };
 
-            timer.schedule(task, 0, 1500);
+            timer.schedule(task, 0, 2000);
         }
 
         static Calendar toCalendar(Date date){
