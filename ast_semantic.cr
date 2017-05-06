@@ -114,6 +114,15 @@ module Semantic
     end
   end
 
+  class CheckEmptyEnum < Visitor
+    def visit(t : AST::EnumType)
+      super
+      if t.values.size == 0
+        raise "Enum '#{t.name}' is empty"
+      end
+    end
+  end
+
   class GiveStructAndEnumTypeNames < Visitor
     @path = [] of String
 
@@ -185,11 +194,13 @@ module AST
       op.return_type = AST::VoidPrimitiveType.new
       operations << op
 
+      # TODO: Topological Ordering:
       Semantic::CheckEveryTypeDefined.new(self).visit(self)
       Semantic::CheckNoRecursiveTypes.new(self).visit(self)
       Semantic::CheckDontReturnSecret.new(self).visit(self)
       Semantic::CheckNamingForGettersReturningBool.new(self).visit(self)
       Semantic::GiveStructAndEnumTypeNames.new(self).visit(self)
+      Semantic::CheckEmptyEnum.new(self).visit(self)
       Semantic::CollectStructAndEnumTypes.new(self).visit(self)
     end
   end
