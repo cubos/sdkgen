@@ -135,10 +135,7 @@ export function start(port: number) {
 
             const {id, ...deviceInfo} = context.device;
 
-            if (await r.table("devices").get(context.device.id).eq(null))
-              context.device.id = null;
-
-            if (!context.device.id) {
+            if (!context.device.id || await r.table("devices").get(context.device.id).eq(null)) {
               context.device.id = crypto.randomBytes(20).toString("hex");
 
               r.table("devices").insert({
