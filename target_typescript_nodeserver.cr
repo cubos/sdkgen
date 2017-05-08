@@ -69,10 +69,10 @@ END
 //////////////////////////////////////////////////////
 
 const webhooks: {
-  [signature: string]: (body: string, res: http.ServerResponse, ip: string) => void
+  [signature: string]: (body: string, res: http.ServerResponse, req: http.IncomingMessage) => void
 } = {}
 
-export function addWebHook(method: "GET" | "POST", path: string, func: (body: string, res: http.ServerResponse, ip: string) => void) {
+export function addWebHook(method: "GET" | "POST", path: string, func: (body: string, res: http.ServerResponse, req: http.IncomingMessage) => void) {
   webhooks[method + path] = func;
 }
 
@@ -109,7 +109,7 @@ export function start(port: number) {
       const signature = req.method! + url.parse(req.url || "").pathname;
       if (webhooks[signature]) {
         console.log(`${moment().format("YYYY-MM-DD HH:mm:ss")} ${ip} webhook ${signature} with ${body.length} bytes`);
-        webhooks[signature](body, res, ip);
+        webhooks[signature](body, res, req);
         return;
       }
 
