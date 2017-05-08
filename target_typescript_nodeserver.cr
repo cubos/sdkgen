@@ -69,16 +69,17 @@ END
 //////////////////////////////////////////////////////
 
 const webhooks: {
-  [signature: string]: (body: string, res: http.ServerResponse) => void
+  [signature: string]: (body: string, res: http.ServerResponse, ip: string) => void
 } = {}
 
-export function addWebHook(method: "GET" | "POST", path: string, func: (body: string, res: http.ServerResponse) => void) {
+export function addWebHook(method: "GET" | "POST", path: string, func: (body: string, res: http.ServerResponse, ip: string) => void) {
   webhooks[method + path] = func;
 }
 
 export interface Context {
   device: DBDevice;
   startTime: Date;
+  ip: string;
 }
 
 function sleep(ms: number) {
@@ -87,6 +88,7 @@ function sleep(ms: number) {
 
 export function start(port: number) {
   const server = http.createServer((req, res) => {
+    const ip = (req.headers["x-forwarded-for"] || "").split(",")[0] || req.connection.remoteAddress;
     req.on("error", (err) => {
       console.error(err);
     });
@@ -106,7 +108,7 @@ export function start(port: number) {
     req.on("end", () => {
       const signature = req.method! + url.parse(req.url || "").pathname;
       if (webhooks[signature]) {
-        webhooks[signature](body, res);
+        webhooks[signature](body, res, ip);
         return;
       }
 
@@ -129,7 +131,8 @@ export function start(port: number) {
             const request = JSON.parse(body);
             const context: Context = {
               device: request.device,
-              startTime: new Date
+              startTime: new Date,
+              ip: ip
             };
             const startTime = process.hrtime();
 
