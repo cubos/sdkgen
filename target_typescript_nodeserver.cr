@@ -108,6 +108,7 @@ export function start(port: number) {
     req.on("end", () => {
       const signature = req.method! + url.parse(req.url || "").pathname;
       if (webhooks[signature]) {
+        console.log(`${moment().format("YYYY-MM-DD HH:mm:ss")} ${ip} webhook ${signature} with ${body.length} bytes`);
         webhooks[signature](body, res, ip);
         return;
       }
@@ -241,7 +242,7 @@ export function start(port: number) {
 
             r.table("api_calls").get(call.id).update(call).then();
 
-            let log = `${moment().format("YYYY-MM-DD HH:mm:ss")} ${call.id} [${call.duration.toFixed(6)}s] ${call.name}() -> `;
+            let log = `${moment().format("YYYY-MM-DD HH:mm:ss")} ${ip} ${call.id} [${call.duration.toFixed(6)}s] ${call.name}() -> `;
             if (call.ok)
               log += "OK"
             else
