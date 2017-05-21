@@ -281,6 +281,8 @@ interface RTableSlice<T extends object> extends RStream<T> {
     delete(): RDatum<{}>
     filter(criteria: (obj: RDatum<T>) => boolean | RDatum<boolean>): RTableSlice<T>
     filter(obj: DeepPartial<RDatumfy<T>>): RTableSlice<T>
+    hasFields(fields: Array<keyof T>): RTableSlice<T>
+    hasFields(field: keyof T): RTableSlice<T>
 }
 
 interface RTableRow<T extends object> extends RDatum<T> {
