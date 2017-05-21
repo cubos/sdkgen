@@ -175,6 +175,9 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
     forEach(func: (e: RDatum<any>) => any): RDatum<{}>
 
     fold(base: any, func: (acc: RDatum<any>, row: RDatum<any>) => any, options?: {emit: (state: RDatum<any>, row: RDatum<any>, newState: RDatum<any>) => any}): RDatum<any>
+
+    hasFields(fields: Array<keyof T>): RDatum<T>
+    hasFields(field: keyof T): RDatum<T>
 }
 
 interface RArray<T> extends RDatum<T[]> {
@@ -215,9 +218,6 @@ interface RArray<T> extends RDatum<T[]> {
     group<K extends keyof T>(idx: K): RGroupedStream<T[K], T>
     group(func: (obj: RDatum<T>) => any): RGroupedStream<any, T>
     forEach(func: (e: RDatum<T>) => any): RDatum<{}>
-
-    hasFields(fields: Array<keyof T>): RTableSlice<T>
-    hasFields(field: keyof T): RTableSlice<T>
 }
 
 interface RStream<T> extends PromiseLike<T[]>, RStreamOrDatum<T[]> {
