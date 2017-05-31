@@ -36,7 +36,7 @@ interface R extends RDB {
     dbList(): RArray<string>
     dbCreate(name: string): RDatum<{}>
     expr(obj: any): RDatum<any>
-    point(longitude: number, latitude: number): RPoint;
+    point(longitude: RDatum<number>, latitude: RDatum<number>): RPoint;
     uuid(): RDatum<string>
     range(): RStream<number>
     range(count: number): RStream<number>
