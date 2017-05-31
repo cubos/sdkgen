@@ -103,7 +103,7 @@ END
       args << "final #{callback_type op.return_type} callback"
       @io << ident(String.build do |io|
         io << "static public void #{mangle op.pretty_name}(#{args.join(", ")}) {\n"
-        io << "    #{mangle op.pretty_name}(#{(op.args.map {|arg| mngle arg.name } + ["0", "callback"]).join(", ")});\n"
+        io << "    #{mangle op.pretty_name}(#{(op.args.map {|arg| mangle arg.name } + ["0", "callback"]).join(", ")});\n"
         io << "}"
       end)
       @io << "\n\n"
