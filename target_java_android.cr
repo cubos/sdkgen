@@ -341,17 +341,17 @@ END
         static Activity getCurrentActivity() {
             try {
                 Class<?> activityThreadClass = Class.forName("android.app.ActivityThread");
-                Object activityThread = activityThreadClass.getMethod("currentActivityThread").invoke(null, (Object[]) null);
+                java.lang.Object activityThread = activityThreadClass.getMethod("currentActivityThread").invoke(null);
                 Field activitiesField = activityThreadClass.getDeclaredField("mActivities");
                 activitiesField.setAccessible(true);
 
                 @SuppressWarnings("unchecked")
-                Map<Object, Object> activities = (Map<Object, Object>) activitiesField.get(activityThread);
+                Map<java.lang.Object, java.lang.Object> activities = (Map<java.lang.Object, java.lang.Object>) activitiesField.get(activityThread);
 
                 if (activities == null)
                     return null;
 
-                for (Object activityRecord : activities.values()) {
+                for (java.lang.Object activityRecord : activities.values()) {
                     Class activityRecordClass = activityRecord.getClass();
                     Field pausedField = activityRecordClass.getDeclaredField("paused");
                     pausedField.setAccessible(true);
