@@ -175,6 +175,9 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
     forEach(func: (e: RDatum<any>) => any): RDatum<{}>
 
     fold(base: any, func: (acc: RDatum<any>, row: RDatum<any>) => any, options?: {emit: (state: RDatum<any>, row: RDatum<any>, newState: RDatum<any>) => any}): RDatum<any>
+
+    hasFields(fields: Array<keyof T>): RDatum<T>
+    hasFields(field: keyof T): RDatum<T>
 }
 
 interface RArray<T> extends RDatum<T[]> {
@@ -281,6 +284,8 @@ interface RTableSlice<T extends object> extends RStream<T> {
     delete(): RDatum<{}>
     filter(criteria: (obj: RDatum<T>) => boolean | RDatum<boolean>): RTableSlice<T>
     filter(obj: DeepPartial<RDatumfy<T>>): RTableSlice<T>
+    hasFields(fields: Array<keyof T>): RTableSlice<T>
+    hasFields(field: keyof T): RTableSlice<T>
 }
 
 interface RTableRow<T extends object> extends RDatum<T> {
