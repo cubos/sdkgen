@@ -103,12 +103,13 @@ function getIP() {
 }
 
 async function makeRequest({name, args}: {name: string, args: any}) {
+  const device = await device();
   return new Promise<any>((resolve, reject) => {
     const req = new XMLHttpRequest();
     req.open("POST", "https://" + baseUrl + "/" + name);
     const body = {
       id: randomBytesHex(8),
-      device: await device(),
+      device,
       name: name,
       args: args
     };
