@@ -6,6 +6,7 @@ class SwiftIosTarget < SwiftTarget
 import Alamofire
 
 class API {
+    static var useStaging = false
 
 END
 
@@ -192,11 +193,11 @@ class APIInternal {
             "id": randomBytesHex(len: 8),
             "device": device(),
             "name": name,
-            "args": args
-            ] as [String : Any]
+            "args": args,
+            "staging": API.useStaging
+        ] as [String : Any]
 
-         api.request("https://\\(baseUrl)/\\(name)", method: .post, parameters: body, encoding: JSONEncoding.default).responseJSON { response in
-
+        api.request("https://\\(baseUrl)\\(API.useStaging ? "-staging" : "")/\\(name)", method: .post, parameters: body, encoding: JSONEncoding.default).responseJSON { response in
             guard let responseValue = response.result.value else {
                 let error = Error(API.ErrorType.Connection, "no result value")
                 callback(Result.failure(error))
