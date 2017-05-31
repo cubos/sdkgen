@@ -78,7 +78,7 @@ function randomBytesHex(len: number) {
   return hex;
 }
 
-const ipRequest: Promise<string>;
+let ipRequest: Promise<string>;
 function getIP() {
     if (!ipRequest) {
         ipRequest = new Promise<string>((resolve, reject) => {
