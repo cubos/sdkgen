@@ -99,17 +99,17 @@ END
     end
 
     @ast.operations.each do |op|
-      args = op.args.map {|arg| "final #{native_type arg.type} #{arg.name}" }
+      args = op.args.map {|arg| "final #{native_type arg.type} #{mangle arg.name}" }
       args << "final #{callback_type op.return_type} callback"
       @io << ident(String.build do |io|
-        io << "static public void #{op.pretty_name}(#{args.join(", ")}) {\n"
-        io << "    #{op.pretty_name}(#{(op.args.map {|arg| arg.name } + ["0", "callback"]).join(", ")});\n"
+        io << "static public void #{mangle op.pretty_name}(#{args.join(", ")}) {\n"
+        io << "    #{mangle op.pretty_name}(#{(op.args.map {|arg| mangle arg.name } + ["0", "callback"]).join(", ")});\n"
         io << "}"
       end)
       @io << "\n\n"
       args = args[0..-2] + ["final int flags", args[-1]]
       @io << ident(String.build do |io|
-        io << "static public void #{op.pretty_name}(#{args.join(", ")}) {\n"
+        io << "static public void #{mangle op.pretty_name}(#{args.join(", ")}) {\n"
         io << ident(String.build do |io|
           if op.args.size == 0
             io << "final JSONObject args = new JSONObject();"
@@ -171,7 +171,7 @@ if ((flags & API.Loading) != 0) {
     reqCallback = Internal.withLoading(reqCallback);
 }
 if ((flags & API.Cache) != 0) {
-    String signature = "#{op.pretty_name}:" + Internal.hash(args.toString());
+    String signature = "#{mangle op.pretty_name}:" + Internal.hash(args.toString());
     final Internal.RequestCallback reqCallbackPure = reqCallback;
     final Internal.RequestCallback reqCallbackSaveCache = Internal.withSavingOnCache(signature, reqCallback);
     Reservoir.getAsync(signature, String.class, new ReservoirGetCallback<String>() {
@@ -184,7 +184,7 @@ if ((flags & API.Cache) != 0) {
                 callback.repeatWithoutCacheRunnable = new Runnable() {
                     @Override
                     public void run() {
-                        Internal.makeRequest(#{op.pretty_name.inspect}, args, new Internal.RequestCallback() {
+                        Internal.makeRequest(#{mangle(op.pretty_name).inspect}, args, new Internal.RequestCallback() {
                             @Override
                             public void onResult(Error error, JSONObject result) {
                                 callback.cacheAge = 0;
@@ -195,17 +195,17 @@ if ((flags & API.Cache) != 0) {
                 };
                 reqCallbackPure.onResult(null, data);
             } catch (JSONException e) {
-                Internal.makeRequest(#{op.pretty_name.inspect}, args, reqCallbackSaveCache);
+                Internal.makeRequest(#{mangle(op.pretty_name).inspect}, args, reqCallbackSaveCache);
             }
         }
 
         @Override
         public void onFailure(Exception e) {
-            Internal.makeRequest(#{op.pretty_name.inspect}, args, reqCallbackSaveCache);
+            Internal.makeRequest(#{mangle(op.pretty_name).inspect}, args, reqCallbackSaveCache);
         }
     });
 } else {
-    Internal.makeRequest(#{op.pretty_name.inspect}, args, reqCallback);
+    Internal.makeRequest(#{mangle(op.pretty_name).inspect}, args, reqCallback);
 }
 
 END
@@ -341,17 +341,17 @@ END
         static Activity getCurrentActivity() {
             try {
                 Class<?> activityThreadClass = Class.forName("android.app.ActivityThread");
-                Object activityThread = activityThreadClass.getMethod("currentActivityThread").invoke(null);
+                java.lang.Object activityThread = activityThreadClass.getMethod("currentActivityThread").invoke(null);
                 Field activitiesField = activityThreadClass.getDeclaredField("mActivities");
                 activitiesField.setAccessible(true);
 
                 @SuppressWarnings("unchecked")
-                Map<Object, Object> activities = (Map<Object, Object>) activitiesField.get(activityThread);
+                Map<java.lang.Object, java.lang.Object> activities = (Map<java.lang.Object, java.lang.Object>) activitiesField.get(activityThread);
 
                 if (activities == null)
                     return null;
 
-                for (Object activityRecord : activities.values()) {
+                for (java.lang.Object activityRecord : activities.values()) {
                     Class activityRecordClass = activityRecord.getClass();
                     Field pausedField = activityRecordClass.getDeclaredField("paused");
                     pausedField.setAccessible(true);
@@ -542,6 +542,7 @@ END
                 body.put("device", device());
                 body.put("name", name);
                 body.put("args", args);
+                body.put("staging", API.useStaging);
             } catch (final JSONException e) {
                 e.printStackTrace();
                 callback.onResult(new Error() {{type = ErrorType.Fatal; message = e.getMessage();}}, null);
