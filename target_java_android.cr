@@ -542,6 +542,7 @@ END
                 body.put("device", device());
                 body.put("name", name);
                 body.put("args", args);
+                body.put("staging", API.useStaging);
             } catch (final JSONException e) {
                 e.printStackTrace();
                 callback.onResult(new Error() {{type = ErrorType.Fatal; message = e.getMessage();}}, null);

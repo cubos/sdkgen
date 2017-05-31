@@ -79,6 +79,7 @@ export function addWebHook(method: "GET" | "POST", path: string, func: (body: st
 export interface Context {
   device: DBDevice;
   startTime: Date;
+  staging: boolean;
 }
 
 function sleep(ms: number) {
@@ -130,7 +131,8 @@ export function start(port: number) {
             const request = JSON.parse(body);
             const context: Context = {
               device: request.device,
-              startTime: new Date
+              startTime: new Date,
+              staging: request.staging || false
             };
             const startTime = process.hrtime();
 
