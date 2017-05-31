@@ -78,38 +78,43 @@ function randomBytesHex(len: number) {
   return hex;
 }
 
+const ipRequest: Promise<string>;
 function getIP() {
-    return new Promise<string>((resolve, reject) => {
-        const req = new XMLHttpRequest();
-        req.open("GET", "https://api.ipify.org/?format=json");
-        req.onreadystatechange = () => {
-            if (req.readyState !== 4) return;
-            try {
-                const response = JSON.parse(req.responseText);
-                localStorage.setItem("ip", response.ip);
+    if (!ipRequest) {
+        ipRequest = new Promise<string>((resolve, reject) => {
+            const req = new XMLHttpRequest();
+            req.open("GET", "https://api.ipify.org/?format=json");
+            req.onreadystatechange = () => {
+                if (req.readyState !== 4) return;
+                try {
+                    const response = JSON.parse(req.responseText);
+                    localStorage.setItem("ip", response.ip);
 
-                if (response.ip) {
-                    resolve(response.ip);
-                } else {
+                    if (response.ip) {
+                        resolve(response.ip);
+                    } else {
+                        reject();
+                    }
+                } catch (err) {
+                    console.log(err);
                     reject();
                 }
-            } catch (err) {
-                console.log(err);
-                reject();
-            }
-        };
-        req.send();
-    });
+            };
+            req.send();
+        });
+    }
+
+    return ipRequest;
 }
 
 async function makeRequest({name, args}: {name: string, args: any}) {
-  const device = await device();
+  const deviceData = await device();
   return new Promise<any>((resolve, reject) => {
     const req = new XMLHttpRequest();
     req.open("POST", "https://" + baseUrl + "/" + name);
     const body = {
       id: randomBytesHex(8),
-      device,
+      device: deviceData,
       name: name,
       args: args
     };
