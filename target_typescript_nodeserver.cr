@@ -78,7 +78,6 @@ export function addWebHook(method: "GET" | "POST", path: string, func: (body: st
 
 export interface Context {
   device: DBDevice;
-  ip: string;
   startTime: Date;
   staging: boolean;
 }
