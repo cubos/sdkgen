@@ -341,7 +341,7 @@ END
         static Activity getCurrentActivity() {
             try {
                 Class<?> activityThreadClass = Class.forName("android.app.ActivityThread");
-                Object activityThread = activityThreadClass.getMethod("currentActivityThread").invoke(null);
+                Object activityThread = activityThreadClass.getMethod("currentActivityThread").invoke(null, (Object[]) null);
                 Field activitiesField = activityThreadClass.getDeclaredField("mActivities");
                 activitiesField.setAccessible(true);
 
