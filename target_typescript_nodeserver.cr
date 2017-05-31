@@ -79,7 +79,6 @@ export function addWebHook(method: "GET" | "POST", path: string, func: (body: st
 export interface Context {
   device: DBDevice;
   startTime: Date;
-  ip: string;
 }
 
 function sleep(ms: number) {
@@ -88,7 +87,6 @@ function sleep(ms: number) {
 
 export function start(port: number) {
   const server = http.createServer((req, res) => {
-    const ip = (req.headers["x-forwarded-for"] || "").split(",")[0] || req.connection.remoteAddress;
     req.on("error", (err) => {
       console.error(err);
     });
@@ -108,7 +106,7 @@ export function start(port: number) {
     req.on("end", () => {
       const signature = req.method! + url.parse(req.url || "").pathname;
       if (webhooks[signature]) {
-        console.log(`${moment().format("YYYY-MM-DD HH:mm:ss")} ${ip} webhook ${signature} with ${body.length} bytes`);
+        console.log(`${moment().format("YYYY-MM-DD HH:mm:ss")} webhook ${signature} with ${body.length} bytes`);
         webhooks[signature](body, res, req);
         return;
       }
@@ -132,8 +130,7 @@ export function start(port: number) {
             const request = JSON.parse(body);
             const context: Context = {
               device: request.device,
-              startTime: new Date,
-              ip: ip
+              startTime: new Date
             };
             const startTime = process.hrtime();
 
@@ -242,7 +239,7 @@ export function start(port: number) {
 
             r.table("api_calls").get(call.id).update(call).then();
 
-            let log = `${moment().format("YYYY-MM-DD HH:mm:ss")} ${ip} ${call.id} [${call.duration.toFixed(6)}s] ${call.name}() -> `;
+            let log = `${moment().format("YYYY-MM-DD HH:mm:ss")} ${call.id} [${call.duration.toFixed(6)}s] ${call.name}() -> `;
             if (call.ok)
               log += "OK"
             else
