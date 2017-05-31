@@ -1,6 +1,7 @@
 
 interface DBDevice {
     id: string;
+    ip: string;
     type: "android" | "ios" | "web";
     platform: any;
     screen: {width: number, height: number};
