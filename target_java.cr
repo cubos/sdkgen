@@ -11,7 +11,7 @@ abstract class JavaTarget < Target
       instanceof extends implements interface abstract static public private protected
       final import package throw throws catch finally try new null else return continue
       break goto switch default case
-    ]
+    ].includes? ident
       "_" + ident
     else
       ident
