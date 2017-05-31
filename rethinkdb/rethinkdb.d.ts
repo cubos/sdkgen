@@ -353,5 +353,5 @@ interface RTable<T extends object> extends RTableSlice<T> {
     getAll(id1: any, id2: any, id3: any, id4: any, opts?: {index: string}): RTableSlice<T>
     between(lower: any, upper: any, opts?: {index: string, leftBound?: "closed" | "opened", rightBound?: "closed" | "opened"}): RTableSlice<T>
 
-    getNearest(id: RPoint, opts: { index: string, maxResults: number, unit: "m" | "km" | "mi" | "nm" | "ft", maxDist: number, geoSystem: "WGS84" | "unit_sphere" }): RTableSlice<T>;
+    getNearest(id: RPoint, opts: { index: string, maxResults?: number, unit?: "m" | "km" | "mi" | "nm" | "ft", maxDist?: number, geoSystem?: "WGS84" | "unit_sphere" }): RTableSlice<T>;
 }
