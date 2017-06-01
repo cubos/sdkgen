@@ -185,6 +185,8 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
 
     hasFields(fields: Array<keyof T>): RDatum<T>
     hasFields(field: keyof T): RDatum<T>
+
+    date(): RDatum<Date>;
 }
 
 interface RArray<T> extends RDatum<T[]> {
@@ -204,6 +206,7 @@ interface RArray<T> extends RDatum<T[]> {
     reduce(func: (a: RDatum<T>, b: RDatum<T>) => any): RDatum<T>
     distinct(): RArray<T>
     sample(count: number | RDatum<number>): RArray<T>
+    isEmpty(): RDatum<number>;
 
     setInsert(other: any): RArray<T>
     setUnion(other: any): RArray<T>
