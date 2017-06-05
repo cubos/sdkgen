@@ -7,7 +7,7 @@ import * as moment from "moment";
 import {UAParser} from "ua-parser-js";
 
 const baseUrl = #{@ast.options.url.inspect};
-const useStaging = false;
+let useStaging = false;
 
 export function setStaging(use: boolean) {
   useStaging = !!use;
