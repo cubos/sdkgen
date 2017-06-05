@@ -7,7 +7,11 @@ import * as moment from "moment";
 import {UAParser} from "ua-parser-js";
 
 const baseUrl = #{@ast.options.url.inspect};
+const useStaging = false;
 
+export function setStaging(use: boolean) {
+  useStaging = !!use;
+}
 
 END
 
@@ -79,7 +83,7 @@ function randomBytesHex(len: number) {
 async function makeRequest({name, args}: {name: string, args: any}) {
   return new Promise<any>((resolve, reject) => {
     const req = new XMLHttpRequest();
-    req.open("POST", "https://" + baseUrl + "/" + name);
+    req.open("POST", "https://" + baseUrl + (useStaging ? "-staging" : "") + "/" + name);
     const body = {
       id: randomBytesHex(8),
       device: device(),
