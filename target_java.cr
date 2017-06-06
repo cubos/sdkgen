@@ -11,6 +11,7 @@ abstract class JavaTarget < Target
       instanceof extends implements interface abstract static public private protected
       final import package throw throws catch finally try new null else return continue
       break goto switch default case
+      Object Class
     ].includes? ident
       "_" + ident
     else
@@ -72,13 +73,13 @@ abstract class JavaTarget < Target
 
   def generate_struct_type(t)
     String.build do |io|
-      io << "public static class #{mangle t.name} implements Parcelable, Comparable<#{t.name}> {\n"
+      io << "public static class #{mangle t.name} implements Parcelable, Comparable<#{mangle t.name}> {\n"
       t.fields.each do |field|
         io << ident "public #{native_type field.type} #{mangle field.name};\n"
       end
       io << ident <<-END
 
-public int	compareTo(#{t.name} other) {
+public int compareTo(#{mangle t.name} other) {
     return toJSON().toString().compareTo(other.toJSON().toString());
 }
 
@@ -98,14 +99,14 @@ END
     }
 }
 
-public static #{t.name} fromJSON(final JSONObject json) {
-    return new #{t.name}(json);
+public static #{mangle t.name} fromJSON(final JSONObject json) {
+    return new #{mangle t.name}(json);
 }
 
-public #{t.name}() {
+public #{mangle t.name}() {
 }
 
-protected #{t.name}(final JSONObject json) {
+protected #{mangle t.name}(final JSONObject json) {
     try {
 
 END
@@ -119,7 +120,7 @@ END
     }
 }
 
-protected #{t.name}(Parcel in) {
+protected #{mangle t.name}(Parcel in) {
     try {
         final JSONObject json = new JSONObject(in.readString());
 
