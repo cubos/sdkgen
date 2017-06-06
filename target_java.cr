@@ -64,7 +64,7 @@ abstract class JavaTarget < Target
   end
 
   def native_type(t : AST::StructType | AST::EnumType)
-    t.name
+    mangle t.name
   end
 
   def native_type(ref : AST::TypeReference)
