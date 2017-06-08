@@ -5,6 +5,20 @@ abstract class JavaTarget < Target
     super super code
   end
 
+  def mangle(ident)
+    if %w[
+      boolean class if int byte do for while void float double long char synchronized
+      instanceof extends implements interface abstract static public private protected
+      final import package throw throws catch finally try new null else return continue
+      break goto switch default case
+      Object Class
+    ].includes? ident
+      "_" + ident
+    else
+      ident
+    end
+  end
+
   def native_type_not_primitive(t : AST::PrimitiveType)
     case t
     when AST::StringPrimitiveType;   "String"
@@ -50,7 +64,7 @@ abstract class JavaTarget < Target
   end
 
   def native_type(t : AST::StructType | AST::EnumType)
-    t.name
+    mangle t.name
   end
 
   def native_type(ref : AST::TypeReference)
@@ -59,13 +73,13 @@ abstract class JavaTarget < Target
 
   def generate_struct_type(t)
     String.build do |io|
-      io << "public static class #{t.name} implements Parcelable, Comparable<#{t.name}> {\n"
+      io << "public static class #{mangle t.name} implements Parcelable, Comparable<#{mangle t.name}> {\n"
       t.fields.each do |field|
-        io << ident "public #{native_type field.type} #{field.name};\n"
+        io << ident "public #{native_type field.type} #{mangle field.name};\n"
       end
       io << ident <<-END
 
-public int	compareTo(#{t.name} other) {
+public int compareTo(#{mangle t.name} other) {
     return toJSON().toString().compareTo(other.toJSON().toString());
 }
 
@@ -85,14 +99,14 @@ END
     }
 }
 
-public static #{t.name} fromJSON(final JSONObject json) {
-    return new #{t.name}(json);
+public static #{mangle t.name} fromJSON(final JSONObject json) {
+    return new #{mangle t.name}(json);
 }
 
-public #{t.name}() {
+public #{mangle t.name}() {
 }
 
-protected #{t.name}(final JSONObject json) {
+protected #{mangle t.name}(final JSONObject json) {
     try {
 
 END
@@ -106,7 +120,7 @@ END
     }
 }
 
-protected #{t.name}(Parcel in) {
+protected #{mangle t.name}(Parcel in) {
     try {
         final JSONObject json = new JSONObject(in.readString());
 
@@ -130,15 +144,15 @@ public int describeContents() {
     return 0;
 }
 
-public static final Parcelable.Creator<#{t.name}> CREATOR = new Parcelable.Creator<#{t.name}>() {
+public static final Parcelable.Creator<#{mangle t.name}> CREATOR = new Parcelable.Creator<#{mangle t.name}>() {
     @Override
-    public #{t.name} createFromParcel(Parcel in) {
-        return new #{t.name}(in);
+    public #{mangle t.name} createFromParcel(Parcel in) {
+        return new #{mangle t.name}(in);
     }
 
     @Override
-    public #{t.name}[] newArray(int size) {
-        return new #{t.name}[size];
+    public #{mangle t.name}[] newArray(int size) {
+        return new #{mangle t.name}[size];
     }
 };
 
@@ -149,9 +163,9 @@ END
 
   def generate_enum_type(t)
     String.build do |io|
-      io << "public enum #{t.name} {\n"
+      io << "public enum #{mangle t.name} {\n"
       t.values.each do |value|
-        io << ident "#{value},\n"
+        io << ident "#{mangle value},\n"
       end
       io << "}"
     end
@@ -180,9 +194,9 @@ END
     when AST::ArrayType
       "new #{native_type t}() {{ JSONArray ary = #{obj}.getJSONArray(#{name}); for (int i = 0; i < ary.length(); ++i) add(#{type_from_json(t.base, "ary", "i")}); }}"
     when AST::StructType
-      "#{t.name}.fromJSON(#{obj}.getJSONObject(#{name}))"
+      "#{mangle t.name}.fromJSON(#{obj}.getJSONObject(#{name}))"
     when AST::EnumType
-      "#{t.values.map {|v| "#{obj}.getString(#{name}).equals(#{v.inspect}) ? #{t.name}.#{v} : " }.join}null"
+      "#{t.values.map {|v| "#{obj}.getString(#{name}).equals(#{v.inspect}) ? #{mangle t.name}.#{mangle v} : " }.join}null"
     when AST::TypeReference
       type_from_json(t.type, obj, name)
     else
@@ -209,7 +223,7 @@ END
     when AST::StructType
       "#{src}.toJSON()"
     when AST::EnumType
-      "#{t.values.map {|v| "#{src} == #{t.name}.#{v} ? #{v.inspect} : " }.join}\"\""
+      "#{t.values.map {|v| "#{src} == #{mangle t.name}.#{mangle v} ? #{v.inspect} : " }.join}\"\""
     when AST::TypeReference
       type_to_json(t.type, src)
     else

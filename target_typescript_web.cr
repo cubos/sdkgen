@@ -7,7 +7,11 @@ import * as moment from "moment";
 import {UAParser} from "ua-parser-js";
 
 const baseUrl = #{@ast.options.url.inspect};
+let useStaging = false;
 
+export function setStaging(use: boolean) {
+  useStaging = !!use;
+}
 
 END
 
@@ -43,12 +47,14 @@ END
     @io << <<-END
 //////////////////////////////////////////////////////
 
-function device() {
+async function device() {
+  const ip = localStorage.getItem("ip") || await getIP();
   const parser = new UAParser();
   parser.setUA(navigator.userAgent);
   const agent = parser.getResult();
   const me = document.currentScript as HTMLScriptElement;
   const device: any = {
+    ip,
     type: "web",
     platform: {
        browser: agent.browser.name,
@@ -76,13 +82,43 @@ function randomBytesHex(len: number) {
   return hex;
 }
 
+let ipRequest: Promise<string>;
+function getIP() {
+    if (!ipRequest) {
+        ipRequest = new Promise<string>((resolve, reject) => {
+            const req = new XMLHttpRequest();
+            req.open("GET", "https://api.ipify.org/?format=json");
+            req.onreadystatechange = () => {
+                if (req.readyState !== 4) return;
+                try {
+                    const response = JSON.parse(req.responseText);
+                    localStorage.setItem("ip", response.ip);
+
+                    if (response.ip) {
+                        resolve(response.ip);
+                    } else {
+                        reject();
+                    }
+                } catch (err) {
+                    console.log(err);
+                    reject();
+                }
+            };
+            req.send();
+        });
+    }
+
+    return ipRequest;
+}
+
 async function makeRequest({name, args}: {name: string, args: any}) {
+  const deviceData = await device();
   return new Promise<any>((resolve, reject) => {
     const req = new XMLHttpRequest();
-    req.open("POST", "https://" + baseUrl + "/" + name);
+    req.open("POST", "https://" + baseUrl + (useStaging ? "-staging" : "") + "/" + name);
     const body = {
       id: randomBytesHex(8),
-      device: device(),
+      device: deviceData,
       name: name,
       args: args
     };
