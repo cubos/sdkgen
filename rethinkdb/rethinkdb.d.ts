@@ -1,6 +1,7 @@
 
 interface DBDevice {
     id: string;
+    ip: string;
     type: "android" | "ios" | "web";
     platform: any;
     screen: {width: number, height: number};
@@ -26,11 +27,17 @@ interface DBApiCall {
 
 interface R_Sorting<T> { __dummy: string }
 
+interface RPoint {
+    coordinates: [number, number];
+    type: "Point";
+}
+
 interface R extends RDB {
     db(name: string): RDB
     dbList(): RArray<string>
     dbCreate(name: string): RDatum<{}>
     expr(obj: any): RDatum<any>
+    point(longitude: number | RDatum<number>, latitude: number | RDatum<number>): RPoint;
     uuid(): RDatum<string>
     range(): RStream<number>
     range(count: number): RStream<number>
@@ -181,6 +188,11 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
     forEach(func: (e: RDatum<any>) => any): RDatum<{}>
 
     fold(base: any, func: (acc: RDatum<any>, row: RDatum<any>) => any, options?: {emit: (state: RDatum<any>, row: RDatum<any>, newState: RDatum<any>) => any}): RDatum<any>
+
+    hasFields(fields: Array<keyof T>): RDatum<T>
+    hasFields(field: keyof T): RDatum<T>
+
+    date(): RDatum<Date>;
 }
 
 interface RArray<T> extends RDatum<T[]> {
@@ -200,6 +212,7 @@ interface RArray<T> extends RDatum<T[]> {
     reduce(func: (a: RDatum<T>, b: RDatum<T>) => any): RDatum<T>
     distinct(): RArray<T>
     sample(count: number | RDatum<number>): RArray<T>
+    isEmpty(): RDatum<number>;
 
     setInsert(other: any): RArray<T>
     setUnion(other: any): RArray<T>
@@ -287,6 +300,8 @@ interface RTableSlice<T extends object> extends RStream<T> {
     delete(): RDatum<{}>
     filter(criteria: (obj: RDatum<T>) => boolean | RDatum<boolean>): RTableSlice<T>
     filter(obj: DeepPartial<RDatumfy<T>>): RTableSlice<T>
+    hasFields(fields: Array<keyof T>): RTableSlice<T>
+    hasFields(field: keyof T): RTableSlice<T>
 }
 
 interface RTableRow<T extends object> extends RDatum<T> {
@@ -347,4 +362,6 @@ interface RTable<T extends object> extends RTableSlice<T> {
     getAll(id1: any, id2: any, id3: any, opts?: {index: string}): RTableSlice<T>
     getAll(id1: any, id2: any, id3: any, id4: any, opts?: {index: string}): RTableSlice<T>
     between(lower: any, upper: any, opts?: {index: string, leftBound?: "closed" | "opened", rightBound?: "closed" | "opened"}): RTableSlice<T>
+
+    getNearest(id: RPoint, opts: { index: string, maxResults?: number, unit?: "m" | "km" | "mi" | "nm" | "ft", maxDist?: number, geoSystem?: "WGS84" | "unit_sphere" }): RTableSlice<T>;
 }
