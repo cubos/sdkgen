@@ -49,6 +49,12 @@ interface R extends RDB {
     not(obj: any): RDatum<boolean>
     and(...objs: any[]): RDatum<boolean>
     or(...objs: any[]): RDatum<boolean>
+    eq(...objs: any[]): RDatum<boolean>
+    ne(...objs: any[]): RDatum<boolean>
+    gt(...objs: any[]): RDatum<boolean>
+    lt(...objs: any[]): RDatum<boolean>
+    ge(...objs: any[]): RDatum<boolean>
+    le(...objs: any[]): RDatum<boolean>
     now(): RDatum<Date>
     asc<T>(name: T): R_Sorting<T>
     desc<T>(name: T): R_Sorting<T>
