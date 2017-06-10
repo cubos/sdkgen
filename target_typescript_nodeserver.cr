@@ -176,17 +176,17 @@ export function start(port: number) {
                 const res = await r.table("api_calls").insert(call);
                 return res.inserted > 0 ? true : await tryLock();
               }
-              if (!priorCall.running) {
-                call = priorCall;
+              call = priorCall;
+              if (!call.running) {
                 return true;
               }
-              if (priorCall.executionId === executionId) {
+              if (call.executionId === executionId) {
                 return true;
               }
               return false;
             }
 
-            for (let i = 0; i < 30; ++i) {
+            for (let i = 0; i < 600; ++i) {
               if (await tryLock()) break;
               await sleep(100);
             }
@@ -196,7 +196,7 @@ export function start(port: number) {
                 call.ok = false;
                 call.error = {
                   type: "Fatal",
-                  message: "CallExecutionTimeout: Timeout while waiting for execution somewhere else"
+                  message: "CallExecutionTimeout: Timeout while waiting for execution somewhere else (is the original container that received this request dead?)"
                 };
               } else {
                 try {
