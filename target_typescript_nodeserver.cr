@@ -217,11 +217,10 @@ export function start(port: number) {
                   }
                 }
                 call.running = false;
+                const deltaTime = process.hrtime(startTime);
+                call.duration = deltaTime[0] + deltaTime[1] * 1e-9;
               }
             }
-
-            const deltaTime = process.hrtime(startTime);
-            call.duration = deltaTime[0] + deltaTime[1] * 1e-9;
 
             const response = {
               id: call.id,
