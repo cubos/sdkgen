@@ -50,12 +50,25 @@ interface R extends RDB {
     branch(c1: any, v1: any, c2: any, v2: any, otherwise: any): RDatum<any>
     branch(c1: any, v1: any, c2: any, v2: any, c3: any, v3: any, otherwise: any): RDatum<any>
     branch(c1: any, v1: any, c2: any, v2: any, c3: any, v3: any, c4: any, v4: any, otherwise: any): RDatum<any>
-    branch(c1: any, v1: any, c2: any, v2: any, c3: any, v3: any, c4: any, v4: any, c5: any, v5: any, otherwise: any): RDatum<any>
+    branch(c1: any, v1: any, c2: any, v2: any, c3: any, v3: any, c4: any, v4: any, k5: any, v5: any, otherwise: any): RDatum<any>
     branch(c1: any, v1: any, c2: any, v2: any, c3: any, v3: any, c4: any, v4: any, c5: any, v5: any, c6: any, v6: any, otherwise: any): RDatum<any>
     branch(c1: any, v1: any, c2: any, v2: any, c3: any, v3: any, c4: any, v4: any, c5: any, v5: any, c6: any, v6: any, c7: any, v7: any, otherwise: any): RDatum<any>
     not(obj: any): RDatum<boolean>
+    object(k1: any, v1: any): RDatum<any>
+    object(k1: any, v1: any, k2: any, v2: any): RDatum<any>
+    object(k1: any, v1: any, k2: any, v2: any, k3: any, v3: any): RDatum<any>
+    object(k1: any, v1: any, k2: any, v2: any, k3: any, v3: any, k4: any, v4: any): RDatum<any>
+    object(k1: any, v1: any, k2: any, v2: any, k3: any, v3: any, k4: any, v4: any, k5: any, v5: any): RDatum<any>
+    object(k1: any, v1: any, k2: any, v2: any, k3: any, v3: any, k4: any, v4: any, k5: any, v5: any, k6: any, v6: any): RDatum<any>
+    object(k1: any, v1: any, k2: any, v2: any, k3: any, v3: any, k4: any, v4: any, k5: any, v5: any, k6: any, v6: any, k7: any, v7: any): RDatum<any>
     and(...objs: any[]): RDatum<boolean>
     or(...objs: any[]): RDatum<boolean>
+    eq(...objs: any[]): RDatum<boolean>
+    ne(...objs: any[]): RDatum<boolean>
+    gt(...objs: any[]): RDatum<boolean>
+    lt(...objs: any[]): RDatum<boolean>
+    ge(...objs: any[]): RDatum<boolean>
+    le(...objs: any[]): RDatum<boolean>
     now(): RDatum<Date>
     asc<T>(name: T): R_Sorting<T>
     desc<T>(name: T): R_Sorting<T>
@@ -261,6 +274,7 @@ interface RStream<T> extends PromiseLike<T[]>, RStreamOrDatum<T[]> {
     group<K extends keyof T>(idx: K): RGroupedStream<T[K], T>
     group(func: (obj: RDatum<T>) => any): RGroupedStream<any, T>
     forEach(func: (e: RDatum<T>) => any): RDatum<{}>
+    fold(base: any, func: (acc: RDatum<any>, row: RDatum<any>) => any, options?: {emit: (state: RDatum<any>, row: RDatum<any>, newState: RDatum<any>) => any}): RDatum<any>
 }
 
 interface RGroupedStream<G, T> extends RArray<T> {
