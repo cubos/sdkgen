@@ -240,13 +240,11 @@ export function start(port: number) {
             res.write(JSON.stringify(response));
             res.end();
 
-            let log = `${moment().format("YYYY-MM-DD HH:mm:ss")} ${call.id} [${call.duration.toFixed(6)}s] ${call.name}() -> `;
-            if (call.ok)
-              log += "OK"
-            else
-              log += call.error ? call.error.type : "???"
-
-            console.log(log)
+            console.log(
+              `${moment().format("YYYY-MM-DD HH:mm:ss")} ` +
+              `${call.id} [${call.duration.toFixed(6)}s] ` +
+              `${call.name}() -> ${call.ok ? "OK" : call.error ? call.error.type : "???"}`
+            );
           })().catch(err => {
             console.error(err);
             res.writeHead(500);
