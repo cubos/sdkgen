@@ -220,6 +220,8 @@ export function start(port: number) {
                 const deltaTime = process.hrtime(startTime);
                 call.duration = deltaTime[0] + deltaTime[1] * 1e-9;
               }
+
+              r.table("api_calls").get(call.id).update(call).run();
             }
 
             const response = {
@@ -237,8 +239,6 @@ export function start(port: number) {
             res.writeHead(200);
             res.write(JSON.stringify(response));
             res.end();
-
-            r.table("api_calls").get(call.id).update(call).run();
 
             let log = `${moment().format("YYYY-MM-DD HH:mm:ss")} ${call.id} [${call.duration.toFixed(6)}s] ${call.name}() -> `;
             if (call.ok)
