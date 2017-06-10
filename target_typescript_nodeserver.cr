@@ -141,13 +141,13 @@ export function start(port: number) {
             if (!context.device.id || await r.table("devices").get(context.device.id).eq(null)) {
               context.device.id = crypto.randomBytes(20).toString("hex");
 
-              r.table("devices").insert({
+              await r.table("devices").insert({
                 id: context.device.id,
                 date: r.now(),
                 ...deviceInfo
-              }).then();
+              });
             } else {
-              r.table("devices").get(context.device.id).update(deviceInfo).then();
+              r.table("devices").get(context.device.id).update(deviceInfo).run();
             }
 
             const executionId = crypto.randomBytes(20).toString("hex");
@@ -239,7 +239,7 @@ export function start(port: number) {
             res.write(JSON.stringify(response));
             res.end();
 
-            r.table("api_calls").get(call.id).update(call).then();
+            r.table("api_calls").get(call.id).update(call).run();
 
             let log = `${moment().format("YYYY-MM-DD HH:mm:ss")} ${call.id} [${call.duration.toFixed(6)}s] ${call.name}() -> `;
             if (call.ok)
