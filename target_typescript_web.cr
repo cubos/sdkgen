@@ -97,11 +97,11 @@ function getIP() {
                     if (response.ip) {
                         resolve(response.ip);
                     } else {
-                        reject();
+                        resolve("0.0.0.0");
                     }
                 } catch (err) {
                     console.log(err);
-                    reject();
+                    resolve("0.0.0.0");
                 }
             };
             req.send();
