@@ -10,6 +10,11 @@ import url from "url";
 import moment from "moment";
 import r from "../rethinkdb";
 
+let captureError: (e: Error) => void = () => {};
+export function setCaptureErrorFn(fn: (e: Error) => void) {
+  captureError = fn;
+}
+
 
 END
 
@@ -219,6 +224,9 @@ export function start(port: number) {
                 call.running = false;
                 const deltaTime = process.hrtime(startTime);
                 call.duration = deltaTime[0] + deltaTime[1] * 1e-9;
+                if (call.error && call.error.type === "Fatal") {
+                  captureError(new Error(call.error.message));
+                }
               }
 
               r.table("api_calls").get(call.id).update(call).run();
