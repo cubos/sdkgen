@@ -268,6 +268,9 @@ export function start(port: number) {
     });
   });
 
+  if ((server as any).keepAliveTimeout)
+    (server as any).keepAliveTimeout = 0;
+
   server.listen(port, () => {
     console.log(`Listening on ${server.address().address}:${server.address().port}`);
   });
