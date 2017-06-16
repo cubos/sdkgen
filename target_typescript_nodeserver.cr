@@ -116,13 +116,13 @@ export function start(port: number) {
     req.on("end", () => {
       const signature = req.method! + url.parse(req.url || "").pathname;
       if (httpHandlers[signature]) {
-        console.log(`${moment().format("YYYY-MM-DD HH:mm:ss")} http ${signature} -> answered ${body.length} bytes`);
+        console.log(`${moment().format("YYYY-MM-DD HH:mm:ss")} http ${signature}`);
         httpHandlers[signature](body, res, req);
         return;
       }
       for (let target in httpHandlers) {
         if (("prefix " + signature).startsWith(target)) {
-          console.log(`${moment().format("YYYY-MM-DD HH:mm:ss")} http ${target} -> answered ${body.length} bytes`);
+          console.log(`${moment().format("YYYY-MM-DD HH:mm:ss")} http ${target}`);
           httpHandlers[target](body, res, req);
           return;
         }
