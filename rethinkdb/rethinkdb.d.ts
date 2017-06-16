@@ -138,6 +138,7 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
     add(...others: any[]): RDatum<any>
     mul(...others: any[]): RDatum<number>
     append(other: any): RDatum<T>
+    skip(other: any): RDatum<any>
     limit(other: any): RDatum<any>
     round(): RDatum<number>
     floor(): RDatum<number>
@@ -214,6 +215,7 @@ interface RArray<T> extends RDatum<T[]> {
     append(other: T): RArray<T>
     filter(criteria: (obj: RDatum<T>) => boolean | RDatum<boolean>): RArray<T>
     filter(obj: DeepPartial<RDatumfy<T>>): RArray<T>
+    skip(other: any): RArray<T>
     limit(other: any): RArray<T>
     contains(obj: T): RDatum<boolean>
     reduce(func: (a: RDatum<T>, b: RDatum<T>) => any): RDatum<T>
@@ -257,6 +259,7 @@ interface RStream<T> extends PromiseLike<T[]>, RStreamOrDatum<T[]> {
     coerceTo(type: "array"): RArray<T>
     filter(criteria: (obj: RDatum<T>) => boolean | RDatum<boolean>): RStream<T>
     filter(obj: DeepPartial<RDatumfy<T>>): RStream<T>
+    skip(other: any): RStream<T>
     limit(other: any): RStream<T>
     reduce(func: (a: RDatum<T>, b: RDatum<T>) => any): RDatum<T>
     distinct(): RArray<T>
