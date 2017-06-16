@@ -73,12 +73,16 @@ END
     @io << <<-END
 //////////////////////////////////////////////////////
 
-const webhooks: {
+const httpHandlers: {
   [signature: string]: (body: string, res: http.ServerResponse, req: http.IncomingMessage) => void
 } = {}
 
-export function addWebHook(method: "GET" | "POST", path: string, func: (body: string, res: http.ServerResponse, req: http.IncomingMessage) => void) {
-  webhooks[method + path] = func;
+export function handleHttp(method: "GET" | "POST" | "PUT" | "DELETE", path: string, func: (body: string, res: http.ServerResponse, req: http.IncomingMessage) => void) {
+  httpHandlers[method + path] = func;
+}
+
+export function handleHttpPrefix(method: "GET" | "POST" | "PUT" | "DELETE", path: string, func: (body: string, res: http.ServerResponse, req: http.IncomingMessage) => void) {
+  httpHandlers["prefix " + method + path] = func;
 }
 
 export interface Context {
@@ -111,10 +115,17 @@ export function start(port: number) {
     req.on("data", (chunk: any) => body += chunk.toString());
     req.on("end", () => {
       const signature = req.method! + url.parse(req.url || "").pathname;
-      if (webhooks[signature]) {
-        console.log(`${moment().format("YYYY-MM-DD HH:mm:ss")} webhook ${signature} with ${body.length} bytes`);
-        webhooks[signature](body, res, req);
+      if (httpHandlers[signature]) {
+        console.log(`${moment().format("YYYY-MM-DD HH:mm:ss")} http ${signature} -> answered ${body.length} bytes`);
+        httpHandlers[signature](body, res, req);
         return;
+      }
+      for (let target in httpHandlers) {
+        if (("prefix " + signature).startsWith(target)) {
+          console.log(`${moment().format("YYYY-MM-DD HH:mm:ss")} http ${target} -> answered ${body.length} bytes`);
+          httpHandlers[target](body, res, req);
+          return;
+        }
       }
 
       switch (req.method) {
