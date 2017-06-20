@@ -48,13 +48,11 @@ END
 //////////////////////////////////////////////////////
 
 async function device() {
-  const ip = localStorage.getItem("ip") || await getIP();
   const parser = new UAParser();
   parser.setUA(navigator.userAgent);
   const agent = parser.getResult();
   const me = document.currentScript as HTMLScriptElement;
   const device: any = {
-    ip,
     type: "web",
     platform: {
        browser: agent.browser.name,
@@ -80,35 +78,6 @@ function randomBytesHex(len: number) {
   for (let i = 0; i < 2 * len; ++i)
     hex += "0123456789abcdef"[Math.floor(Math.random()*16)];
   return hex;
-}
-
-let ipRequest: Promise<string>;
-function getIP() {
-    if (!ipRequest) {
-        ipRequest = new Promise<string>((resolve, reject) => {
-            const req = new XMLHttpRequest();
-            req.open("GET", "https://api.ipify.org/?format=json");
-            req.onreadystatechange = () => {
-                if (req.readyState !== 4) return;
-                try {
-                    const response = JSON.parse(req.responseText);
-                    localStorage.setItem("ip", response.ip);
-
-                    if (response.ip) {
-                        resolve(response.ip);
-                    } else {
-                        resolve("0.0.0.0");
-                    }
-                } catch (err) {
-                    console.log(err);
-                    resolve("0.0.0.0");
-                }
-            };
-            req.send();
-        });
-    }
-
-    return ipRequest;
 }
 
 async function makeRequest({name, args}: {name: string, args: any}) {

@@ -114,6 +114,7 @@ export function start(port: number) {
     let body = "";
     req.on("data", (chunk: any) => body += chunk.toString());
     req.on("end", () => {
+      const ip = req.headers["x-real-ip"] || "";
       const signature = req.method! + url.parse(req.url || "").pathname;
       if (httpHandlers[signature]) {
         console.log(`${moment().format("YYYY-MM-DD HH:mm:ss")} http ${signature}`);
@@ -153,6 +154,7 @@ export function start(port: number) {
             const startTime = process.hrtime();
 
             const {id, ...deviceInfo} = context.device;
+            deviceInfo.ip = ip;
 
             if (!context.device.id || await r.table("devices").get(context.device.id).eq(null)) {
               context.device.id = crypto.randomBytes(20).toString("hex");
