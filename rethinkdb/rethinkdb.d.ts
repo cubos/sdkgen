@@ -28,8 +28,7 @@ interface DBApiCall {
 interface R_Sorting<T> { __dummy: string }
 
 interface RPoint {
-    coordinates: [number, number];
-    type: "Point";
+    __dummy: string
 }
 
 interface R extends RDB {
