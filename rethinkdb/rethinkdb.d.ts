@@ -172,6 +172,7 @@ interface RDatum<T> extends RStreamOrDatum<T>, PromiseLike<T> {
     split(by: string): RArray<any>
     coerceTo(type: "array"): RArray<any>
     coerceTo(type: "string"): RDatum<string>
+    coerceTo(type: "number"): RDatum<number>
 
     setInsert(other: any): RArray<any>
     setUnion(other: any): RArray<any>
