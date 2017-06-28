@@ -146,6 +146,7 @@ export function start(port: number) {
         case "POST": {
           (async () => {
             const request = JSON.parse(body);
+            request.device.ip = ip;
             const context: Context = {
               device: request.device,
               startTime: new Date,
@@ -154,7 +155,6 @@ export function start(port: number) {
             const startTime = process.hrtime();
 
             const {id, ...deviceInfo} = context.device;
-            deviceInfo.ip = ip;
 
             if (!context.device.id || await r.table("devices").get(context.device.id).eq(null)) {
               context.device.id = crypto.randomBytes(20).toString("hex");
