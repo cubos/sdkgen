@@ -257,7 +257,7 @@ END
 
     static public OkHttpClient getHttpClient() {
         Internal.initialize();
-        return Internal.getHttpClientForThirdParty()
+        return Internal.getHttpClientForThirdParty();
     }
 
     private static class Internal {
