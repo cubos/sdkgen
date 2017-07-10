@@ -255,6 +255,11 @@ END
         }
     }
 
+    static public OkHttpClient getHttpClient() {
+        Internal.initialize();
+        return Internal.getHttpClientForThirdParty()
+    }
+
     private static class Internal {
         static String baseUrl = #{@ast.options.url.inspect};
         static OkHttpClient http = null;
@@ -268,6 +273,14 @@ END
             dateTimeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
             dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
             createHttpClient();
+        }
+
+        static OkHttpClient getHttpClientForThirdParty() {
+            if (http == null) {
+                createHttpClient()
+            }
+
+            return http;
         }
 
         static void createHttpClient() {
