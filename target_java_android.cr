@@ -277,7 +277,7 @@ END
 
         static OkHttpClient getHttpClientForThirdParty() {
             if (http == null) {
-                createHttpClient()
+                createHttpClient();
             }
 
             return http;
