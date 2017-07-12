@@ -102,7 +102,7 @@ END
 public static JSONArray toJSONArray(List<#{mangle t.name}> list) {
     JSONArray array = null;
     if (list != null && !list.isEmpty()) {
-        JSONArray array = new JSONArray();
+        array = new JSONArray();
         for (int i=0; i<list.size(); i++) {
             try{
                 array.put(toJSON(list.get(i)));
