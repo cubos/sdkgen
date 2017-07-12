@@ -99,8 +99,38 @@ END
     }
 }
 
+public static JSONArray toJSONArray(List<#{mangle t.name}> list) {
+    JSONArray array = null;
+    if (list != null && !list.isEmpty()) {
+        JSONArray array = new JSONArray();
+        for (int i=0; i<list.size(); i++) {
+            try{
+                array.put(toJSON(list.get(i)));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } 
+    }
+}
+
 public static #{mangle t.name} fromJSON(final JSONObject json) {
     return new #{mangle t.name}(json);
+}
+
+public static List<#{mangle t.name}> fromJSONArray(final JSONArray jsonArray) {
+    ArrayList<#{mangle t.name}> list = null;
+    if (jsonArray != null && jsonArray.length() > 0) {
+        list = new ArrayList<#{mangle t.name}>();
+        for (int i = 0; i < jsonArray.length(); i++) {
+            try {
+                JSONObject obj = jsonArray.getJSONObject;
+                list.add(fromJSON(obj));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    return list;
 }
 
 public #{mangle t.name}() {
