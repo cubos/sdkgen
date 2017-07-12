@@ -111,6 +111,7 @@ public static JSONArray toJSONArray(List<#{mangle t.name}> list) {
             }
         } 
     }
+    return array;
 }
 
 public static #{mangle t.name} fromJSON(final JSONObject json) {
@@ -123,7 +124,7 @@ public static List<#{mangle t.name}> fromJSONArray(final JSONArray jsonArray) {
         list = new ArrayList<#{mangle t.name}>();
         for (int i = 0; i < jsonArray.length(); i++) {
             try {
-                JSONObject obj = jsonArray.getJSONObject;
+                JSONObject obj = jsonArray.getJSONObject(i);
                 list.add(fromJSON(obj));
             } catch (Exception e) {
                 e.printStackTrace();
