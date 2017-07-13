@@ -80,14 +80,14 @@ import okhttp3.Response;
 
 public class API {
     interface GlobalRequestCallback {
-        public void onResult(String method, Error error, JSONObject result, Callback<JSONObject> callback);
+        public void onResult(final String method, final Error error, final JSONObject result, final Callback<JSONObject> callback);
     };
 
     static public boolean useStaging = false;
     static public Context serviceContext = null;
     static public GlobalRequestCallback globalCallback = new GlobalRequestCallback() {
         @Override
-        public void onResult(String method, Error error, JSONObject result, Callback<JSONObject> callback) {
+        public void onResult(final String method, final Error error, final JSONObject result, final Callback<JSONObject> callback) {
             callback.onResult(error, result);
         }
     };
