@@ -80,14 +80,14 @@ import okhttp3.Response;
 
 public class API {
     interface GlobalRequestCallback {
-        public void onResult(Error error, JSONObject result, Callback<JSONObject> callback);
+        public void onResult(String method, Error error, JSONObject result, Callback<JSONObject> callback);
     };
 
     static public boolean useStaging = false;
     static public Context serviceContext = null;
     static public GlobalRequestCallback globalCallback = new GlobalRequestCallback() {
         @Override
-        public void onResult(Error error, JSONObject result, Callback<JSONObject> callback) {
+        public void onResult(String method, Error error, JSONObject result, Callback<JSONObject> callback) {
             callback.onResult(error, result);
         }
     };
@@ -137,10 +137,19 @@ END
     }};
 } catch (final JSONException e) {
     e.printStackTrace();
-    globalCallback.onResult(new Error() {{type = ErrorType.Fatal; message = e.getMessage();}}, null, new Callback<JSONObject>() {
+    globalCallback.onResult(#{op.pretty_name.inspect}, new Error() {{type = ErrorType.Fatal; message = e.getMessage();}}, null, new Callback<JSONObject>() {
         @Override
         public void onResult(Error error, JSONObject result) {
-            callback.onResult(error#{op.return_type.is_a?(AST::VoidPrimitiveType) ? "" : ", #{type_from_json op.return_type, "result", "result".inspect}"});
+            if (error != null) {
+                callback.onResult(error, null);
+            } else {
+                try {
+                    callback.onResult(null, #{type_from_json op.return_type, "result", "result".inspect});
+                } catch (final JSONException e) {
+                    e.printStackTrace();
+                    callback.onResult(new Error() {{type = ErrorType.Fatal; message = e.getMessage();}}, null);
+                }
+            }
         } 
     });
     return;
@@ -157,7 +166,7 @@ Internal.RequestCallback reqCallback = new Internal.RequestCallback() {
 END
           if op.return_type.is_a? AST::VoidPrimitiveType
             io << <<-END
-        globalCallback.onResult(error, null, new Callback<JSONObject>() {
+        globalCallback.onResult(#{op.pretty_name.inspect}, error, null, new Callback<JSONObject>() {
             @Override
             public void onResult(Error error, JSONObject result) {
                 callback.onResult(error);
@@ -168,33 +177,21 @@ END
 END
           else
             io << <<-END
-        if (error != null) {
-            globalCallback.onResult(error, null, new Callback<JSONObject>() {
-                @Override
-                public void onResult(Error error, JSONObject result) {
-                    if (error != null) {
-                        callback.onResult(error,null);
-                    elkse    
-                }
-            });
-        } else {
-            try {
-                globalCallback.onResult(null, #{type_from_json op.return_type, "result", "result".inspect}, new Callback<JSONObject>() {
-                    @Override
-                    public void onResult(Error error, JSONObject result) {
-                        callback.onResult(error, #{type_from_json op.return_type, "result", "result".inspect});
+        globalCallback.onResult(#{op.pretty_name.inspect}, error, result, new Callback<JSONObject>() {
+            @Override
+            public void onResult(Error error, JSONObject result) {
+                if (error != null) {
+                    callback.onResult(error, null);
+                } else {
+                    try {
+                        callback.onResult(null, #{type_from_json op.return_type, "result", "result".inspect});
+                    } catch (final JSONException e) {
+                        e.printStackTrace();
+                        callback.onResult(new Error() {{type = ErrorType.Fatal; message = e.getMessage();}}, null);
                     }
-                });
-            } catch (final JSONException e) {
-                e.printStackTrace();
-                globalCallback.onResult(new Error() {{type = ErrorType.Fatal; message = e.getMessage();}}, null, new Callback<JSONObject>() {
-                    @Override
-                    public void onResult(Error error, JSONObject result) {
-                        callback.onResult(error#{op.return_type.is_a?(AST::VoidPrimitiveType) ? "" : ", #{type_from_json op.return_type, "result", "result".inspect}"});
-                    } 
-                });
+                }
             }
-        }
+        });
 END
           end
           io << <<-END
