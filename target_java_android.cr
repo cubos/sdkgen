@@ -181,7 +181,7 @@ END
             io << <<-END
         globalCallback.onResult(#{op.pretty_name.inspect}, error, null, new Callback<JSONObject>() {
             @Override
-            public void onResult(Error error, JSONObject result) {
+            public void onResult(final Error error,final JSONObject result) {
                 callback.onResult(error);
             } 
         });
@@ -192,7 +192,7 @@ END
             io << <<-END
         globalCallback.onResult(#{op.pretty_name.inspect}, error, result, new Callback<JSONObject>() {
             @Override
-            public void onResult(Error error, JSONObject result) {
+            public void onResult(final Error error,final JSONObject result) {
                 if (error != null) {
                     callback.onResult(error, null);
                 } else {
