@@ -140,6 +140,15 @@ END
     globalCallback.onResult(#{op.pretty_name.inspect}, new Error() {{type = ErrorType.Fatal; message = e.getMessage();}}, null, new Callback<JSONObject>() {
         @Override
         public void onResult(Error error, JSONObject result) {
+
+END
+          if op.return_type.is_a? AST::VoidPrimitiveType
+            io << <<-END
+            callback.onResult(error);
+
+END
+          else
+            io << <<-END
             if (error != null) {
                 callback.onResult(error, null);
             } else {
@@ -150,6 +159,10 @@ END
                     callback.onResult(new Error() {{type = ErrorType.Fatal; message = e.getMessage();}}, null);
                 }
             }
+END
+          end
+          io << <<-END
+
         } 
     });
     return;
