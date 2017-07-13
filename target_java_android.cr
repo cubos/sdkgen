@@ -139,7 +139,7 @@ END
     e.printStackTrace();
     globalCallback.onResult(#{op.pretty_name.inspect}, new Error() {{type = ErrorType.Fatal; message = e.getMessage();}}, null, new Callback<JSONObject>() {
         @Override
-        public void onResult(Error error, JSONObject result) {
+        public void onResult(final Error error,final JSONObject result) {
 
 END
           if op.return_type.is_a? AST::VoidPrimitiveType
