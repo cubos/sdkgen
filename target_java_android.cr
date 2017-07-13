@@ -275,11 +275,11 @@ END
     }
 
     public abstract static class Callback<T> extends BaseCallback {
-        public abstract void onResult(Error error, T result);
+        public abstract void onResult(final Error error, final T result);
     }
 
     public abstract static class VoidCallback extends BaseCallback {
-        public abstract void onResult(Error error);
+        public abstract void onResult(final Error error);
     }
 
     static public void getDeviceId(final Callback<String> callback) {
