@@ -7,6 +7,9 @@ import Alamofire
 
 class API {
     static var useStaging = false
+    static var globalCallback: (_ method: String, _ result: Result<Any?>, _ callback: @escaping ((Result<Any?>) -> Void)) -> Void = { _, result, callback in
+        callback(result)
+    } 
 
 END
 
@@ -199,8 +202,8 @@ class APIInternal {
 
         api.request("https://\\(baseUrl)\\(API.useStaging ? "-staging" : "")/\\(name)", method: .post, parameters: body, encoding: JSONEncoding.default).responseJSON { response in
             guard let responseValue = response.result.value else {
-                let error = Error(API.ErrorType.Connection, "no result value")
-                callback(Result.failure(error))
+                let error = Error(API.ErrorType.Connection, "Erro de Conexão, tente novamente mais tarde")
+                globalCallback(name, result: Result.failure(error), callback: callback)
                 return
             }
 
@@ -208,10 +211,10 @@ class APIInternal {
             saveDeviceID(response.deviceId)
 
             guard response.error == nil && response.ok else {
-                callback(Result.failure(response.error!))
+                globalCallback(name, result: Result.failure(response.error!), callback: callback)
                 return
             }
-            callback(Result.success(response.result))
+            globalCallback(name, result: Result.success(response.result), callback: callback)
         }
     }
 }
