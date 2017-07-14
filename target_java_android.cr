@@ -79,7 +79,7 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 public class API {
-    interface GlobalRequestCallback {
+    public interface GlobalRequestCallback {
         public void onResult(final String method, final Error error, final JSONObject result, final Callback<JSONObject> callback);
     };
 
