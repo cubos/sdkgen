@@ -214,7 +214,7 @@ class APIInternal {
                 API.globalCallback(name, Result.failure(response.error!), callback)
                 return
             }
-            API.globalCallback(name, Result.success(response.result), callback: callback)
+            API.globalCallback(name, Result.success(response.result), callback)
         }
     }
 }
