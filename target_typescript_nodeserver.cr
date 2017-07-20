@@ -3,11 +3,11 @@ require "./target_typescript"
 class TypeScriptServerTarget < TypeScriptTarget
   def gen
     @io << <<-END
-import http from "http";
-import crypto from "crypto";
-import os from "os";
-import url from "url";
-import moment from "moment";
+import * http from "http";
+import * crypto from "crypto";
+import * os from "os";
+import * url from "url";
+import * moment from "moment";
 import r from "../rethinkdb";
 
 let captureError: (e: Error) => void = () => {};
