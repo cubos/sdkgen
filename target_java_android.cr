@@ -26,8 +26,6 @@ import android.view.WindowManager;
 import com.anupcowkur.reservoir.Reservoir;
 import com.anupcowkur.reservoir.ReservoirGetCallback;
 import com.anupcowkur.reservoir.ReservoirPutCallback;
-import com.facebook.stetho.Stetho;
-import com.facebook.stetho.okhttp3.StethoInterceptor;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -163,7 +161,7 @@ END
           end
           io << <<-END
 
-        } 
+        }
     });
     return;
 }
@@ -183,7 +181,7 @@ END
             @Override
             public void onResult(final Error error,final JSONObject result) {
                 callback.onResult(error);
-            } 
+            }
         });
 
 
@@ -275,7 +273,7 @@ END
     }
 
     public abstract static class Callback<T> extends BaseCallback {
-        public abstract void onResult(final Error error, final T result); 
+        public abstract void onResult(final Error error, final T result);
     }
 
     public abstract static class VoidCallback extends BaseCallback {
@@ -369,7 +367,6 @@ END
         static void initialize() {
             if (initialized) return;
             initialized = true;
-            Stetho.initializeWithDefaults(context());
             try {
                 Reservoir.init(context(), 10 * 1024 * 1024 /* 10 MB */);
             } catch (IOException e) {
