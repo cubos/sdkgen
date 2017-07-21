@@ -362,6 +362,7 @@ END
                     .dispatcher(dispatcher)
                     .sslSocketFactory(sslSocketFactory, trustManager)
                     .addNetworkInterceptor(new StethoInterceptor())
+                    .connectTimeout(5, TimeUnit.MINUTES)
                     .build();
         }
 
@@ -627,7 +628,7 @@ END
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
-                                callback.onResult(new Error() {{type = ErrorType.Connection; message = "Sem Internet";}}, null);
+                                callback.onResult(new Error() {{type = ErrorType.Connection; message = "Erro de conexão, tente novamente mais tarde.";}}, null);
                             }
                         });
                         return;
