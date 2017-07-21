@@ -359,7 +359,6 @@ END
                     .connectionPool(connectionPool)
                     .dispatcher(dispatcher)
                     .sslSocketFactory(sslSocketFactory, trustManager)
-                    .addNetworkInterceptor(new StethoInterceptor())
                     .connectTimeout(5, TimeUnit.MINUTES)
                     .build();
         }
