@@ -1,4 +1,5 @@
 require "./target"
+require "secure_random"
 
 abstract class JavaTarget < Target
   def ident(code)
