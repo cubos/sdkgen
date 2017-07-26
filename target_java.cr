@@ -226,7 +226,7 @@ END
     when AST::ArrayType
       i = "i" + SecureRandom.hex[0, 5]
       ary = "ary" + SecureRandom.hex[0, 5]
-      "new #{native_type t}() {{ JSONArray #{ary} = #{obj}.getJSONArray(#{name}); for (int #{i} = 0; #{i} < #{ary}.length(); ++#{i}) add(#{type_from_json(t.base, "#{ary}", "#{i}")}); }}"
+      "new #{native_type t}() {{ final JSONArray #{ary} = #{obj}.getJSONArray(#{name}); for (int #{i} = 0; #{i} < #{ary}.length(); ++#{i}) {final int x#{i} = #{i}; add(#{type_from_json(t.base, "#{ary}", "x#{i}")});} }}"
     when AST::StructType
       "#{mangle t.name}.fromJSON(#{obj}.getJSONObject(#{name}))"
     when AST::EnumType
@@ -254,7 +254,7 @@ END
       "#{src} == null ? null : #{type_to_json(t.base, src)}"
     when AST::ArrayType
       el = "el" + SecureRandom.hex[0, 5]
-      "new JSONArray() {{ for (#{native_type t.base} #{el} : #{src}) put(#{type_to_json t.base, "#{el}"}); }}"
+      "new JSONArray() {{ for (final #{native_type t.base} #{el} : #{src}) put(#{type_to_json t.base, "#{el}"}); }}"
     when AST::StructType
       "#{src}.toJSON()"
     when AST::EnumType
