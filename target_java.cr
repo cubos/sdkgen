@@ -109,7 +109,7 @@ public static JSONArray toJSONArray(List<#{mangle t.name}> list) {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } 
+        }
     }
     return array;
 }
@@ -223,7 +223,9 @@ END
     when AST::OptionalType
       "#{obj}.isNull(#{name}) ? null : #{type_from_json(t.base, obj, name)}"
     when AST::ArrayType
-      "new #{native_type t}() {{ JSONArray ary = #{obj}.getJSONArray(#{name}); for (int i = 0; i < ary.length(); ++i) add(#{type_from_json(t.base, "ary", "i")}); }}"
+      i = "i" + SecureRandom.hex[0, 5]
+      ary = "ary" + SecureRandom.hex[0, 5]
+      "new #{native_type t}() {{ JSONArray #{ary} = #{obj}.getJSONArray(#{name}); for (int #{i} = 0; #{i} < #{ary}.length(); ++#{i}) add(#{type_from_json(t.base, "#{ary}", "#{i}")}); }}"
     when AST::StructType
       "#{mangle t.name}.fromJSON(#{obj}.getJSONObject(#{name}))"
     when AST::EnumType
@@ -250,7 +252,8 @@ END
     when AST::OptionalType
       "#{src} == null ? null : #{type_to_json(t.base, src)}"
     when AST::ArrayType
-      "new JSONArray() {{ for (#{native_type t.base} el : #{src}) put(#{type_to_json t.base, "el"}); }}"
+      el = "el" + SecureRandom.hex[0, 5]
+      "new JSONArray() {{ for (#{native_type t.base} #{el} : #{src}) put(#{type_to_json t.base, "#{el}"}); }}"
     when AST::StructType
       "#{src}.toJSON()"
     when AST::EnumType
