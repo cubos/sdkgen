@@ -310,6 +310,7 @@ END
         static boolean initialized = false;
         static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US);
         static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        static Application application;
 
         static {
             dateTimeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -373,22 +374,33 @@ END
             }
         }
 
+        static void initialize(Application application) {
+            if (application != null) {
+                this.application = application;
+            }
+            initialize();
+        }
+
         static Context context() {
-            try {
-                Class<?> activityThreadClass =
-                        Class.forName("android.app.ActivityThread");
-                Method method = activityThreadClass.getMethod("currentApplication");
-                Application app = (Application)method.invoke(null, (Object[]) null);
-                if (app == null) {
-                    if (API.serviceContext != null)
-                        return API.serviceContext;
-                    else
-                        throw new RuntimeException("Failed to get Application, use API.serviceContext to provide a Context");
+            if (this.application == null) {
+                try {
+                    Class<?> activityThreadClass =
+                            Class.forName("android.app.ActivityThread");
+                    Method method = activityThreadClass.getMethod("currentApplication");
+                    Application app = (Application)method.invoke(null, (Object[]) null);
+                    if (app == null) {
+                        if (API.serviceContext != null)
+                            return API.serviceContext;
+                        else
+                            throw new RuntimeException("Failed to get Application, use API.serviceContext to provide a Context");
+                    }
+                    return app;
+                } catch (ClassNotFoundException | NoSuchMethodException |
+                        IllegalArgumentException | InvocationTargetException | IllegalAccessException e) {
+                    throw new RuntimeException("Failed to get application from android.app.ActivityThread");
                 }
-                return app;
-            } catch (ClassNotFoundException | NoSuchMethodException |
-                    IllegalArgumentException | InvocationTargetException | IllegalAccessException e) {
-                throw new RuntimeException("Failed to get application from android.app.ActivityThread");
+            } else {
+                return this.application;
             }
         }
 
