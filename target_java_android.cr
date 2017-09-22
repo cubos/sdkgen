@@ -376,7 +376,7 @@ END
 
         static void initialize(Application app) {
             if (app != null) {
-                this.application = app;
+                application = app;
             }
             initialize();
         }
