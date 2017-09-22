@@ -114,6 +114,11 @@ export function start(port: number) {
     let body = "";
     req.on("data", (chunk: any) => body += chunk.toString());
     req.on("end", () => {
+      if (req.method === "OPTIONS") {
+        res.writeHead(200);
+        res.end();
+        return;
+      }
       const ip = req.headers["x-real-ip"] as string || "";
       const signature = req.method! + url.parse(req.url || "").pathname;
       if (httpHandlers[signature]) {
