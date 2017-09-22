@@ -374,15 +374,15 @@ END
             }
         }
 
-        static void initialize(Application application) {
-            if (application != null) {
-                this.application = application;
+        static void initialize(Application app) {
+            if (app != null) {
+                this.application = app;
             }
             initialize();
         }
 
         static Context context() {
-            if (this.application == null) {
+            if (application == null) {
                 try {
                     Class<?> activityThreadClass =
                             Class.forName("android.app.ActivityThread");
@@ -400,7 +400,7 @@ END
                     throw new RuntimeException("Failed to get application from android.app.ActivityThread");
                 }
             } else {
-                return this.application;
+                return application;
             }
         }
 
