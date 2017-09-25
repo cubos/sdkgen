@@ -110,7 +110,7 @@ END
     @ast.operations.each do |op|
         args = op.args.map {|arg| "final #{native_type arg.type} #{mangle arg.name}" }
         args << "final #{callback_type op.return_type} callback"
-        @io << indent(String.build do |io|
+        @io << ident(String.build do |io|
             io << "void #{mangle op.pretty_name}(#{args.join(", ")})\n"
         end)
     end
