@@ -380,7 +380,7 @@ END
         }
 
         static void initialize(Application app) {
-            if (app != null) {
+            if (app == null) {
                 application = app;
             }
             initialize();
