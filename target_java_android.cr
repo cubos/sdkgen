@@ -81,6 +81,7 @@ public class API {
         public void onResult(final String method, final Error error, final JSONObject result, final Callback<JSONObject> callback);
     };
 
+    static public Application application;
     static public boolean useStaging = false;
     static public Context serviceContext = null;
     static public GlobalRequestCallback globalCallback = new GlobalRequestCallback() {
@@ -89,6 +90,10 @@ public class API {
             callback.onResult(error, result);
         }
     };
+
+    static public void initialize(Application application) {
+        Internal.initialize(application);
+    }
 
     static public int Default = 0;
     static public int Loading = 1;
