@@ -101,6 +101,25 @@ public class API {
 
 END
 
+#CREATING API'S CALLS INTERFACE
+@io << <<-END
+public interface APICalls {
+
+END
+
+    @ast.operations.each do |op|
+        args = op.args.map {|arg| "final #{native_type arg.type} #{mangle arg.name}" }
+        args << "final #{callback_type op.return_type} callback"
+        @io << indent(String.build do |io|
+            io << "void #{mangle op.pretty_name}(#{args.join(", ")})\n"
+        end)
+    end
+
+@io << <<-END
+}
+END
+#CREATING API'S CALLS INTERFACE 
+
     @ast.struct_types.each do |t|
       @io << ident generate_struct_type(t)
       @io << "\n\n"
