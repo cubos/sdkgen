@@ -111,7 +111,7 @@ END
         args = op.args.map {|arg| "final #{native_type arg.type} #{mangle arg.name}" }
         args << "final #{callback_type op.return_type} callback"
         @io << ident(String.build do |io|
-            io << "void #{mangle op.pretty_name}(#{args.join(", ")})\n"
+            io << "void #{mangle op.pretty_name}(#{args.join(", ")});\n"
         end)
     end
 
