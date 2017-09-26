@@ -76,7 +76,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class API implements APICalls {
+public class API {
     public interface GlobalRequestCallback {
         public void onResult(final String method, final Error error, final JSONObject result, final Callback<JSONObject> callback);
     };
