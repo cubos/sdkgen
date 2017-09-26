@@ -81,6 +81,7 @@ public class API implements APICalls {
         public void onResult(final String method, final Error error, final JSONObject result, final Callback<JSONObject> callback);
     };
 
+    static public Calls calls = new Calls();
     static public Application application;
     static public boolean useStaging = false;
     static public Context serviceContext = null;
@@ -325,7 +326,7 @@ END
         if (pref.contains("deviceId"))
             callback.onResult(null, pref.getString("deviceId", null));
         else {
-            ping(API.Default, new Callback<String>() {
+            calls.ping(API.Default, new Callback<String>() {
                 @Override
                 public void onResult(Error error, String result) {
                     if (error != null)
