@@ -60,7 +60,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLContext;x
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
@@ -76,7 +76,30 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-public class API {
+END
+
+#CREATING API'S CALLS INTERFACE
+@io << <<-END
+public interface APICalls {
+
+END
+
+    @ast.operations.each do |op|
+        args = op.args.map {|arg| "final #{native_type arg.type} #{mangle arg.name}" }
+        args << "final #{callback_type op.return_type} callback"
+        @io << ident(String.build do |io|
+            io << "void #{mangle op.pretty_name}(#{args.join(", ")});\n"
+        end)
+    end
+
+@io << <<-END
+}
+END
+#CREATING API'S CALLS INTERFACE 
+
+@io << <<-END
+
+public class API implements APICalls {
     public interface GlobalRequestCallback {
         public void onResult(final String method, final Error error, final JSONObject result, final Callback<JSONObject> callback);
     };
@@ -101,25 +124,6 @@ public class API {
 
 END
 
-#CREATING API'S CALLS INTERFACE
-@io << <<-END
-public interface APICalls {
-
-END
-
-    @ast.operations.each do |op|
-        args = op.args.map {|arg| "final #{native_type arg.type} #{mangle arg.name}" }
-        args << "final #{callback_type op.return_type} callback"
-        @io << ident(String.build do |io|
-            io << "void #{mangle op.pretty_name}(#{args.join(", ")});\n"
-        end)
-    end
-
-@io << <<-END
-}
-END
-#CREATING API'S CALLS INTERFACE 
-
     @ast.struct_types.each do |t|
       @io << ident generate_struct_type(t)
       @io << "\n\n"
@@ -134,6 +138,7 @@ END
       args = op.args.map {|arg| "final #{native_type arg.type} #{mangle arg.name}" }
       args << "final #{callback_type op.return_type} callback"
       @io << ident(String.build do |io|
+        io << "@Override \n"
         io << "static public void #{mangle op.pretty_name}(#{args.join(", ")}) {\n"
         io << "    #{mangle op.pretty_name}(#{(op.args.map {|arg| mangle arg.name } + ["0", "callback"]).join(", ")});\n"
         io << "}"
