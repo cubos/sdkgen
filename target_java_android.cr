@@ -81,7 +81,7 @@ public class API {
         public void onResult(final String method, final Error error, final JSONObject result, final Callback<JSONObject> callback);
     };
 
-    static public APICalls calls = new Calls();
+    static public Calls calls = new Calls();
     static public Application application;
     static public boolean useStaging = false;
     static public Context serviceContext = null;
