@@ -111,7 +111,7 @@ END
         args = op.args.map {|arg| "final #{native_type arg.type} #{mangle arg.name}" }
         args << "final #{callback_type op.return_type} callback"
         @io << ident(String.build do |io|
-            io << "void #{mangle op.pretty_name}(#{args.join(", ")});\n"
+            io << "public void #{mangle op.pretty_name}(#{args.join(", ")});\n"
         end)
     end
 
@@ -142,14 +142,14 @@ END
       args << "final #{callback_type op.return_type} callback"
       @io << ident(String.build do |io|
         io << "@Override \n"
-        io << "static public void #{mangle op.pretty_name}(#{args.join(", ")}) {\n"
+        io << "public void #{mangle op.pretty_name}(#{args.join(", ")}) {\n"
         io << "    #{mangle op.pretty_name}(#{(op.args.map {|arg| mangle arg.name } + ["0", "callback"]).join(", ")});\n"
         io << "}"
       end)
       @io << "\n\n"
       args = args[0..-2] + ["final int flags", args[-1]]
       @io << ident(String.build do |io|
-        io << "static public void #{mangle op.pretty_name}(#{args.join(", ")}) {\n"
+        io << "public void #{mangle op.pretty_name}(#{args.join(", ")}) {\n"
         io << ident(String.build do |io|
           if op.args.size == 0
             io << "final JSONObject args = new JSONObject();"
