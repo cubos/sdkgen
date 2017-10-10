@@ -594,7 +594,10 @@ END
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
-                            progress[0] = ProgressDialog.show(getCurrentActivity() != null ? getCurrentActivity() : context(), "Aguarde", "Carregando...", true, true);
+                            Activity currentActivity = getCurrentActivity();
+                            if (currentActivity != null) {
+                                progress[0] = ProgressDialog.show(currentActivity, "Aguarde", "Carregando...", true, true);
+                            }
                         }
                     });
                 }
