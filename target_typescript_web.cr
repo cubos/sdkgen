@@ -80,6 +80,32 @@ function randomBytesHex(len: number) {
   return hex;
 }
 
+interface ListenerTypes {
+  fail: (e: Error) => void;
+  fatal: (e: Error) => void;
+  success: (res: string) => void;
+}
+
+type HookArray = Array<Function>;
+type Listenables = keyof ListenerTypes;
+type ListenersDict = { [k in Listenables]: Array<ListenerTypes[k]> };
+
+const listenersDict: ListenersDict = {
+  fail: [],
+  fatal: [],
+  success: [],
+};
+
+export function addEventListener(listenable: Listenables, hook: ListenerTypes[typeof listenable]) {
+  const listeners: HookArray = listenersDict[listenable];
+  listeners.push(hook);
+}
+
+export function removeEventListener(listenable: Listenables, hook: ListenerTypes[typeof listenable]) {
+  const listeners: HookArray = listenersDict[listenable];
+  listenersDict[listenable] = listeners.filter(h => h !== hook) as any;
+}
+
 async function makeRequest({name, args}: {name: string, args: any}) {
   const deviceData = await device();
   return new Promise<any>((resolve, reject) => {
@@ -97,12 +123,15 @@ async function makeRequest({name, args}: {name: string, args: any}) {
         const response = JSON.parse(req.responseText);
         localStorage.setItem("deviceId", response.deviceId);
         if (response.ok) {
+          listenersDict["success"].forEach(hook => hook(response.result));
           resolve(response.result);
         } else {
+          listenersDict["fail"].forEach(hook => hook(response.error));
           reject(response.error);
         }
       } catch (e) {
         console.error(e);
+        listenersDict["fatal"].forEach(hook => hook(response.error));
         reject({type: "Fatal", message: e.toString()});
       }
     };
