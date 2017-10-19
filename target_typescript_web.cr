@@ -138,7 +138,7 @@ async function makeRequest({name, args}: {name: string, args: any}) {
         }
       } catch (e) {
         console.error(e);
-        reject({type: "BadFormattedMessage", message: `Response couldn't be parsed as JSON (${req.responseText}):\\n${e.toString()}`});
+        reject({type: "BadFormattedResponse", message: `Response couldn't be parsed as JSON (${req.responseText}):\\n${e.toString()}`});
         listenersDict["fatal"].forEach(hook => hook(e));
       }
     };
