@@ -95,15 +95,21 @@ async function makeRequest({name, args}: {name: string, args: any}) {
       if (req.readyState !== 4) return;
       try {
         const response = JSON.parse(req.responseText);
-        localStorage.setItem("deviceId", response.deviceId);
-        if (response.ok) {
-          resolve(response.result);
-        } else {
-          reject(response.error);
+
+        try {
+          localStorage.setItem("deviceId", response.deviceId);
+          if (response.ok) {
+            resolve(response.result);
+          } else {
+            reject(response.error);
+          }
+        } catch (e) {
+          console.error(e);
+          reject({type: "Fatal", message: e.toString()});
         }
       } catch (e) {
         console.error(e);
-        reject({type: "Fatal", message: e.toString()});
+        reject({type: "BadFormattedMessage", message: `Response couldn't be parsed as JSON (${req.responseText}):\\n${e.toString()}`});
       }
     };
     req.send(JSON.stringify(body));
