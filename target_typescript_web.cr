@@ -80,32 +80,6 @@ function randomBytesHex(len: number) {
   return hex;
 }
 
-interface ListenerTypes {
-  fail: (e: Error) => void;
-  fatal: (e: Error) => void;
-  success: (res: string) => void;
-}
-
-type HookArray = Array<Function>;
-type Listenables = keyof ListenerTypes;
-type ListenersDict = { [k in Listenables]: Array<ListenerTypes[k]> };
-
-const listenersDict: ListenersDict = {
-  fail: [],
-  fatal: [],
-  success: [],
-};
-
-export function addEventListener(listenable: Listenables, hook: ListenerTypes[typeof listenable]) {
-  const listeners: HookArray = listenersDict[listenable];
-  listeners.push(hook);
-}
-
-export function removeEventListener(listenable: Listenables, hook: ListenerTypes[typeof listenable]) {
-  const listeners: HookArray = listenersDict[listenable];
-  listenersDict[listenable] = listeners.filter(h => h !== hook) as any;
-}
-
 async function makeRequest({name, args}: {name: string, args: any}) {
   const deviceData = await device();
   return new Promise<any>((resolve, reject) => {
@@ -121,25 +95,15 @@ async function makeRequest({name, args}: {name: string, args: any}) {
       if (req.readyState !== 4) return;
       try {
         const response = JSON.parse(req.responseText);
-
-        try {
-          localStorage.setItem("deviceId", response.deviceId);
-          if (response.ok) {
-            resolve(response.result);
-            listenersDict["success"].forEach(hook => hook(response.result));
-          } else {
-            reject(response.error);
-            listenersDict["fail"].forEach(hook => hook(response.error));
-          }
-        } catch (e) {
-          console.error(e);
-          reject({type: "Fatal", message: e.toString()});
-          listenersDict["fatal"].forEach(hook => hook(response.error));
+        localStorage.setItem("deviceId", response.deviceId);
+        if (response.ok) {
+          resolve(response.result);
+        } else {
+          reject(response.error);
         }
       } catch (e) {
         console.error(e);
-        reject({type: "BadFormattedMessage", message: `Response couldn't be parsed as JSON (${req.responseText}):\\n${e.toString()}`});
-        listenersDict["fatal"].forEach(hook => hook(e));
+        reject({type: "Fatal", message: e.toString()});
       }
     };
     req.send(JSON.stringify(body));
