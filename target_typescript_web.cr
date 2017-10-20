@@ -81,9 +81,9 @@ function randomBytesHex(len: number) {
 }
 
 export interface ListenerTypes {
-  fail: (e: Error) => void;
-  fatal: (e: Error) => void;
-  success: (res: string) => void;
+  fail: (e: Error, name: string, args: any) => void;
+  fatal: (e: Error, name: string, args: any) => void;
+  success: (res: string, name: string, args: any) => void;
 }
 
 type HookArray = Array<Function>;
@@ -126,20 +126,20 @@ async function makeRequest({name, args}: {name: string, args: any}) {
           localStorage.setItem("deviceId", response.deviceId);
           if (response.ok) {
             resolve(response.result);
-            listenersDict["success"].forEach(hook => hook(response.result));
+            listenersDict["success"].forEach(hook => hook(response.result, name, args));
           } else {
             reject(response.error);
-            listenersDict["fail"].forEach(hook => hook(response.error));
+            listenersDict["fail"].forEach(hook => hook(response.error, name, args));
           }
         } catch (e) {
           console.error(e);
           reject({type: "Fatal", message: e.toString()});
-          listenersDict["fatal"].forEach(hook => hook(response.error));
+          listenersDict["fatal"].forEach(hook => hook(response.error, name, args));
         }
       } catch (e) {
         console.error(e);
         reject({type: "BadFormattedResponse", message: `Response couldn't be parsed as JSON (${req.responseText}):\\n${e.toString()}`});
-        listenersDict["fatal"].forEach(hook => hook(e));
+        listenersDict["fatal"].forEach(hook => hook(e, name, args));
       }
     };
     req.send(JSON.stringify(body));
