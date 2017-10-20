@@ -80,15 +80,15 @@ function randomBytesHex(len: number) {
   return hex;
 }
 
-interface ListenerTypes {
+export interface ListenerTypes {
   fail: (e: Error) => void;
   fatal: (e: Error) => void;
   success: (res: string) => void;
 }
 
 type HookArray = Array<Function>;
-type Listenables = keyof ListenerTypes;
-type ListenersDict = { [k in Listenables]: Array<ListenerTypes[k]> };
+export type Listenables = keyof ListenerTypes;
+export type ListenersDict = { [k in Listenables]: Array<ListenerTypes[k]> };
 
 const listenersDict: ListenersDict = {
   fail: [],
