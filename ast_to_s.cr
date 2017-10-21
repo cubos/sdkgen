@@ -71,6 +71,14 @@ module AST
 
   class ApiDescription
     def to_s(io)
+      anyopt = false
+      if options.url != ""
+        io << "$url = "
+        options.url.inspect(io)
+        io << "\n"
+        anyop = true
+      end
+      io << "\n" if anyop && errors.size != 0
       errors.each do |err|
         io << "error " << err << "\n"
       end
