@@ -150,7 +150,6 @@ class Lexer
         when "import"; ImportKeywordToken.new
         when "get"; GetKeywordToken.new
         when "function"; FunctionKeywordToken.new
-        when "subscribe"; SubscribeKeywordToken.new
         when "bool", "int", "uint", "float", "string", "date", "datetime", "bytes", "void"
           PrimitiveTypeToken.new(str)
         else

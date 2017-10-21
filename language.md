@@ -71,7 +71,6 @@ Operations are represented as functions called by the client and executed by the
 
 - `get`: This operation will fetch some data from the server into the client, it is meant to be a read-only operation. This type of operation can support cache. A connection failure by default should a non blocking warning to the end user. This can be safely retried on failure.
 - `function`: This operation will do some action and optionally return some information about it. It is not cacheable, but supports "do eventually" semantics. On a connection failure, a more intrusive error is shown to the end user by default. There will be no automatic retries.
-- `subscribe`: This request is always stream based and will keep a connection open receiving events from the server.
 
 Examples:
 
@@ -80,10 +79,6 @@ Examples:
 
     // Sends a message, returns nothing
     function sendMessage(target: string, message: Message): void
-
-    // Subscribes for new messages
-    // The "return type" is the event
-    subscribe messages(since: date): Message
 
 ## Marks
 
