@@ -55,16 +55,8 @@ abstract class TypeScriptTarget < Target
     op.return_type.is_a?(AST::VoidPrimitiveType) ? "void" : native_type op.return_type
   end
 
-  def operation_ret(op : AST::SubscribeOperation)
-    "null"
-  end
-
   def operation_args(op : AST::Operation)
     args = op.args.map {|arg| "#{arg.name}: #{native_type arg.type}" }
-    if op.is_a? AST::SubscribeOperation
-      args << "callback: (result: #{native_type op.return_type}) => null"
-    end
-
     "(#{args.join(", ")})"
   end
 

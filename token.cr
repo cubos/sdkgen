@@ -61,12 +61,6 @@ class FunctionKeywordToken < Token
   end
 end
 
-class SubscribeKeywordToken < Token
-  def try_ident
-    IdentifierToken.new("subscribe")
-  end
-end
-
 class ErrorKeywordToken < Token
   def try_ident
     IdentifierToken.new("error")

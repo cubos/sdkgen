@@ -157,19 +157,4 @@ module AST
       end
     end
   end
-
-  class SubscribeOperation
-    def to_s
-      io << "subscribe " << name << "("
-      args.each_with_index do |arg, i|
-        arg.to_s(io)
-        io << ", " if i != args.size-1
-      end
-      io << ")"
-      unless return_type.is_a? VoidPrimitiveType
-        io << ": "
-        return_type.to_s(io)
-      end
-    end
-  end
 end
