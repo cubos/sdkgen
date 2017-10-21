@@ -78,7 +78,7 @@ class Parser
     {% end %}
 
     unless result
-      raise ParserException.new "Expected #{{{token_types.map{|t| t.stringify.gsub(/Token$/, "")}.join(" or ")}}} at #{token.location}, but found #{token.class.to_s.gsub(/Token$/, "")}"
+      raise ParserException.new "Expected #{{{token_types.map{|t| t.stringify.gsub(/Token$/, "")}.join(" or ")}}} at #{token.location}, but found #{token}"
     end
 
     result
@@ -93,7 +93,7 @@ class Parser
       token = token.try_ident
     {% end %}
     unless token.is_a?({{token_type}})
-      raise ParserException.new "Expected #{{{token_type.stringify.gsub(/Token$/, "")}}} at #{token.location}, but found #{token.class.to_s.sub(/Token$/, "")}"
+      raise ParserException.new "Expected #{{{token_type.stringify.gsub(/Token$/, "")}}} at #{token.location}, but found #{token}"
     end
     token
   end
@@ -165,6 +165,7 @@ class Parser
 
     read_next_token
     op.name = expect(IdentifierToken).name
+    ref_deprecated_location_token = @token.not_nil!
     read_next_token
 
     if @token.is_a? ParensOpenSymbolToken
@@ -181,6 +182,8 @@ class Parser
           next
         end
       end
+    else
+      STDERR.puts "DEPRECATED: Should use '()' even for functions without arguments. See '#{op.name}' at #{ref_deprecated_location_token.location}.".colorize.light_yellow
     end
 
     if @token.is_a? ColonSymbolToken
