@@ -9,8 +9,13 @@ class Parser
   @lexers = [] of Lexer
   @token : Token | Nil
 
-  def initialize(source)
-    @lexers << Lexer.new(source)
+  def initialize(filename : String)
+    @lexers << Lexer.new(File.read(filename), filename)
+    next_token
+  end
+
+  def initialize(io : IO)
+    @lexers << Lexer.new(io.gets_to_end)
     next_token
   end
 
@@ -37,7 +42,7 @@ class Parser
         next_token
         token = expect StringLiteralToken
         source = File.expand_path(token.str + ".sdkgen", File.dirname(current_source.not_nil!))
-        @lexers << Lexer.new(source)
+        @lexers << Lexer.new(File.read(source), source)
         next_token
       when TypeKeywordToken
         api.type_definitions << parse_type_definition
