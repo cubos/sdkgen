@@ -12,6 +12,15 @@ class Lexer
     @col = 0
   end
 
+  def initialize(io : IO)
+    @filename = "<noname>"
+    @raw = io.gets_to_end
+    @start = 0
+    @pos = 0
+    @line = 1
+    @col = 0
+  end
+
   private def current_char
     @raw[@pos]?
   end
