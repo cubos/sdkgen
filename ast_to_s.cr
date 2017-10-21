@@ -71,8 +71,11 @@ module AST
 
   class ApiDescription
     def to_s(io)
+      errors.each do |err|
+        io << "error " << err << "\n"
+      end
+      io << "\n" if errors.size != 0 && type_definitions.size != 0
       type_definitions.each_with_index do |tdef, i|
-        io << "\n" unless i == 0
         tdef.to_s(io)
         io << "\n"
       end
