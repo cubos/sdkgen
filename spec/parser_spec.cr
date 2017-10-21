@@ -68,4 +68,26 @@ describe Parser do
       END
     end
   end
+
+  it "handles options on the top" do
+    check_parses <<-END
+    $url = "api.cubos.io/sdkgenspec"
+    END
+  end
+
+  it "handles combinations of all parts" do
+    check_parses <<-END
+    $url = "api.cubos.io/sdkgenspec"
+
+    error Foo
+    error Bar
+
+    type Baz {
+      a: string?
+      b: int
+    }
+
+    get baz(): Baz
+    END
+  end
 end
