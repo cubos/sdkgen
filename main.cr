@@ -8,6 +8,7 @@ require "./src/target_typescript_nodeclient"
 require "./src/target_typescript_web"
 require "option_parser"
 require "file_utils"
+require "colorize"
 
 is_server = false
 destination = ""
@@ -32,19 +33,25 @@ end
 
 source = sources[0]
 
-parser = Parser.new(source)
-ast = parser.parse
-ast.semantic
+begin
+  parser = Parser.new(source)
+  ast = parser.parse
+  ast.semantic
 
-if destination == ""
-  STDERR.puts "You must specify an output file"
-  exit
+  if destination == ""
+    STDERR.puts "You must specify an output file"
+    exit
+  end
+
+  if target_name == ""
+    STDERR.puts "You must specify a target"
+    exit
+  end
+
+  FileUtils.mkdir_p(File.dirname(destination))
+  Target.process(ast, destination, target_name)
+rescue ex : Lexer::LexerException | Parser::ParserException
+  STDERR.puts (ex.message || "Invalid source").colorize.light_red
+rescue ex : Exception
+  raise ex
 end
-
-if target_name == ""
-  STDERR.puts "You must specify a target"
-  exit
-end
-
-FileUtils.mkdir_p(File.dirname(destination))
-Target.process(ast, destination, target_name)
