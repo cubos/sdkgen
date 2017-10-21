@@ -216,7 +216,7 @@ class Parser
     read_next_token
     expect ColonSymbolToken
     read_next_token
-    field.type = parse_type(allow_void: false)
+    field.type = parse_type
 
     while @token.is_a?(ExclamationMarkSymbolToken)
       read_next_token
@@ -232,7 +232,7 @@ class Parser
     field
   end
 
-  def parse_type(allow_void = true)
+  def parse_type
     case token = multi_expect(CurlyOpenSymbolToken, EnumKeywordToken, PrimitiveTypeToken, IdentifierToken)
     when CurlyOpenSymbolToken
       result = parse_struct
@@ -254,12 +254,6 @@ class Parser
       when "float";    AST::FloatPrimitiveType.new
       when "bool";     AST::BoolPrimitiveType.new
       when "bytes";    AST::BytesPrimitiveType.new
-      when "void"
-        if allow_void
-          AST::VoidPrimitiveType.new
-        else
-          raise ParserException.new "Can't use 'void' here, at #{token.location}"
-        end
       else
         raise "BUG! Should handle primitive #{token.name}"
       end
