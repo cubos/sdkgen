@@ -9,7 +9,7 @@ class Parser
   @lexers = [] of Lexer
   @token : Token | Nil
 
-  def initialize(source : String)
+  def initialize(source)
     @lexers << Lexer.new(source)
     next_token
   end
