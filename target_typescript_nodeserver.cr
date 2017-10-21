@@ -305,7 +305,7 @@ END
 
   def operation_args(op : AST::Operation)
     args = ["ctx: Context"] + op.args.map {|arg| "#{arg.name}: #{native_type arg.type}" }
-    if op.is_a? SubscribeOperation
+    if op.is_a? AST::SubscribeOperation
       args << "callback: (result: #{native_type op.return_type}) => void"
     end
 
