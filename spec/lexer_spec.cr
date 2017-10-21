@@ -1,5 +1,5 @@
 require "spec"
-require "../lexer"
+require "../src/lexer"
 
 describe Lexer do
   it_lexes "", [] of Token
