@@ -11,15 +11,15 @@ class Parser
 
   def initialize(filename : String)
     @lexers << Lexer.new(File.read(filename), filename)
-    next_token
+    read_next_token
   end
 
   def initialize(io : IO)
     @lexers << Lexer.new(io.gets_to_end)
-    next_token
+    read_next_token
   end
 
-  def next_token
+  private def read_next_token
     while @lexers.size > 0
       @token = @lexers.last.next_token
       if @token
@@ -30,7 +30,7 @@ class Parser
     end
   end
 
-  def current_source
+  private def current_filename
     @lexers.last.filename if @lexers.size > 0
   end
 
@@ -39,11 +39,11 @@ class Parser
     while @token
       case multi_expect(ImportKeywordToken, TypeKeywordToken, GetKeywordToken, FunctionKeywordToken, SubscribeKeywordToken, GlobalOptionToken, ErrorKeywordToken)
       when ImportKeywordToken
-        next_token
+        read_next_token
         token = expect StringLiteralToken
-        source = File.expand_path(token.str + ".sdkgen", File.dirname(current_source.not_nil!))
+        source = File.expand_path(token.str + ".sdkgen", File.dirname(current_filename.not_nil!))
         @lexers << Lexer.new(File.read(source), source)
-        next_token
+        read_next_token
       when TypeKeywordToken
         api.type_definitions << parse_type_definition
       when GetKeywordToken, FunctionKeywordToken, SubscribeKeywordToken
@@ -51,9 +51,9 @@ class Parser
       when GlobalOptionToken
         parse_option(api.options)
       when ErrorKeywordToken
-        next_token
+        read_next_token
         token = expect IdentifierToken
-        next_token
+        read_next_token
         api.errors << token.name
       end
     end
@@ -100,20 +100,20 @@ class Parser
 
   def parse_enum
     expect EnumKeywordToken
-    next_token
+    read_next_token
 
     e = AST::EnumType.new
 
     expect CurlyOpenSymbolToken
-    next_token
+    read_next_token
 
     while true
       case token = multi_expect(IdentifierToken, CurlyCloseSymbolToken)
       when IdentifierToken
         e.values << token.name
-        next_token
+        read_next_token
       when CurlyCloseSymbolToken
-        next_token
+        read_next_token
         return e
       end
     end
@@ -121,7 +121,7 @@ class Parser
 
   def parse_type_definition
     expect TypeKeywordToken
-    next_token
+    read_next_token
 
     t = AST::TypeDefinition.new
     name_token = expect(IdentifierToken)
@@ -129,7 +129,7 @@ class Parser
       raise ParserException.new "The custom type name must start with an uppercase letter, but found '#{name_token.name}' at #{name_token.location}"
     end
     t.name = name_token.name
-    next_token
+    read_next_token
 
     t.type = parse_type
     t
@@ -137,7 +137,7 @@ class Parser
 
   def parse_struct
     expect CurlyOpenSymbolToken
-    next_token
+    read_next_token
 
     t = AST::StructType.new
 
@@ -146,7 +146,7 @@ class Parser
       when IdentifierToken
         t.fields << parse_field
       when CurlyCloseSymbolToken
-        next_token
+        read_next_token
         return t
       end
     end
@@ -165,21 +165,21 @@ class Parser
       raise "never"
     end
 
-    next_token
+    read_next_token
     op.name = expect(IdentifierToken).name
-    next_token
+    read_next_token
 
     if @token.is_a? ParensOpenSymbolToken
-      next_token
+      read_next_token
       while true
         case token = multi_expect(IdentifierToken, ParensCloseSymbolToken, CommaSymbolToken)
         when IdentifierToken
           op.args << parse_field
         when ParensCloseSymbolToken
-          next_token
+          read_next_token
           break
         when CommaSymbolToken
-          next_token
+          read_next_token
           next
         end
       end
@@ -187,7 +187,7 @@ class Parser
 
     if @token.is_a? ColonSymbolToken
       expect ColonSymbolToken
-      next_token
+      read_next_token
       op.return_type = parse_type
     else
       op.return_type = AST::VoidPrimitiveType.new
@@ -198,14 +198,14 @@ class Parser
 
   def parse_option(options)
     var = expect GlobalOptionToken
-    next_token
+    read_next_token
     expect EqualSymbolToken
-    next_token
+    read_next_token
 
     case var.name
     when "url"
       token = expect StringLiteralToken
-      next_token
+      read_next_token
       options.url = token.str
     else
       raise ParserException.new("Unknown option $#{var.name} at #{var.location}")
@@ -215,20 +215,20 @@ class Parser
   def parse_field
     field = AST::Field.new
     field.name = expect(IdentifierToken).name
-    next_token
+    read_next_token
     expect ColonSymbolToken
-    next_token
+    read_next_token
     field.type = parse_type(allow_void: false)
 
     while @token.is_a?(ExclamationMarkSymbolToken)
-      next_token
+      read_next_token
       case (token = expect(IdentifierToken)).name
       when "secret"
         field.secret = true
       else
         raise ParserException.new "Unknown field mark !#{token.name} at #{token.location}"
       end
-      next_token
+      read_next_token
     end
 
     field
@@ -245,7 +245,7 @@ class Parser
         raise ParserException.new "Expected a type but found '#{token.name}', at #{token.location}"
       end
       result = AST::TypeReference.new(token.name)
-      next_token
+      read_next_token
     when PrimitiveTypeToken
       result = case token.name
       when "string";   AST::StringPrimitiveType.new
@@ -265,7 +265,7 @@ class Parser
       else
         raise "BUG! Should handle primitive #{token.name}"
       end
-      next_token
+      read_next_token
     else
       raise "never"
     end
@@ -277,7 +277,7 @@ class Parser
       when OptionalSymbolToken
         result = AST::OptionalType.new(result)
       end
-      next_token
+      read_next_token
     end
 
     result
