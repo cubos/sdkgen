@@ -101,7 +101,4 @@ module AST
 
   class FunctionOperation < Operation
   end
-
-  class SubscribeOperation < Operation
-  end
 end
