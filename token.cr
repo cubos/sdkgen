@@ -27,7 +27,7 @@ end
 
 class EnumKeywordToken < Token
   def try_ident
-    IdentifierToken.new("type")
+    IdentifierToken.new("enum")
   end
 end
 
