@@ -67,7 +67,7 @@ describe Lexer do
     IdentifierToken.new("errorh")
   ]
 
-  %w[string int uint date datetime bytes float bool void].each do |primitive|
+  %w[string int uint date datetime bytes float bool].each do |primitive|
     it_lexes primitive, [
       PrimitiveTypeToken.new(primitive)
     ]
