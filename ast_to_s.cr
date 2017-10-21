@@ -1,108 +1,164 @@
 require "./ast"
 
-class StringPrimitiveType
-  def to_s
-    "string"
+module AST
+  class StringPrimitiveType
+    def to_s(io)
+      io << "string"
+    end
   end
-end
 
-class IntPrimitiveType
-  def to_s
-    "int"
+  class IntPrimitiveType
+    def to_s(io)
+      io << "int"
+    end
   end
-end
 
-class UIntPrimitiveType
-  def to_s
-    "uint"
+  class UIntPrimitiveType
+    def to_s(io)
+      io << "uint"
+    end
   end
-end
 
-class FloatPrimitiveType
-  def to_s
-    "float"
+  class FloatPrimitiveType
+    def to_s(io)
+      io << "float"
+    end
   end
-end
 
-class DatePrimitiveType
-  def to_s
-    "date"
+  class DatePrimitiveType
+    def to_s(io)
+      io << "date"
+    end
   end
-end
 
-class DateTimePrimitiveType
-  def to_s
-    "datetime"
+  class DateTimePrimitiveType
+    def to_s(io)
+      io << "datetime"
+    end
   end
-end
 
-class BoolPrimitiveType
-  def to_s
-    "bool"
+  class BoolPrimitiveType
+    def to_s(io)
+      io << "bool"
+    end
   end
-end
 
-class BytesPrimitiveType
-  def to_s
-    "bytes"
+  class BytesPrimitiveType
+    def to_s(io)
+      io << "bytes"
+    end
   end
-end
 
-class VoidPrimitiveType
-  def to_s
-    "void"
+  class VoidPrimitiveType
+    def to_s(io)
+      io << "void"
+    end
   end
-end
 
-class OptionalType
-  def to_s
-    "#{@base.to_s}?"
+  class OptionalType
+    def to_s(io)
+      @base.to_s(io)
+      io << "?"
+    end
   end
-end
 
-class ApiDescription
-  def to_s
-    type_definitions.map(&.to_s).join("\n") + "\n" +
-    operations.map(&.to_s).join("\n")
+  class ArrayType
+    def to_s(io)
+      @base.to_s(io)
+      io << "[]"
+    end
   end
-end
 
-class Field
-  def to_s
-    str = "#{name}: #{type.to_s}"
-    str += " !secret" if secret
-    str
+  class ApiDescription
+    def to_s(io)
+      type_definitions.each_with_index do |tdef, i|
+        io << "\n" unless i == 0
+        tdef.to_s(io)
+        io << "\n"
+      end
+      io << "\n" if type_definitions.size != 0 && operations.size != 0
+      operations.each do |op|
+        op.to_s(io)
+        io << "\n"
+      end
+    end
   end
-end
 
-class TypeDefinition
-  def to_s
-    "type #{name} {\n" +
-    fields.map{|f| "  #{f.to_s}\n" }.join +
-    "}\n"
+  class Field
+    def to_s(io)
+      io << name << ": "
+      type.to_s(io)
+      io << " !secret" if secret
+    end
   end
-end
 
-class TypeReference
-  def to_s
-    name
+  class TypeDefinition
+    def to_s(io)
+      io << "type " << name << " "
+      type.to_s(io)
+    end
   end
-end
 
-class GetOperation
-  def to_s
-    "get #{name}(#{args.map(&.to_s).join(", ")}): #{return_type.to_s}"
+  class StructType
+    def to_s(io)
+      io << "{\n"
+      fields.each do |field|
+        io << "  "
+        field.to_s(io)
+        io << "\n"
+      end
+      io << "}"
+    end
   end
-end
 
-class FunctionOperation
-  def to_s
-    "function #{name}(#{args.map(&.to_s).join(", ")}): #{return_type.to_s}"
+  class TypeReference
+    def to_s(io)
+      io << name
+    end
   end
-end
 
-class SubscribeOperation
-  def to_s
-    "subscribe #{name}(#{args.map(&.to_s).join(", ")}): #{return_type.to_s}"
+  class GetOperation
+    def to_s(io)
+      io << "get " << name << "("
+      args.each_with_index do |arg, i|
+        arg.to_s(io)
+        io << ", " if i != args.size-1
+      end
+      io << ")"
+      unless return_type.is_a? VoidPrimitiveType
+        io << ": "
+        return_type.to_s(io)
+      end
+    end
+  end
+
+  class FunctionOperation
+    def to_s
+      io << "function " << name << "("
+      args.each_with_index do |arg, i|
+        arg.to_s(io)
+        io << ", " if i != args.size-1
+      end
+      io << ")"
+      unless return_type.is_a? VoidPrimitiveType
+        io << ": "
+        return_type.to_s(io)
+      end
+    end
+  end
+
+  class SubscribeOperation
+    def to_s
+      io << "subscribe " << name << "("
+      args.each_with_index do |arg, i|
+        arg.to_s(io)
+        io << ", " if i != args.size-1
+      end
+      io << ")"
+      unless return_type.is_a? VoidPrimitiveType
+        io << ": "
+        return_type.to_s(io)
+      end
+    end
   end
 end
