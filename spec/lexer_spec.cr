@@ -59,10 +59,6 @@ describe Lexer do
     FunctionKeywordToken.new
   ]
 
-  it_lexes "subscribe", [
-    SubscribeKeywordToken.new
-  ]
-
   it_lexes "enuma", [
     IdentifierToken.new("enuma")
   ]

@@ -37,7 +37,7 @@ class Parser
   def parse
     api = AST::ApiDescription.new
     while @token
-      case multi_expect(ImportKeywordToken, TypeKeywordToken, GetKeywordToken, FunctionKeywordToken, SubscribeKeywordToken, GlobalOptionToken, ErrorKeywordToken)
+      case multi_expect(ImportKeywordToken, TypeKeywordToken, GetKeywordToken, FunctionKeywordToken, GlobalOptionToken, ErrorKeywordToken)
       when ImportKeywordToken
         read_next_token
         token = expect StringLiteralToken
@@ -46,7 +46,7 @@ class Parser
         read_next_token
       when TypeKeywordToken
         api.type_definitions << parse_type_definition
-      when GetKeywordToken, FunctionKeywordToken, SubscribeKeywordToken
+      when GetKeywordToken, FunctionKeywordToken
         api.operations << parse_operation
       when GlobalOptionToken
         parse_option(api.options)
@@ -154,13 +154,11 @@ class Parser
 
   def parse_operation
     op = nil
-    case token = multi_expect(GetKeywordToken, FunctionKeywordToken, SubscribeKeywordToken)
+    case token = multi_expect(GetKeywordToken, FunctionKeywordToken)
     when GetKeywordToken
       op = AST::GetOperation.new
     when FunctionKeywordToken
       op = AST::FunctionOperation.new
-    when SubscribeKeywordToken
-      op = AST::SubscribeOperation.new
     else
       raise "never"
     end
