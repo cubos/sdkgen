@@ -30,7 +30,7 @@ END
       if op.args.size > 0
         @io << "  const args = {\n"
         op.args.each do |arg|
-          @io << ident ident "#{arg.name}: #{type_to_json(arg.type, arg.name)},"
+          @io << ident ident "#{arg.name}: #{arg.type.typescript_encode(arg.name)},"
           @io << "\n"
         end
         @io << "  };\n"
@@ -39,7 +39,7 @@ END
       @io << "  "
       @io << "const ret = " unless op.return_type.is_a? AST::VoidPrimitiveType
       @io << "await makeRequest({name: #{op.pretty_name.inspect}, #{op.args.size > 0 ? "args" : "args: {}"}});\n"
-      @io << ident "return " + type_from_json(op.return_type, "ret") + ";"
+      @io << ident "return " + op.return_type.typescript_decode("ret") + ";"
       @io << "\n"
       @io << "}\n\n"
     end
@@ -149,8 +149,12 @@ async function makeRequest({name, args}: {name: string, args: any}) {
 END
   end
 
-  def native_type(t : AST::OptionalType)
-    native_type(t.base) + " | null | undefined"
+  def native_type(t : AST::Type)
+    if t.is_a? AST::OptionalType
+      t.typescript_native_type + " | undefined"
+    else
+      t.typescript_native_type
+    end
   end
 end
 
