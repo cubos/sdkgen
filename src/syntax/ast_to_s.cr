@@ -1,4 +1,4 @@
-require "./ast"
+require "../ast"
 
 module AST
   class StringPrimitiveType
