@@ -42,11 +42,11 @@ END
     @ast.operations.each do |op|
       @io << "  " << op.pretty_name << ": async (ctx: Context, args: any) => {\n"
       op.args.each do |arg|
-        @io << ident ident "const #{arg.name} = #{type_from_json(arg.type, "args.#{arg.name}")};"
+        @io << ident ident "const #{arg.name} = #{arg.type.typescript_decode("args.#{arg.name}")};"
         @io << "\n"
       end
       @io << "    const ret = await fn.#{op.pretty_name}(#{(["ctx"] + op.args.map(&.name)).join(", ")});\n"
-      @io << ident ident "return " + type_to_json(op.return_type, "ret") + ";"
+      @io << ident ident "return " + op.return_type.typescript_encode("ret") + ";"
       @io << "\n"
       @io << "  },\n"
     end
@@ -304,7 +304,7 @@ END
   end
 
   def operation_args(op : AST::Operation)
-    args = ["ctx: Context"] + op.args.map {|arg| "#{arg.name}: #{native_type arg.type}" }
+    args = ["ctx: Context"] + op.args.map {|arg| "#{arg.name}: #{arg.type.typescript_native_type}" }
     "(#{args.join(", ")})"
   end
 
