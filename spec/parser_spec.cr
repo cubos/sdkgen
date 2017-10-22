@@ -1,7 +1,7 @@
 require "spec"
-require "../src/lexer"
-require "../src/parser"
-require "../src/ast_to_s"
+require "../src/syntax/lexer"
+require "../src/syntax/parser"
+require "../src/syntax/ast_to_s"
 
 def clear(code)
   code = code.strip
