@@ -1,7 +1,6 @@
 
 module AST
   abstract class Type
-    include AST
   end
 
   abstract class PrimitiveType < Type
@@ -55,7 +54,6 @@ module AST
   end
 
   class TypeDefinition
-    include AST
     property! name : String
     property! type : Type
   end
@@ -67,7 +65,6 @@ module AST
   end
 
   class ApiDescription
-    include AST
     property type_definitions = [] of TypeDefinition
     property operations = [] of Operation
     property options = Options.new
@@ -79,7 +76,6 @@ module AST
   end
 
   class Field
-    include AST
     property! name : String
     property! type : Type
     property secret = false
@@ -90,7 +86,6 @@ module AST
   end
 
   abstract class Operation
-    include AST
     property! name : String
     property args = [] of Field
     property! return_type : Type
