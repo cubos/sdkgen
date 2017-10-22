@@ -51,7 +51,7 @@ class Lexer
     case current_char
     when '\0'
       return nil
-    when ' ', '\n'
+    when ' ', '\n', '\r' ,'\t'
       next_char
       return next_token
     when '/'
