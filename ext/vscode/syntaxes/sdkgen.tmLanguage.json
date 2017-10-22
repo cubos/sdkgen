@@ -5,7 +5,7 @@
 			"include": "#any"
 		}, {
 			"name": "meta.variable",
-			"begin": "(\\$[a-zA-Z0-9_]+) =",
+			"begin": "(\\$[a-zA-Z0-9]+) =",
 			"beginCaptures": {
 				"1": {"name": "variable.other"}
 			},
@@ -29,14 +29,14 @@
 			]
 		}, {
 			"name": "meta.error",
-			"match": "(error) ([A-Z][a-zA-Z0-9_]*)",
+			"match": "(error) ([A-Z][a-zA-Z0-9]*)",
 			"captures": {
 				"1": {"name": "keyword.control"},
 				"2": {"name": "entity.name.type"}
 			}
 		}, {
 			"name": "meta.type",
-			"begin": "(type) ([A-Z][a-zA-Z0-9_]*) ",
+			"begin": "(type) ([A-Z][a-zA-Z0-9]*) ",
 			"beginCaptures": {
 				"1": {"name": "keyword.control"},
 				"2": {"name": "entity.name.type"}
@@ -49,7 +49,7 @@
 			]
 		}, {
 			"name": "meta.operation",
-			"begin": "(get|function) ([a-zA-Z0-9_]+)",
+			"begin": "(get|function) ([a-zA-Z0-9]+)",
 			"beginCaptures": {
 				"1": {"name": "keyword.control"},
 				"2": {"name": "entity.name.function"}
@@ -111,10 +111,10 @@
 					"match": "(\\?|\\[\\])"
 				}, {
 					"name": "entity.name.type",
-					"match": "\\b([A-Z][a-zA-Z0-9_]*)\\b"
+					"match": "\\b([A-Z][a-zA-Z0-9]*)\\b"
 				}, {
 					"name": "constant.numeric",
-					"match": "(![a-zA-Z0-9_]+)\\b"
+					"match": "(![a-zA-Z0-9]+)\\b"
 				}, {
 					"name": "meta.type",
 					"begin": "\\{",
