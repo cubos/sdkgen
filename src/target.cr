@@ -1,6 +1,4 @@
 require "./ast"
-require "./lexer"
-require "./parser"
 require "./codegen_types/**"
 
 abstract class Target
