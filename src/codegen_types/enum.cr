@@ -11,5 +11,9 @@ module AST
     def typescript_native_type
       name
     end
+
+    def typescript_definition
+      "export type #{name} = #{values.map(&.inspect).join(" | ")};"
+    end
   end
 end
