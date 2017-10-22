@@ -29,12 +29,12 @@ END
     @io << "};\n\n"
 
     @ast.struct_types.each do |t|
-      @io << generate_struct_type(t)
+      @io << t.typescript_definition
       @io << "\n\n"
     end
 
     @ast.enum_types.each do |t|
-      @io << generate_enum_type(t)
+      @io << t.typescript_definition
       @io << "\n\n"
     end
 
