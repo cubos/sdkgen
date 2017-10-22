@@ -1,6 +1,5 @@
 require "./lexer"
 require "../ast"
-require "../ast_semantic"
 
 class Parser
   class ParserException < Exception

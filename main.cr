@@ -1,4 +1,5 @@
 require "./src/syntax/parser"
+require "./src/semantic/ast_semantic"
 require "./src/target_java_android"
 require "./src/target_swift_ios"
 require "./src/target_typescript_nodeserver"
