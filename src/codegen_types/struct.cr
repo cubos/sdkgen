@@ -23,5 +23,15 @@ module AST
     def typescript_native_type
       name
     end
+
+    def typescript_definition
+      String.build do |io|
+        io << "export interface #{name} {\n"
+        fields.each do |field|
+          io << "    #{field.name}: #{field.type.typescript_native_type};\n"
+        end
+        io << "}"
+      end
+    end
   end
 end
