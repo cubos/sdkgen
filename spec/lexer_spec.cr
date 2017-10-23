@@ -10,9 +10,7 @@ describe Lexer do
 
   it_doesnt_lex "23", "Unexpected character '2' at -:1:1"
 
-  it_lexes "type", [
-    IdentifierToken.new("type")
-  ]
+  it_doesnt_lex "2a", "Unexpected character '2' at -:1:1"
 
   it_lexes "type2", [
     IdentifierToken.new("type2")
@@ -67,9 +65,19 @@ describe Lexer do
     IdentifierToken.new("errorh")
   ]
 
+  %w[enum type error import get function].each do |kw|
+    it_lexes kw, [
+      IdentifierToken.new(kw)
+    ]
+  end
+
   %w[string int uint date datetime bytes float bool].each do |primitive|
     it_lexes primitive, [
       PrimitiveTypeToken.new(primitive)
+    ]
+
+    it_lexes primitive, [
+      IdentifierToken.new(primitive)
     ]
 
     it_lexes primitive + "a", [
