@@ -51,8 +51,13 @@ class Lexer
     case current_char
     when '\0'
       return nil
-    when ' ', '\n', '\r' ,'\t'
+    when ' ', '\r' ,'\t'
       next_char
+      return next_token
+    when '\n'
+      next_char
+      @column = 1
+      @line += 1
       return next_token
     when '/'
       case next_char
@@ -150,7 +155,9 @@ class Lexer
         when "import"; ImportKeywordToken.new
         when "get"; GetKeywordToken.new
         when "function"; FunctionKeywordToken.new
-        when "bool", "int", "uint", "float", "string", "date", "datetime", "bytes"
+        when "bool", "int", "uint", "float", "string", "date", "datetime", "bytes",
+            "money", "cpf", "cnpj", "email", "phone", "cep", "latlng", "url",
+            "uuid", "hex", "base64", "safehtml", "xml"
           PrimitiveTypeToken.new(str)
         else
           IdentifierToken.new(str)
