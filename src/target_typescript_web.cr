@@ -129,7 +129,7 @@ async function makeRequest({name, args}: {name: string, args: any}) {
             listenersDict["success"].forEach(hook => hook(response.result, name, args));
           } else {
             reject(response.error);
-            listenersDict["fail"].forEach(hook => hook(new Error((response.error || "").toString()), name, args));
+            listenersDict["fail"].forEach(hook => hook(response.error, name, args));
           }
         } catch (e) {
           console.error(e);
