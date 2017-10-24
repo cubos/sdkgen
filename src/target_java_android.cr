@@ -119,7 +119,7 @@ END
 @io << <<-END
 }
 END
-# END CREATING API'S CALLS INTERFACE 
+# END CREATING API'S CALLS INTERFACE
 
     @ast.struct_types.each do |t|
       @io << ident generate_struct_type(t)
@@ -133,8 +133,8 @@ END
 
 # INIT CREATING CALLS
 @io << <<-END
-    
-    public static class Calls implements APICalls { 
+
+    public static class Calls implements APICalls {
 
 END
 
@@ -350,7 +350,7 @@ END
         static SecureRandom random = new SecureRandom();
         static boolean initialized = false;
         static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US);
-        static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         static Application application;
 
         static {
