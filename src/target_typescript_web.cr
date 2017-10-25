@@ -148,14 +148,6 @@ async function makeRequest({name, args}: {name: string, args: any}) {
 
 END
   end
-
-  def native_type(t : AST::Type)
-    if t.is_a? AST::OptionalType
-      t.typescript_native_type + " | undefined"
-    else
-      t.typescript_native_type
-    end
-  end
 end
 
 Target.register(TypeScriptWebTarget, target_name: "typescript_web")
