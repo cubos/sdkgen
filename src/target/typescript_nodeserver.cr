@@ -10,9 +10,13 @@ import url from "url";
 import moment from "moment";
 import r from "../rethinkdb";
 
-let captureError: (e: Error, req: http.IncomingMessage, extra: any) => void = () => {};
-export function setCaptureErrorFn(fn: (e: Error, req: http.IncomingMessage, extra: any) => void) {
+let captureError: (e: Error, req?: http.IncomingMessage, extra?: any) => void = () => {};
+export function setCaptureErrorFn(fn: (e: Error, req?: http.IncomingMessage, extra?: any) => void) {
   captureError = fn;
+}
+
+function failedCheckTypeError(descr: string) {
+  setTimeout(() => captureError(new Error("Invalid Type at '" + descr + "'")), 1);
 }
 
 
@@ -43,6 +47,7 @@ END
     @ast.operations.each do |op|
       @io << "  " << op.pretty_name << ": async (ctx: Context, args: any) => {\n"
       op.args.each do |arg|
+        @io << ident ident arg.type.typescript_check_decoded("args.#{arg.name}", "\"#{op.pretty_name}.args.#{arg.name}\"")
         @io << ident ident "const #{arg.name} = #{arg.type.typescript_decode("args.#{arg.name}")};"
         @io << "\n"
       end

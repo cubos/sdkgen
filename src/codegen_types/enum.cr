@@ -15,5 +15,9 @@ module AST
     def typescript_definition
       "export type #{name} = #{values.map(&.inspect).join(" | ")};"
     end
+
+    def typescript_check_decoded(expr, descr)
+      ""
+    end
   end
 end
