@@ -26,7 +26,7 @@ END
     end
 
     @ast.operations.each do |op|
-      @io << "export async function #{op.pretty_name}#{operation_args(op)}: Promise<#{operation_ret(op)}> {\n"
+      @io << "export async function #{op.pretty_name}#{operation_args(op)}: Promise<#{op.return_type.typescript_native_type}> {\n"
       if op.args.size > 0
         @io << "  const args = {\n"
         op.args.each do |arg|
