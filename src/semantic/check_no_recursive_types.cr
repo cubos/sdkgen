@@ -17,7 +17,7 @@ module Semantic
 
     def visit(ref : AST::TypeReference)
       if ref.name == @path[0]
-        raise "Detected type recursion: #{@path.join(".")}"
+        raise SemanticException.new("Detected type recursion: #{@path.join(".")}")
       end
       visit ref.type
       super

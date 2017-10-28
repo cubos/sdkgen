@@ -5,7 +5,7 @@ module Semantic
     def visit(t : AST::EnumType)
       super
       if t.values.size == 0
-        raise "Enum '#{t.name}' is empty"
+        raise SemanticException.new("Enum '#{t.name}' is empty")
       end
     end
   end
