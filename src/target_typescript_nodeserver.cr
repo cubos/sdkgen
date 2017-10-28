@@ -22,7 +22,7 @@ END
     @ast.operations.each do |op|
       @io << "  " << op.pretty_name << ": " << operation_type(op) << ";\n"
     end
-    @io << "} = {\n";
+    @io << "} = {\n"
     @ast.operations.each do |op|
       @io << "  " << op.pretty_name << ": () => { throw \"not implemented\"; },\n"
     end
@@ -54,7 +54,7 @@ END
 
     @io << "const clearForLogging: {[name: string]: (call: DBApiCall) => void} = {\n"
     @ast.operations.each do |op|
-      cmds_args = String.build {|io| emit_clear_for_logging(io, op, "call.args") }
+      cmds_args = String.build { |io| emit_clear_for_logging(io, op, "call.args") }
 
       if cmds_args != ""
         @io << "  " << op.pretty_name << ": async (call: DBApiCall) => {\n"
@@ -304,11 +304,12 @@ END
   end
 
   def operation_args(op : AST::Operation)
-    args = ["ctx: Context"] + op.args.map {|arg| "#{arg.name}: #{arg.type.typescript_native_type}" }
+    args = ["ctx: Context"] + op.args.map { |arg| "#{arg.name}: #{arg.type.typescript_native_type}" }
     "(#{args.join(", ")})"
   end
 
   @i = 0
+
   def emit_clear_for_logging(io : IO, t : AST::Type | AST::Operation | AST::Field, path : String)
     case t
     when AST::Operation
@@ -328,14 +329,14 @@ END
     when AST::TypeReference
       emit_clear_for_logging(io, t.type, path)
     when AST::OptionalType
-      cmd = String.build {|io| emit_clear_for_logging(io, t.base, path) }
+      cmd = String.build { |io| emit_clear_for_logging(io, t.base, path) }
       if cmd != ""
         io << "if (#{path}) {\n" << ident(cmd) << "}\n"
       end
     when AST::ArrayType
       var = ('i' + @i).to_s
       @i += 1
-      cmd = String.build {|io| emit_clear_for_logging(io, t.base, "#{path}[#{var}]") }
+      cmd = String.build { |io| emit_clear_for_logging(io, t.base, "#{path}[#{var}]") }
       @i -= 1
       if cmd != ""
         io << "for (let #{var} = 0; #{var} < #{path}.length; ++#{var}) {\n" << ident(cmd) << "}\n"

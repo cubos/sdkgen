@@ -1,4 +1,3 @@
-
 class Token
   property! filename : String
   property! line : Int32
@@ -15,7 +14,7 @@ class Token
   def to_s(io)
     io << self.class.name.sub("Token", "")
     vars = [] of String
-    {% for ivar in @type.instance_vars.map(&.id).reject {|s| %w[filename line column].map(&.id).includes? s } %}
+    {% for ivar in @type.instance_vars.map(&.id).reject { |s| %w[filename line column].map(&.id).includes? s } %}
       vars << @{{ivar.id}}
     {% end %}
     vars.inspect(io) if vars.size > 0
@@ -70,6 +69,7 @@ end
 class PrimitiveTypeToken < Token
   property name : String
   def_equals name
+
   def initialize(@name)
   end
 
@@ -81,6 +81,7 @@ end
 class IdentifierToken < Token
   property name : String
   def_equals name
+
   def initialize(@name)
   end
 end
@@ -88,6 +89,7 @@ end
 class GlobalOptionToken < Token
   property name : String
   def_equals name
+
   def initialize(@name)
   end
 end
@@ -95,6 +97,7 @@ end
 class StringLiteralToken < Token
   property str : String
   def_equals str
+
   def initialize(@str)
   end
 end

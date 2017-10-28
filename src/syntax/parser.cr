@@ -62,7 +62,7 @@ class Parser
   macro multi_expect(*token_types)
     token = @token
     unless token
-      raise ParserException.new "Expected #{{{token_types.map{|t| t.stringify.gsub(/Token$/, "")}.join(" or ")}}}, but found end of file"
+      raise ParserException.new "Expected #{{{token_types.map { |t| t.stringify.gsub(/Token$/, "") }.join(" or ")}}}, but found end of file"
     end
 
     result = nil
@@ -77,7 +77,7 @@ class Parser
     {% end %}
 
     unless result
-      raise ParserException.new "Expected #{{{token_types.map{|t| t.stringify.gsub(/Token$/, "")}.join(" or ")}}} at #{token.location}, but found #{token}"
+      raise ParserException.new "Expected #{{{token_types.map { |t| t.stringify.gsub(/Token$/, "") }.join(" or ")}}} at #{token.location}, but found #{token}"
     end
 
     result
@@ -248,17 +248,17 @@ class Parser
       read_next_token
     when PrimitiveTypeToken
       result = case token.name
-      when "string";   AST::StringPrimitiveType.new
-      when "int";      AST::IntPrimitiveType.new
-      when "uint";     AST::UIntPrimitiveType.new
-      when "date";     AST::DatePrimitiveType.new
-      when "datetime"; AST::DateTimePrimitiveType.new
-      when "float";    AST::FloatPrimitiveType.new
-      when "bool";     AST::BoolPrimitiveType.new
-      when "bytes";    AST::BytesPrimitiveType.new
-      else
-        raise "BUG! Should handle primitive #{token.name}"
-      end
+               when "string"  ; AST::StringPrimitiveType.new
+               when "int"     ; AST::IntPrimitiveType.new
+               when "uint"    ; AST::UIntPrimitiveType.new
+               when "date"    ; AST::DatePrimitiveType.new
+               when "datetime"; AST::DateTimePrimitiveType.new
+               when "float"   ; AST::FloatPrimitiveType.new
+               when "bool"    ; AST::BoolPrimitiveType.new
+               when "bytes"   ; AST::BytesPrimitiveType.new
+               else
+                 raise "BUG! Should handle primitive #{token.name}"
+               end
       read_next_token
     else
       raise "never"
