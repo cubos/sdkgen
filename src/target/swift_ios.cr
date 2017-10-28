@@ -1,4 +1,4 @@
-require "./target_swift"
+require "./swift"
 
 class SwiftIosTarget < SwiftTarget
   def gen
@@ -9,7 +9,7 @@ class API {
     static var useStaging = false
     static var globalCallback: (_ method: String, _ result: APIInternal.Result<Any?>, _ callback: @escaping ((APIInternal.Result<Any?>) -> Void)) -> Void = { _, result, callback in
         callback(result)
-    } 
+    }
 
 END
 

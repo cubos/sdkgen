@@ -1,5 +1,5 @@
-require "./ast"
-require "./codegen_types/**"
+require "../ast"
+require "../codegen_types/**"
 
 abstract class Target
   @@targets = {} of String => Target.class
