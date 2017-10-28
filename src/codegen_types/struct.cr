@@ -33,5 +33,9 @@ module AST
         io << "}"
       end
     end
+
+    def typescript_check_decoded(expr, descr)
+      ""
+    end
   end
 end
