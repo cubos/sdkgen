@@ -15,5 +15,9 @@ module AST
     def typescript_check_encoded(expr, descr)
       ""
     end
+
+    def typescript_check_decoded(expr, descr)
+      ""
+    end
   end
 end

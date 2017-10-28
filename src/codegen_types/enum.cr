@@ -23,5 +23,13 @@ module AST
         io << "}\n"
       end
     end
+
+    def typescript_check_decoded(expr, descr)
+      String.build do |io|
+        io << "if (typeof #{expr} !== \"string\" || !#{values.inspect}.includes(#{expr})) {\n"
+        io << "    failTypeCheck(#{descr}, ctx);\n"
+        io << "}\n"
+      end
+    end
   end
 end
