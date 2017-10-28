@@ -6,6 +6,7 @@ require "./check_naming_for_getters_returning_bool"
 require "./check_empty_enum"
 require "./give_struct_and_enum_names"
 require "./collect_struct_and_enum_types"
+require "./check_multiple_declaration"
 
 module AST
   class ApiDescription
@@ -35,6 +36,7 @@ module AST
       op.return_type = AST::VoidPrimitiveType.new
       operations << op
 
+      Semantic::CheckMultipleDeclaration.visit(self)
       Semantic::MatchTypeDefinitions.visit(self)
       Semantic::CheckNoRecursiveTypes.visit(self)
       Semantic::CheckDontReturnSecret.visit(self)
