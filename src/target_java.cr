@@ -8,12 +8,12 @@ abstract class JavaTarget < Target
 
   def mangle(ident)
     if %w[
-      boolean class if int byte do for while void float double long char synchronized
-      instanceof extends implements interface abstract static public private protected
-      final import package throw throws catch finally try new null else return continue
-      break goto switch default case
-      Object Class
-    ].includes? ident
+         boolean class if int byte do for while void float double long char synchronized
+         instanceof extends implements interface abstract static public private protected
+         final import package throw throws catch finally try new null else return continue
+         break goto switch default case
+         Object Class
+       ].includes? ident
       "_" + ident
     else
       ident
@@ -22,15 +22,15 @@ abstract class JavaTarget < Target
 
   def native_type_not_primitive(t : AST::PrimitiveType)
     case t
-    when AST::StringPrimitiveType;   "String"
-    when AST::IntPrimitiveType;      "Integer"
-    when AST::UIntPrimitiveType;     "Integer"
-    when AST::FloatPrimitiveType;    "Double"
-    when AST::DatePrimitiveType;     "Calendar"
+    when AST::StringPrimitiveType  ; "String"
+    when AST::IntPrimitiveType     ; "Integer"
+    when AST::UIntPrimitiveType    ; "Integer"
+    when AST::FloatPrimitiveType   ; "Double"
+    when AST::DatePrimitiveType    ; "Calendar"
     when AST::DateTimePrimitiveType; "Calendar"
-    when AST::BoolPrimitiveType;     "Boolean"
-    when AST::BytesPrimitiveType;    "byte[]"
-    when AST::VoidPrimitiveType;     "void"
+    when AST::BoolPrimitiveType    ; "Boolean"
+    when AST::BytesPrimitiveType   ; "byte[]"
+    when AST::VoidPrimitiveType    ; "void"
     else
       raise "BUG! Should handle primitive #{t.class}"
     end
@@ -42,15 +42,15 @@ abstract class JavaTarget < Target
 
   def native_type(t : AST::PrimitiveType)
     case t
-    when AST::StringPrimitiveType;   "String"
-    when AST::IntPrimitiveType;      "int"
-    when AST::UIntPrimitiveType;     "int"
-    when AST::FloatPrimitiveType;    "double"
-    when AST::DatePrimitiveType;     "Calendar"
+    when AST::StringPrimitiveType  ; "String"
+    when AST::IntPrimitiveType     ; "int"
+    when AST::UIntPrimitiveType    ; "int"
+    when AST::FloatPrimitiveType   ; "double"
+    when AST::DatePrimitiveType    ; "Calendar"
     when AST::DateTimePrimitiveType; "Calendar"
-    when AST::BoolPrimitiveType;     "boolean"
-    when AST::BytesPrimitiveType;    "byte[]"
-    when AST::VoidPrimitiveType;     "void"
+    when AST::BoolPrimitiveType    ; "boolean"
+    when AST::BytesPrimitiveType   ; "byte[]"
+    when AST::VoidPrimitiveType    ; "void"
     else
       raise "BUG! Should handle primitive #{t.class}"
     end
@@ -230,7 +230,7 @@ END
     when AST::StructType
       "#{mangle t.name}.fromJSON(#{obj}.getJSONObject(#{name}))"
     when AST::EnumType
-      "#{t.values.map {|v| "#{obj}.getString(#{name}).equals(#{v.inspect}) ? #{mangle t.name}.#{mangle v} : " }.join}null"
+      "#{t.values.map { |v| "#{obj}.getString(#{name}).equals(#{v.inspect}) ? #{mangle t.name}.#{mangle v} : " }.join}null"
     when AST::TypeReference
       type_from_json(t.type, obj, name)
     else
@@ -258,7 +258,7 @@ END
     when AST::StructType
       "#{src}.toJSON()"
     when AST::EnumType
-      "#{t.values.map {|v| "#{src} == #{mangle t.name}.#{mangle v} ? #{v.inspect} : " }.join}\"\""
+      "#{t.values.map { |v| "#{src} == #{mangle t.name}.#{mangle v} ? #{v.inspect} : " }.join}\"\""
     when AST::TypeReference
       type_to_json(t.type, src)
     else

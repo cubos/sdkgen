@@ -1,4 +1,3 @@
-
 module AST
   abstract class Type
   end
@@ -35,12 +34,14 @@ module AST
 
   class OptionalType < Type
     property base
+
     def initialize(@base : Type)
     end
   end
 
   class ArrayType < Type
     property base
+
     def initialize(@base : Type)
     end
   end
@@ -60,6 +61,7 @@ module AST
 
   class TypeReference < Type
     property name
+
     def initialize(@name : String)
     end
   end

@@ -10,12 +10,12 @@ module Semantic
     end
 
     def visit(node : AST::ApiDescription)
-      node.type_definitions.each {|e| visit e }
-      node.operations.each {|e| visit e }
+      node.type_definitions.each { |e| visit e }
+      node.operations.each { |e| visit e }
     end
 
     def visit(op : AST::Operation)
-      op.args.each {|arg| visit arg }
+      op.args.each { |arg| visit arg }
       visit op.return_type
     end
 
@@ -28,7 +28,7 @@ module Semantic
     end
 
     def visit(t : AST::StructType)
-      t.fields.each {|field| visit field }
+      t.fields.each { |field| visit field }
     end
 
     def visit(t : AST::ArrayType)
