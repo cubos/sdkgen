@@ -11,5 +11,9 @@ module AST
     def typescript_native_type
       "boolean"
     end
+
+    def typescript_check_decoded(expr, descr)
+      ""
+    end
   end
 end
