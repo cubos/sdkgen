@@ -21,5 +21,15 @@ module AST
         io << "}\n"
       end
     end
+
+    def typescript_check_decoded(expr, descr)
+      String.build do |io|
+        x = random_var
+        io << "const #{x} = #{expr};\n"
+        io << "if (#{x}) {\n"
+        io << ident base.typescript_check_decoded(x, descr)
+        io << "}\n"
+      end
+    end
   end
 end
