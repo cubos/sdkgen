@@ -19,5 +19,13 @@ module AST
         io << "}\n"
       end
     end
+
+    def typescript_check_decoded(expr, descr)
+      String.build do |io|
+        io << "if (!(#{expr} instanceof Buffer)) {\n"
+        io << "    failTypeCheck(#{descr}, ctx);\n"
+        io << "}\n"
+      end
+    end
   end
 end

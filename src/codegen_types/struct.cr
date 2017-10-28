@@ -41,5 +41,13 @@ module AST
         end
       end
     end
+
+    def typescript_check_decoded(expr, descr)
+      String.build do |io|
+        fields.each do |field|
+          io << field.type.typescript_check_decoded("#{expr}.#{field.name}", "#{descr} + \".#{field.name}\"")
+        end
+      end
+    end
   end
 end
