@@ -7,15 +7,15 @@ abstract class SwiftTarget < Target
 
   def native_type(t : AST::PrimitiveType)
     case t
-    when AST::StringPrimitiveType;   "String"
-    when AST::IntPrimitiveType;      "Int"
-    when AST::UIntPrimitiveType;     "UInt"
-    when AST::FloatPrimitiveType;    "Double"
-    when AST::DatePrimitiveType;     "Date"
+    when AST::StringPrimitiveType  ; "String"
+    when AST::IntPrimitiveType     ; "Int"
+    when AST::UIntPrimitiveType    ; "UInt"
+    when AST::FloatPrimitiveType   ; "Double"
+    when AST::DatePrimitiveType    ; "Date"
     when AST::DateTimePrimitiveType; "Date"
-    when AST::BoolPrimitiveType;     "Bool"
-    when AST::BytesPrimitiveType;    "Data"
-    when AST::VoidPrimitiveType;     "void"
+    when AST::BoolPrimitiveType    ; "Bool"
+    when AST::BytesPrimitiveType   ; "Data"
+    when AST::VoidPrimitiveType    ; "void"
     else
       raise "BUG! Should handle primitive #{t.class}"
     end
@@ -54,7 +54,7 @@ END
       io << ident <<-END
 }
 
-init(#{t.fields.map{|f| "#{f.name}: #{native_type f.type}"}.join(", ")}) {
+init(#{t.fields.map { |f| "#{f.name}: #{native_type f.type}" }.join(", ")}) {
 
 END
       t.fields.each do |field|
@@ -124,7 +124,7 @@ END
     when AST::StructType
       "#{t.name}()"
     when AST::EnumType
-      "#{t.name}.#{t.values[0]}"#(rawValue: \"\")"
+      "#{t.name}.#{t.values[0]}" # (rawValue: \"\")"
     when AST::TypeReference
       default_value(t.type)
     else

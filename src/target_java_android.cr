@@ -102,24 +102,24 @@ public class API {
 
 END
 
-# INIT CREATING API'S CALLS INTERFACE
-@io << <<-END
+    # INIT CREATING API'S CALLS INTERFACE
+    @io << <<-END
 public interface APICalls {
 
 END
 
     @ast.operations.each do |op|
-        args = op.args.map {|arg| "final #{native_type arg.type} #{mangle arg.name}" }
-        args << "final #{callback_type op.return_type} callback"
-        @io << ident(String.build do |io|
-            io << "public void #{mangle op.pretty_name}(#{args.join(", ")});\n"
-        end)
+      args = op.args.map { |arg| "final #{native_type arg.type} #{mangle arg.name}" }
+      args << "final #{callback_type op.return_type} callback"
+      @io << ident(String.build do |io|
+        io << "public void #{mangle op.pretty_name}(#{args.join(", ")});\n"
+      end)
     end
 
-@io << <<-END
+    @io << <<-END
 }
 END
-# END CREATING API'S CALLS INTERFACE
+    # END CREATING API'S CALLS INTERFACE
 
     @ast.struct_types.each do |t|
       @io << ident generate_struct_type(t)
@@ -131,20 +131,20 @@ END
       @io << "\n\n"
     end
 
-# INIT CREATING CALLS
-@io << <<-END
+    # INIT CREATING CALLS
+    @io << <<-END
 
     public static class Calls implements APICalls {
 
 END
 
     @ast.operations.each do |op|
-      args = op.args.map {|arg| "final #{native_type arg.type} #{mangle arg.name}" }
+      args = op.args.map { |arg| "final #{native_type arg.type} #{mangle arg.name}" }
       args << "final #{callback_type op.return_type} callback"
       @io << ident(String.build do |io|
         io << "@Override \n"
         io << "public void #{mangle op.pretty_name}(#{args.join(", ")}) {\n"
-        io << "    #{mangle op.pretty_name}(#{(op.args.map {|arg| mangle arg.name } + ["0", "callback"]).join(", ")});\n"
+        io << "    #{mangle op.pretty_name}(#{(op.args.map { |arg| mangle arg.name } + ["0", "callback"]).join(", ")});\n"
         io << "}"
       end)
       @io << "\n\n"
@@ -161,10 +161,10 @@ try {
     args = new JSONObject() {{
 
 END
-      op.args.each do |arg|
-        io << ident ident "put(\"#{arg.name}\", #{type_to_json arg.type, arg.name});\n"
-      end
-          io << <<-END
+            op.args.each do |arg|
+              io << ident ident "put(\"#{arg.name}\", #{type_to_json arg.type, arg.name});\n"
+            end
+            io << <<-END
     }};
 } catch (final JSONException e) {
     e.printStackTrace();
@@ -173,13 +173,13 @@ END
         public void onResult(final Error error,final JSONObject result) {
 
 END
-          if op.return_type.is_a? AST::VoidPrimitiveType
-            io << <<-END
+            if op.return_type.is_a? AST::VoidPrimitiveType
+              io << <<-END
             callback.onResult(error);
 
 END
-          else
-            io << <<-END
+            else
+              io << <<-END
             if (error != null) {
                 callback.onResult(error, null);
             } else {
@@ -191,8 +191,8 @@ END
                 }
             }
 END
-          end
-          io << <<-END
+            end
+            io << <<-END
 
         }
     });
@@ -290,13 +290,13 @@ END
       @io << "\n\n"
     end
 
-@io << <<-END
+    @io << <<-END
 
 }
 
 END
 
-# END CREATING CALLS
+    # END CREATING CALLS
 
     @io << <<-END
     public static class Error {
@@ -725,7 +725,7 @@ END
                                         if (!body.getBoolean("ok")) {
                                             JSONObject jsonError = body.getJSONObject("error");
                                             Error error = new Error();
-                                            error.type = #{type_from_json(@ast.enum_types.find {|e| e.name == "ErrorType"}.not_nil!, "jsonError", "type".inspect)};
+                                            error.type = #{type_from_json(@ast.enum_types.find { |e| e.name == "ErrorType" }.not_nil!, "jsonError", "type".inspect)};
                                             error.message = jsonError.getString("message");
                                             Log.e("API Error", jsonError.getString("type") + " - " + error.message);
                                             callback.onResult(error, null);
