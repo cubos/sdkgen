@@ -17,7 +17,7 @@ module AST
     def typescript_check_decoded(expr, descr)
       String.build do |io|
         io << "if (typeof #{expr} !== \"string\") {\n"
-        io << "    failTypeCheck(#{descr});\n"
+        io << "    failTypeCheck(#{descr} + \", callId = \" + ctx.callId);\n"
         io << "}\n"
       end
     end

@@ -56,7 +56,7 @@ END
       @io << ident ident op.return_type.typescript_check_decoded("retEncoded", "\"#{op.pretty_name}.ret\"")
       @io << ident ident "return retEncoded"
       @io << "\n"
-      @io << "  },\n"
+      @io << ident "},\n"
     end
     @io << "};\n\n"
 
@@ -94,6 +94,7 @@ export function handleHttpPrefix(method: "GET" | "POST" | "PUT" | "DELETE", path
 }
 
 export interface Context {
+    callId: string;
     device: DBDevice;
     startTime: Date;
     staging: boolean;
@@ -161,6 +162,7 @@ export function start(port: number) {
                         const request = JSON.parse(body);
                         request.device.ip = ip;
                         const context: Context = {
+                            callId: "",
                             device: request.device,
                             startTime: new Date,
                             staging: request.staging || false
@@ -197,6 +199,8 @@ export function start(port: number) {
                             result: null as any,
                             error: null as {type: string, message: string}|null
                         };
+
+                        context.callId = call.id;
 
                         if (clearForLogging[call.name])
                             clearForLogging[call.name](call);
