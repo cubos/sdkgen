@@ -20,7 +20,7 @@ END
 
     @io << "export const fn: {\n"
     @ast.operations.each do |op|
-      args = op.args.map { |arg| "#{arg.name}: #{arg.type.typescript_native_type}" }
+      args = ["ctx: Context"] + op.args.map { |arg| "#{arg.name}: #{arg.type.typescript_native_type}" }
       @io << "  " << op.pretty_name << ": (#{args.join(", ")}) => Promise<#{op.return_type.typescript_native_type}>;\n"
     end
     @io << "} = {\n"
