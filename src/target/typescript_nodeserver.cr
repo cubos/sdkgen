@@ -244,9 +244,9 @@ export function start(port: number) {
                 const deltaTime = process.hrtime(startTime);
                 call.duration = deltaTime[0] + deltaTime[1] * 1e-9;
                 if (call.error && call.error.type === "Fatal") {
-                  captureError(new Error(call.error.type + ": " + call.error.message), req, {
+                  setTimeout(() => captureError(new Error(call.error.type + ": " + call.error.message), req, {
                     call
-                  });
+                  }), 1);
                 }
               }
 
