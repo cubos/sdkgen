@@ -28,8 +28,4 @@ abstract class Target
     t.gen
     t.write
   end
-
-  def ident(code)
-    code.split("\n").map { |line| "    " + line }.join("\n").gsub(/\n\s+$/m, "\n")
-  end
 end
