@@ -48,7 +48,7 @@ begin
 
   FileUtils.mkdir_p(File.dirname(destination))
   Target.process(ast, destination, target_name)
-rescue ex : Lexer::LexerException | Parser::ParserException
+rescue ex : Lexer::LexerException | Parser::ParserException | Semantic::SemanticException
   STDERR.puts (ex.message || "Invalid source").colorize.light_red
 rescue ex : Exception
   raise ex

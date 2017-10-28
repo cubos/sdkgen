@@ -20,7 +20,7 @@ module Semantic
     def visit(field : AST::Field)
       @path.push field.name
       if @inreturn && field.secret
-        raise "Can't return a secret value at #{@path.join(".")}"
+        raise SemanticException.new("Can't return a secret value at #{@path.join(".")}")
       end
       super
       @path.pop

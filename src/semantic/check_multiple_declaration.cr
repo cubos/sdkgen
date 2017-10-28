@@ -6,7 +6,7 @@ module Semantic
 
     def visit(definition : AST::TypeDefinition)
       if @names.includes? definition.name
-        raise "Type '#{definition.name}' is already defined"
+        raise SemanticException.new("Type '#{definition.name}' is defined multiple times")
       end
       @names << definition.name
       super
