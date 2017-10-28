@@ -9,7 +9,7 @@ module AST
     end
 
     def typescript_native_type
-      "null"
+      "void"
     end
   end
 end
