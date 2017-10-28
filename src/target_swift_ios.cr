@@ -24,10 +24,10 @@ END
     end
 
     @ast.operations.each do |op|
-      args = op.args.map {|arg| "#{arg.name}: #{native_type arg.type}" }
+      args = op.args.map { |arg| "#{arg.name}: #{native_type arg.type}" }
 
       if op.return_type.is_a? AST::VoidPrimitiveType
-         args << "callback: ((_ result: APIInternal.Result<Void>) -> Void)?"
+        args << "callback: ((_ result: APIInternal.Result<Void>) -> Void)?"
       else
         ret = op.return_type
         args << "callback: ((_ result: APIInternal.Result<#{native_type ret}>) -> Void)?"
@@ -35,20 +35,19 @@ END
       @io << ident(String.build do |io|
         io << "static public func #{op.pretty_name}(#{args.join(", ")}) {\n"
         io << ident(String.build do |io|
+          if op.args.size != 0
+            io << "var args = [String: Any]()\n"
+          else
+            io << "let args = [String: Any]()\n"
+          end
 
-      if op.args.size != 0
-        io << "var args = [String: Any]()\n"
-      else
-        io << "let args = [String: Any]()\n"
-      end
+          op.args.each do |arg|
+            io << "args[\"#{arg.name}\"] = #{type_to_json arg.type, arg.name}\n\n"
+          end
 
-      op.args.each do |arg|
-        io << "args[\"#{arg.name}\"] = #{type_to_json arg.type, arg.name}\n\n"
-      end
+          io << "APIInternal.makeRequest(#{op.pretty_name.inspect}, args) {  response in \n"
 
-        io << "APIInternal.makeRequest(#{op.pretty_name.inspect}, args) {  response in \n"
-
-        io << ident(String.build do |io|
+          io << ident(String.build do |io|
             io << "switch response {\n"
             io << <<-END
             case .failure(let error):
@@ -56,29 +55,26 @@ END
             END
 
             if op.return_type.is_a? AST::VoidPrimitiveType
-                io << <<-END
-                case .success:
-                    callback?(APIInternal.Result.success())\n
-                END
+              io << <<-END
+              case .success:
+                  callback?(APIInternal.Result.success())\n
+              END
             else
-                io << <<-END
-                case .success(let value):
-                    let returnObject = #{type_from_json(op.return_type, "value")}
-                    callback?(APIInternal.Result.success(returnObject))\n
-                END
+              io << <<-END
+              case .success(let value):
+                  let returnObject = #{type_from_json(op.return_type, "value")}
+                  callback?(APIInternal.Result.success(returnObject))\n
+              END
             end
             io << "}\n"
-        end) # end of make request body indentation.
+          end) # end of make request body indentation.
 
-
-
-        io << "}\n\n"
-       end)
+          io << "}\n\n"
+        end)
         io << "}"
       end)
       @io << "\n\n"
     end
-
 
     @io << <<-END
 }

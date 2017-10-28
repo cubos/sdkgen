@@ -133,7 +133,7 @@ module AST
       io << "get " << name << "("
       args.each_with_index do |arg, i|
         arg.to_s(io)
-        io << ", " if i != args.size-1
+        io << ", " if i != args.size - 1
       end
       io << ")"
       unless return_type.is_a? VoidPrimitiveType
@@ -148,7 +148,7 @@ module AST
       io << "function " << name << "("
       args.each_with_index do |arg, i|
         arg.to_s(io)
-        io << ", " if i != args.size-1
+        io << ", " if i != args.size - 1
       end
       io << ")"
       unless return_type.is_a? VoidPrimitiveType

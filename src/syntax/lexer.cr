@@ -51,7 +51,7 @@ class Lexer
     case current_char
     when '\0'
       return nil
-    when ' ', '\r' ,'\t'
+    when ' ', '\r', '\t'
       next_char
       return next_token
     when '\n'
@@ -112,7 +112,7 @@ class Lexer
           next_char
         end
 
-        token = GlobalOptionToken.new(substring(@start_pos+1, pos-1))
+        token = GlobalOptionToken.new(substring(@start_pos + 1, pos - 1))
       end
     when '"'
       builder = String::Builder.new
@@ -124,9 +124,9 @@ class Lexer
           case next_char
           when '\0'
             break
-          when 'n'; builder << '\n'
-          when 't'; builder << '\t'
-          when '"'; builder << '"'
+          when 'n' ; builder << '\n'
+          when 't' ; builder << '\t'
+          when '"' ; builder << '"'
           when '\\'; builder << '\\'
           else
             builder << current_char
@@ -146,22 +146,22 @@ class Lexer
           next_char
         end
 
-        str = substring(@start_pos, pos-1)
+        str = substring(@start_pos, pos - 1)
 
         token = case str
-        when "error"; ErrorKeywordToken.new
-        when "enum"; EnumKeywordToken.new
-        when "type"; TypeKeywordToken.new
-        when "import"; ImportKeywordToken.new
-        when "get"; GetKeywordToken.new
-        when "function"; FunctionKeywordToken.new
-        when "bool", "int", "uint", "float", "string", "date", "datetime", "bytes",
-            "money", "cpf", "cnpj", "email", "phone", "cep", "latlng", "url",
-            "uuid", "hex", "base64", "safehtml", "xml"
-          PrimitiveTypeToken.new(str)
-        else
-          IdentifierToken.new(str)
-        end
+                when "error"   ; ErrorKeywordToken.new
+                when "enum"    ; EnumKeywordToken.new
+                when "type"    ; TypeKeywordToken.new
+                when "import"  ; ImportKeywordToken.new
+                when "get"     ; GetKeywordToken.new
+                when "function"; FunctionKeywordToken.new
+                when "bool", "int", "uint", "float", "string", "date", "datetime", "bytes",
+                     "money", "cpf", "cnpj", "email", "phone", "cep", "latlng", "url",
+                     "uuid", "hex", "base64", "safehtml", "xml"
+                  PrimitiveTypeToken.new(str)
+                else
+                  IdentifierToken.new(str)
+                end
       end
     end
 

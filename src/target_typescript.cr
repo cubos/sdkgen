@@ -6,7 +6,7 @@ abstract class TypeScriptTarget < Target
   end
 
   def operation_args(op : AST::Operation)
-    args = op.args.map {|arg| "#{arg.name}: #{arg.type.typescript_native_type}" }
+    args = op.args.map { |arg| "#{arg.name}: #{arg.type.typescript_native_type}" }
     "(#{args.join(", ")})"
   end
 
