@@ -1,4 +1,4 @@
-require "./target_java"
+require "./java"
 
 class JavaAndroidTarget < JavaTarget
   def gen
