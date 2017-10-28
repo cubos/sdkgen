@@ -4,7 +4,7 @@ module AST
       String::Builder.build do |io|
         io << "{\n"
         fields.each do |field|
-          io << "    #{field.name}: #{field.type.typescript_decode("#{expr}.#{field.name}")},\n"
+          io << ident "#{field.name}: #{field.type.typescript_decode("#{expr}.#{field.name}")},\n"
         end
         io << "}"
       end
@@ -14,7 +14,7 @@ module AST
       String::Builder.build do |io|
         io << "{\n"
         fields.each do |field|
-          io << "    #{field.name}: #{field.type.typescript_encode("#{expr}.#{field.name}")},\n"
+          io << ident "#{field.name}: #{field.type.typescript_encode("#{expr}.#{field.name}")},\n"
         end
         io << "}"
       end
