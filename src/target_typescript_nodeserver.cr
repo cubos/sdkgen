@@ -1,6 +1,6 @@
-require "./target_typescript"
+require "./target"
 
-class TypeScriptServerTarget < TypeScriptTarget
+class TypeScriptServerTarget < Target
   def gen
     @io << <<-END
 import http from "http";
@@ -20,7 +20,8 @@ END
 
     @io << "export const fn: {\n"
     @ast.operations.each do |op|
-      @io << "  " << op.pretty_name << ": " << operation_type(op) << ";\n"
+      args = op.args.map { |arg| "#{arg.name}: #{arg.type.typescript_native_type}" }
+      @io << "  " << op.pretty_name << ": (#{args.join(", ")}) => Promise<#{op.return_type.typescript_native_type}>;\n"
     end
     @io << "} = {\n"
     @ast.operations.each do |op|
@@ -301,11 +302,6 @@ fn.setPushToken = async (ctx: Context, token: string) => {
 };
 
 END
-  end
-
-  def operation_args(op : AST::Operation)
-    args = ["ctx: Context"] + op.args.map { |arg| "#{arg.name}: #{arg.type.typescript_native_type}" }
-    "(#{args.join(", ")})"
   end
 
   @i = 0
