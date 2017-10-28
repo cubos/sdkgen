@@ -52,10 +52,8 @@ END
         @io << "\n"
       end
       @io << ident ident "const ret = await fn.#{op.pretty_name}(#{(["ctx"] + op.args.map(&.name)).join(", ")});\n"
-      @io << ident ident "const retEncoded = " + op.return_type.typescript_encode("ret") + ";\n"
-      @io << ident ident op.return_type.typescript_check_encoded("retEncoded", "\"#{op.pretty_name}.ret\"")
-      @io << ident ident "return retEncoded"
-      @io << "\n"
+      @io << ident ident op.return_type.typescript_check_decoded("ret", "\"#{op.pretty_name}.ret\"")
+      @io << ident ident "return " + op.return_type.typescript_encode("ret") + ";\n"
       @io << ident "},\n"
     end
     @io << "};\n\n"
