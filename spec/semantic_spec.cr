@@ -4,7 +4,7 @@ require "../src/semantic/ast_semantic"
 
 describe Semantic do
   it "fails when type definition appears twice" do
-    expect_raises(Exception, "already defined") do
+    expect_raises(Exception, "defined") do
       parse <<-END
         type X {
 
