@@ -10,7 +10,7 @@ module Semantic
     end
 
     def visit(operation : AST::Operation)
-      @path = [operation.name]
+      @path = [operation.name[0].upcase + operation.name[1..-1]]
       super
     end
 
@@ -20,12 +20,7 @@ module Semantic
       @path.pop
     end
 
-    def visit(t : AST::StructType)
-      t.name = @path.join("")
-      super
-    end
-
-    def visit(t : AST::EnumType)
+    def visit(t : AST::StructType | AST::EnumType)
       t.name = @path.join("")
       super
     end
