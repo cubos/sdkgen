@@ -12,7 +12,7 @@ module AST
       "void"
     end
 
-    def typescript_check_decoded(expr, descr)
+    def typescript_check_encoded(expr, descr)
       ""
     end
   end

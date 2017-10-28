@@ -34,10 +34,10 @@ module AST
       end
     end
 
-    def typescript_check_decoded(expr, descr)
+    def typescript_check_encoded(expr, descr)
       String.build do |io|
         fields.each do |field|
-          io << field.type.typescript_check_decoded("#{expr}.#{field.name}", "#{descr} + \".#{field.name}\"")
+          io << field.type.typescript_check_encoded("#{expr}.#{field.name}", "#{descr} + \".#{field.name}\"")
         end
       end
     end

@@ -12,10 +12,10 @@ module AST
       "number"
     end
 
-    def typescript_check_decoded(expr, descr)
+    def typescript_check_encoded(expr, descr)
       String.build do |io|
         io << "if (typeof #{expr} !== \"number\") {\n"
-        io << "    failTypeCheck(#{descr} + \", callId = \" + ctx.callId);\n"
+        io << "    failTypeCheck(#{descr}, ctx);\n"
         io << "}\n"
       end
     end
