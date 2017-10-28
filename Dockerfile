@@ -2,7 +2,7 @@ FROM crystallang/crystal
 CMD ["bash"]
 ADD . /tmp/
 WORKDIR /tmp
-RUN crystal tool format src --check
+RUN crystal tool format --check
 RUN crystal spec
 WORKDIR /root
 RUN crystal build /tmp/main.cr -o sdkgen2
