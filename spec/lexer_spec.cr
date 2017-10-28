@@ -5,7 +5,7 @@ describe Lexer do
   it_lexes "", [] of Token
 
   it_lexes "type", [
-    TypeKeywordToken.new
+    TypeKeywordToken.new,
   ]
 
   it_doesnt_lex "23", "Unexpected character '2' at -:1:1"
@@ -13,11 +13,11 @@ describe Lexer do
   it_doesnt_lex "2a", "Unexpected character '2' at -:1:1"
 
   it_lexes "type2", [
-    IdentifierToken.new("type2")
+    IdentifierToken.new("type2"),
   ]
 
   it_lexes "aaa", [
-    IdentifierToken.new("aaa")
+    IdentifierToken.new("aaa"),
   ]
 
   it_lexes "a b c", [
@@ -30,82 +30,82 @@ describe Lexer do
 
   it_lexes "type type", [
     TypeKeywordToken.new,
-    TypeKeywordToken.new
+    TypeKeywordToken.new,
   ]
 
   it_lexes "enum", [
-    EnumKeywordToken.new
+    EnumKeywordToken.new,
   ]
 
   it_lexes "error", [
-    ErrorKeywordToken.new
+    ErrorKeywordToken.new,
   ]
 
   it_lexes "import", [
-    ImportKeywordToken.new
+    ImportKeywordToken.new,
   ]
 
   it_lexes "get", [
-    GetKeywordToken.new
+    GetKeywordToken.new,
   ]
 
   it_lexes "Get", [
-    IdentifierToken.new("Get")
+    IdentifierToken.new("Get"),
   ]
 
   it_lexes "function", [
-    FunctionKeywordToken.new
+    FunctionKeywordToken.new,
   ]
 
   it_lexes "enuma", [
-    IdentifierToken.new("enuma")
+    IdentifierToken.new("enuma"),
   ]
 
   it_lexes "errorh", [
-    IdentifierToken.new("errorh")
+    IdentifierToken.new("errorh"),
   ]
 
   %w[enum type error import get function].each do |kw|
     it_lexes kw, [
-      IdentifierToken.new(kw)
+      IdentifierToken.new(kw),
     ]
   end
 
   %w[string int uint date datetime bytes float bool].each do |primitive|
     it_lexes primitive, [
-      PrimitiveTypeToken.new(primitive)
+      PrimitiveTypeToken.new(primitive),
     ]
 
     it_lexes primitive, [
-      IdentifierToken.new(primitive)
+      IdentifierToken.new(primitive),
     ]
 
     it_lexes primitive + "a", [
-      IdentifierToken.new(primitive + "a")
+      IdentifierToken.new(primitive + "a"),
     ]
   end
 
   it_lexes "err", [
-    IdentifierToken.new("err")
+    IdentifierToken.new("err"),
   ]
 
   it_lexes "{", [
-    CurlyOpenSymbolToken.new
+    CurlyOpenSymbolToken.new,
   ]
 
   it_lexes "{{", [
     CurlyOpenSymbolToken.new,
-    CurlyOpenSymbolToken.new
+    CurlyOpenSymbolToken.new,
   ]
 
   it_lexes "}{", [
     CurlyCloseSymbolToken.new,
-    CurlyOpenSymbolToken.new
+    CurlyOpenSymbolToken.new,
   ]
 
   it_lexes " } { ", [
     CurlyCloseSymbolToken.new,
-    CurlyOpenSymbolToken.new
+    CurlyOpenSymbolToken.new,
   ]
 
   it_lexes "({!:?,=})", [
@@ -117,22 +117,22 @@ describe Lexer do
     CommaSymbolToken.new,
     EqualSymbolToken.new,
     CurlyCloseSymbolToken.new,
-    ParensCloseSymbolToken.new
+    ParensCloseSymbolToken.new,
   ]
 
   it_lexes " [][] ", [
     ArraySymbolToken.new,
-    ArraySymbolToken.new
+    ArraySymbolToken.new,
   ]
 
   it_lexes "nice[]", [
     IdentifierToken.new("nice"),
-    ArraySymbolToken.new
+    ArraySymbolToken.new,
   ]
 
   it_lexes "nice\n[]", [
     IdentifierToken.new("nice"),
-    ArraySymbolToken.new
+    ArraySymbolToken.new,
   ]
 
   it_doesnt_lex "[", "Unexpected end of file"
@@ -140,25 +140,25 @@ describe Lexer do
   it_lexes "type Str string", [
     TypeKeywordToken.new,
     IdentifierToken.new("Str"),
-    PrimitiveTypeToken.new("string")
+    PrimitiveTypeToken.new("string"),
   ]
 
   it_lexes "$url", [
-    GlobalOptionToken.new("url")
+    GlobalOptionToken.new("url"),
   ]
 
   it_lexes "$F", [
-    GlobalOptionToken.new("F")
+    GlobalOptionToken.new("F"),
   ]
 
   it_lexes "$x123", [
-    GlobalOptionToken.new("x123")
+    GlobalOptionToken.new("x123"),
   ]
 
   it_lexes "$ah[]?", [
     GlobalOptionToken.new("ah"),
     ArraySymbolToken.new,
-    OptionalSymbolToken.new
+    OptionalSymbolToken.new,
   ]
 
   it_doesnt_lex "$", "Unexpected end of file"
@@ -168,47 +168,47 @@ describe Lexer do
   it_doesnt_lex "$ a", "Unexpected character ' '"
 
   it_lexes "\"ab\"", [
-    StringLiteralToken.new("ab")
+    StringLiteralToken.new("ab"),
   ]
 
   it_lexes "\"\"", [
-    StringLiteralToken.new("")
+    StringLiteralToken.new(""),
   ]
 
   it_lexes "\"aa\\nbb\"", [
-    StringLiteralToken.new("aa\nbb")
+    StringLiteralToken.new("aa\nbb"),
   ]
 
   it_lexes "\"aa\\bb\"", [
-    StringLiteralToken.new("aabb")
+    StringLiteralToken.new("aabb"),
   ]
 
   it_lexes "\"'\"", [
-    StringLiteralToken.new("'")
+    StringLiteralToken.new("'"),
   ]
 
   it_lexes "\"\\n\\t\\\"\"", [
-    StringLiteralToken.new("\n\t\"")
+    StringLiteralToken.new("\n\t\""),
   ]
 
   it_lexes "//hmmm", [] of Token
 
   it_lexes "x//hmmm", [
-    IdentifierToken.new("x")
+    IdentifierToken.new("x"),
   ]
 
   it_lexes "a//hmmm\nb", [
     IdentifierToken.new("a"),
-    IdentifierToken.new("b")
+    IdentifierToken.new("b"),
   ]
 
   it_lexes "a  //  hmmm  \n  b", [
     IdentifierToken.new("a"),
-    IdentifierToken.new("b")
+    IdentifierToken.new("b"),
   ]
 
   it_lexes "// héýça\n z", [
-    IdentifierToken.new("z")
+    IdentifierToken.new("z"),
   ]
 end
 
