@@ -1,6 +1,6 @@
-require "./target_typescript"
+require "./target"
 
-class TypeScriptWebTarget < TypeScriptTarget
+class TypeScriptWebTarget < Target
   def gen
     @io << <<-END
 import * as moment from "moment";
@@ -26,7 +26,8 @@ END
     end
 
     @ast.operations.each do |op|
-      @io << "export async function #{op.pretty_name}#{operation_args(op)}: Promise<#{op.return_type.typescript_native_type}> {\n"
+      args = op.args.map { |arg| "#{arg.name}: #{arg.type.typescript_native_type}" }
+      @io << "export async function #{op.pretty_name}(#{args.join(", ")}): Promise<#{op.return_type.typescript_native_type}> {\n"
       if op.args.size > 0
         @io << "  const args = {\n"
         op.args.each do |arg|
