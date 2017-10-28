@@ -2,10 +2,6 @@ require "./target"
 require "secure_random"
 
 abstract class JavaTarget < Target
-  def ident(code)
-    super super code
-  end
-
   def mangle(ident)
     if %w[
          boolean class if int byte do for while void float double long char synchronized

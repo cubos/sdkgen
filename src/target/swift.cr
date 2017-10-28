@@ -1,10 +1,6 @@
 require "./target"
 
 abstract class SwiftTarget < Target
-  def ident(code)
-    super super code
-  end
-
   def native_type(t : AST::PrimitiveType)
     case t
     when AST::StringPrimitiveType  ; "String"
