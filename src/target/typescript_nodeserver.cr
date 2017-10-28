@@ -15,8 +15,8 @@ export function setCaptureErrorFn(fn: (e: Error, req?: http.IncomingMessage, ext
     captureError = fn;
 }
 
-function failTypeCheck(descr: string) {
-    setTimeout(() => captureError(new Error("Invalid Type at '" + descr + "'")), 1);
+function failTypeCheck(descr: string, ctx: Context) {
+    setTimeout(() => captureError(new Error("Invalid Type at '" + descr + "'"), undefined, ctx), 1);
 }
 
 
@@ -47,13 +47,13 @@ END
     @ast.operations.each do |op|
       @io << "    " << op.pretty_name << ": async (ctx: Context, args: any) => {\n"
       op.args.each do |arg|
-        @io << ident ident arg.type.typescript_check_decoded("args.#{arg.name}", "\"#{op.pretty_name}.args.#{arg.name}\"")
+        @io << ident ident arg.type.typescript_check_encoded("args.#{arg.name}", "\"#{op.pretty_name}.args.#{arg.name}\"")
         @io << ident ident "const #{arg.name} = #{arg.type.typescript_decode("args.#{arg.name}")};"
         @io << "\n"
       end
       @io << ident ident "const ret = await fn.#{op.pretty_name}(#{(["ctx"] + op.args.map(&.name)).join(", ")});\n"
       @io << ident ident "const retEncoded = " + op.return_type.typescript_encode("ret") + ";\n"
-      @io << ident ident op.return_type.typescript_check_decoded("retEncoded", "\"#{op.pretty_name}.ret\"")
+      @io << ident ident op.return_type.typescript_check_encoded("retEncoded", "\"#{op.pretty_name}.ret\"")
       @io << ident ident "return retEncoded"
       @io << "\n"
       @io << ident "},\n"

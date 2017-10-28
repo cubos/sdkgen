@@ -12,8 +12,12 @@ module AST
       "Buffer"
     end
 
-    def typescript_check_decoded(expr, descr)
-      ""
+    def typescript_check_encoded(expr, descr)
+      String.build do |io|
+        io << "if (typeof #{expr} !== \"string\" || !#{expr}.match(/^([0-9a-f]{2})*$/)) {\n"
+        io << "    failTypeCheck(#{descr}, ctx);\n"
+        io << "}\n"
+      end
     end
   end
 end
