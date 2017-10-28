@@ -139,11 +139,17 @@ class Parser
     read_next_token
 
     t = AST::StructType.new
+    field_names = Set(String).new
 
     while true
       case token = multi_expect(IdentifierToken, CurlyCloseSymbolToken)
       when IdentifierToken
-        t.fields << parse_field
+        f = parse_field
+        if field_names.includes? f.name
+          raise ParserException.new "Cannot redeclare field '#{f.name}'"
+        end
+        field_names << f.name
+        t.fields << f
       when CurlyCloseSymbolToken
         read_next_token
         return t
@@ -166,13 +172,19 @@ class Parser
     op.name = expect(IdentifierToken).name
     ref_deprecated_location_token = @token.not_nil!
     read_next_token
+    arg_names = Set(String).new
 
     if @token.is_a? ParensOpenSymbolToken
       read_next_token
       while true
         case token = multi_expect(IdentifierToken, ParensCloseSymbolToken, CommaSymbolToken)
         when IdentifierToken
-          op.args << parse_field
+          f = parse_field
+          if arg_names.includes? f.name
+            raise ParserException.new "Cannot redeclare argument '#{f.name}'"
+          end
+          arg_names << f.name
+          op.args << f
         when ParensCloseSymbolToken
           read_next_token
           break
