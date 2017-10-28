@@ -18,7 +18,7 @@ OptionParser.parse! do |parser|
   parser.on("-o NAME", "--output=NAME", "Specifies the output file") { |name| destination = name }
   parser.on("-t TARGET", "--target=TARGET", "Specifies the target platform") { |target| target_name = target }
   parser.on("-h", "--help", "Show this help") { puts parser }
-  parser.unknown_args {|args| sources = args }
+  parser.unknown_args { |args| sources = args }
 end
 
 if sources.size == 0
