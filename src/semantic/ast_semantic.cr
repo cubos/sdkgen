@@ -8,6 +8,11 @@ require "./give_struct_and_enum_names"
 require "./collect_struct_and_enum_types"
 require "./check_multiple_declaration"
 
+module Semantic
+  class SemanticException < Exception
+  end
+end
+
 module AST
   class ApiDescription
     property struct_types = [] of AST::StructType
