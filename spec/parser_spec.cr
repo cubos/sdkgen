@@ -19,7 +19,6 @@ end
 
 PRIMITIVES = %w[string int uint date datetime bytes float bool]
 describe Parser do
-
   {% for p in PRIMITIVES %}
     it "handles primitive type '#{{{p}}}'" do
       check_parses <<-END
