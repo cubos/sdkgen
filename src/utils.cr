@@ -1,12 +1,13 @@
 module RandomGen
-    @@gen = Random::PCG32.new(17)
-    def self.random_u
-        @@gen.next_u
-    end
+  @@gen = Random::PCG32.new(17)
+
+  def self.random_u
+    @@gen.next_u
+  end
 end
 
 def random_var
-    "x#{RandomGen.random_u}"
+  "x#{RandomGen.random_u}"
 end
 
 def ident(code)
