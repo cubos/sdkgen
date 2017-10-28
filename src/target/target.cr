@@ -30,6 +30,6 @@ abstract class Target
   end
 
   def ident(code)
-    code.split("\n").map { |line| "  " + line }.join("\n").gsub(/\n\s+$/m, "\n")
+    code.split("\n").map { |line| "    " + line }.join("\n").gsub(/\n\s+$/m, "\n")
   end
 end
