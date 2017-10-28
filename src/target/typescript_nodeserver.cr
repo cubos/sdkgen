@@ -10,8 +10,8 @@ import url from "url";
 import moment from "moment";
 import r from "../rethinkdb";
 
-let captureError: (e: Error) => void = () => {};
-export function setCaptureErrorFn(fn: (e: Error) => void) {
+let captureError: (e: Error, req: http.IncomingMessage, extra: any) => void = () => {};
+export function setCaptureErrorFn(fn: (e: Error, req: http.IncomingMessage, extra: any) => void) {
   captureError = fn;
 }
 
@@ -244,7 +244,9 @@ export function start(port: number) {
                 const deltaTime = process.hrtime(startTime);
                 call.duration = deltaTime[0] + deltaTime[1] * 1e-9;
                 if (call.error && call.error.type === "Fatal") {
-                  captureError(new Error(call.error.message));
+                  captureError(new Error(call.error.type + ": " + call.error.message), req, {
+                    call
+                  });
                 }
               }
 
