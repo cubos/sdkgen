@@ -12,12 +12,12 @@ module AST
       "#{base.typescript_native_type} | null"
     end
 
-    def typescript_check_decoded(expr, descr)
+    def typescript_check_encoded(expr, descr)
       String.build do |io|
         x = random_var
         io << "const #{x} = #{expr};\n"
         io << "if (#{x}) {\n"
-        io << ident base.typescript_check_decoded(x, descr)
+        io << ident base.typescript_check_encoded(x, descr)
         io << "}\n"
       end
     end

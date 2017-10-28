@@ -22,14 +22,14 @@ module AST
       end
     end
 
-    def typescript_check_decoded(expr, descr)
+    def typescript_check_encoded(expr, descr)
       String.build do |io|
         io << "if (!(#{expr} instanceof Array)) {\n"
-        io << "    failTypeCheck(#{descr} + \", callId = \" + ctx.callId);\n"
+        io << "    failTypeCheck(#{descr}, ctx);\n"
         io << "} else {\n"
         i = random_var
         io << ident "for (let #{i} = 0; #{i} < #{expr}.length; ++#{i}) {\n"
-        io << ident ident base.typescript_check_decoded("#{expr}[#{i}]", "#{descr} + \"[\" + #{i} + \"]\"")
+        io << ident ident base.typescript_check_encoded("#{expr}[#{i}]", "#{descr} + \"[\" + #{i} + \"]\"")
         io << ident "}\n"
         io << "}\n"
       end
