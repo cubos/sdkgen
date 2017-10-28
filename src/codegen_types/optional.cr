@@ -13,7 +13,11 @@ module AST
     end
 
     def typescript_check_decoded(expr, descr)
-      ""
+      String.build do |io|
+        io << "if (#{expr}) {\n"
+        io << ident base.typescript_check_decoded(expr, descr)
+        io << "}\n"
+      end
     end
   end
 end

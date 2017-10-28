@@ -1,3 +1,5 @@
+require "../utils"
+
 module AST
   class ArrayType
     def typescript_decode(expr)
@@ -21,7 +23,16 @@ module AST
     end
 
     def typescript_check_decoded(expr, descr)
-      ""
+      String.build do |io|
+        io << "if (!(#{expr} instanceof Array)) {\n"
+        io << "    failTypeCheck(#{descr});\n"
+        io << "} else {\n"
+        i = random_var
+        io << ident "for (let #{i} = 0; #{i} < #{expr}.length; ++#{i}) {\n"
+        io << ident ident base.typescript_check_decoded("#{expr}[#{i}]", "#{descr} + \"[\" + #{i} + \"]\"")
+        io << ident "}\n"
+        io << "}\n"
+      end
     end
   end
 end
