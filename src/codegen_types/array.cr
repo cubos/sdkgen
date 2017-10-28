@@ -25,7 +25,7 @@ module AST
     def typescript_check_decoded(expr, descr)
       String.build do |io|
         io << "if (!(#{expr} instanceof Array)) {\n"
-        io << "    failTypeCheck(#{descr});\n"
+        io << "    failTypeCheck(#{descr} + \", callId = \" + ctx.callId);\n"
         io << "} else {\n"
         i = random_var
         io << ident "for (let #{i} = 0; #{i} < #{expr}.length; ++#{i}) {\n"
