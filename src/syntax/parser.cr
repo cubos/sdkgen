@@ -268,6 +268,19 @@ class Parser
                when "float"   ; AST::FloatPrimitiveType.new
                when "bool"    ; AST::BoolPrimitiveType.new
                when "bytes"   ; AST::BytesPrimitiveType.new
+               when "money"   ; AST::MoneyPrimitiveType.new
+               when "cpf"     ; AST::CpfPrimitiveType.new
+               when "cnpj"    ; AST::CnpjPrimitiveType.new
+               when "email"   ; AST::EmailPrimitiveType.new
+               when "phone"   ; AST::PhonePrimitiveType.new
+               when "cep"     ; AST::CepPrimitiveType.new
+               when "latlng"  ; AST::LatLngPrimitiveType.new
+               when "url"     ; AST::UrlPrimitiveType.new
+               when "uuid"    ; AST::UuidPrimitiveType.new
+               when "hex"     ; AST::HexPrimitiveType.new
+               when "base64"  ; AST::Base64PrimitiveType.new
+               when "safehtml"; AST::SafeHtmlPrimitiveType.new
+               when "xml"     ; AST::XmlPrimitiveType.new
                else
                  raise "BUG! Should handle primitive #{token.name}"
                end
