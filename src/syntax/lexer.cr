@@ -1,6 +1,12 @@
 require "./token"
 
 class Lexer
+  PRIMITIVES = %w[
+    bool int uint float string date datetime bytes
+    money cpf cnpj email phone cep latlng url
+    uuid hex base64 safehtml xml
+  ]
+
   property filename : String
 
   class LexerException < Exception
@@ -155,12 +161,12 @@ class Lexer
                 when "import"  ; ImportKeywordToken.new
                 when "get"     ; GetKeywordToken.new
                 when "function"; FunctionKeywordToken.new
-                when "bool", "int", "uint", "float", "string", "date", "datetime", "bytes",
-                     "money", "cpf", "cnpj", "email", "phone", "cep", "latlng", "url",
-                     "uuid", "hex", "base64", "safehtml", "xml"
-                  PrimitiveTypeToken.new(str)
                 else
-                  IdentifierToken.new(str)
+                  if PRIMITIVES.includes? str
+                    PrimitiveTypeToken.new(str)
+                  else
+                    IdentifierToken.new(str)
+                  end
                 end
       end
     end

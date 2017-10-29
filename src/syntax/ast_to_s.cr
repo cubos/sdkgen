@@ -55,6 +55,84 @@ module AST
     end
   end
 
+  class MoneyPrimitiveType
+    def to_s(io)
+      io << "money"
+    end
+  end
+
+  class CpfPrimitiveType
+    def to_s(io)
+      io << "cpf"
+    end
+  end
+
+  class CnpjPrimitiveType
+    def to_s(io)
+      io << "cnpj"
+    end
+  end
+
+  class EmailPrimitiveType
+    def to_s(io)
+      io << "email"
+    end
+  end
+
+  class PhonePrimitiveType
+    def to_s(io)
+      io << "phone"
+    end
+  end
+
+  class CepPrimitiveType
+    def to_s(io)
+      io << "cep"
+    end
+  end
+
+  class LatLngPrimitiveType
+    def to_s(io)
+      io << "latlng"
+    end
+  end
+
+  class UrlPrimitiveType
+    def to_s(io)
+      io << "url"
+    end
+  end
+
+  class UuidPrimitiveType
+    def to_s(io)
+      io << "uuid"
+    end
+  end
+
+  class HexPrimitiveType
+    def to_s(io)
+      io << "hex"
+    end
+  end
+
+  class Base64PrimitiveType
+    def to_s(io)
+      io << "base64"
+    end
+  end
+
+  class SafeHtmlPrimitiveType
+    def to_s(io)
+      io << "safehtml"
+    end
+  end
+
+  class XmlPrimitiveType
+    def to_s(io)
+      io << "xml"
+    end
+  end
+
   class OptionalType
     def to_s(io)
       @base.to_s(io)

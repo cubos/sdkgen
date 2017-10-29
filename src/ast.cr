@@ -32,6 +32,45 @@ module AST
   class VoidPrimitiveType < PrimitiveType
   end
 
+  class MoneyPrimitiveType < PrimitiveType
+  end
+
+  class CpfPrimitiveType < PrimitiveType
+  end
+
+  class CnpjPrimitiveType < PrimitiveType
+  end
+
+  class EmailPrimitiveType < PrimitiveType
+  end
+
+  class PhonePrimitiveType < PrimitiveType
+  end
+
+  class CepPrimitiveType < PrimitiveType
+  end
+
+  class LatLngPrimitiveType < PrimitiveType
+  end
+
+  class UrlPrimitiveType < PrimitiveType
+  end
+
+  class UuidPrimitiveType < PrimitiveType
+  end
+
+  class HexPrimitiveType < PrimitiveType
+  end
+
+  class Base64PrimitiveType < PrimitiveType
+  end
+
+  class SafeHtmlPrimitiveType < PrimitiveType
+  end
+
+  class XmlPrimitiveType < PrimitiveType
+  end
+
   class OptionalType < Type
     property base
 
