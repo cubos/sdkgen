@@ -2,10 +2,8 @@ require "spec"
 require "../src/syntax/parser"
 require "../src/syntax/ast_to_s"
 
-PRIMITIVES = %w[string int uint date datetime bytes float bool]
-
 describe Parser do
-  PRIMITIVES.each do |p|
+  Lexer::PRIMITIVES.each do |p|
     it "handles primitive type '#{p}'" do
       check_parses <<-END
       type Foo {
@@ -15,7 +13,7 @@ describe Parser do
     end
   end
 
-  (PRIMITIVES + %w[type get function enum import error void]).each do |kw|
+  (Lexer::PRIMITIVES + %w[type get function enum import error void]).each do |kw|
     it "handles '#{kw}' on the name of a field" do
       check_parses <<-END
       type Foo {
@@ -45,7 +43,7 @@ describe Parser do
   end
 
   it "handles simple get operations" do
-    PRIMITIVES.each do |primitive|
+    Lexer::PRIMITIVES.each do |primitive|
       check_parses <<-END
       get foo(): #{primitive}
       get bar(): #{primitive}?
