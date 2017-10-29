@@ -105,7 +105,7 @@
 					"include": "#any"
 				}, {
 					"name": "keyword.type",
-					"match": "\\b(bool|int|uint|float|string|datetime|date|bytes|void)\\b"
+					"match": "\\b(bool|int|uint|float|string|datetime|date|bytes|void|money|cpf|cnpj|email|phone|cep|latlng|url|uuid|hex|base64|safehtml|xml)\\b"
 				}, {
 					"name": "markup.bold",
 					"match": "(\\?|\\[\\])"

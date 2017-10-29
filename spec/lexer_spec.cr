@@ -71,7 +71,7 @@ describe Lexer do
     ]
   end
 
-  %w[string int uint date datetime bytes float bool].each do |primitive|
+  Lexer::PRIMITIVES.each do |primitive|
     it_lexes primitive, [
       PrimitiveTypeToken.new(primitive),
     ]
