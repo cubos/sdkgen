@@ -11,5 +11,6 @@ def random_var
 end
 
 def ident(code)
+  return "" if code.strip == ""
   code.split("\n").map { |line| "    " + line }.join("\n").gsub(/\n\s+$/m, "\n")
 end
