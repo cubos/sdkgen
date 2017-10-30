@@ -16,7 +16,7 @@ export function setCaptureErrorFn(fn: (e: Error, req?: http.IncomingMessage, ext
 }
 
 function failTypeCheck(descr: string, ctx: Context) {
-    setTimeout(() => captureError(new Error("Invalid Type at '" + descr + "'"), undefined, ctx), 1);
+    setTimeout(() => captureError(new Error("Invalid Type at '" + descr + "'"), ctx.req, ctx.call), 1);
 }
 
 
@@ -92,8 +92,9 @@ export function handleHttpPrefix(method: "GET" | "POST" | "PUT" | "DELETE", path
 }
 
 export interface Context {
-    callId: string;
+    call: DBApiCall;
     device: DBDevice;
+    req: http.IncomingMessage;
     startTime: Date;
     staging: boolean;
 }
@@ -160,7 +161,8 @@ export function start(port: number) {
                         const request = JSON.parse(body);
                         request.device.ip = ip;
                         const context: Context = {
-                            callId: "",
+                            call: null as any,
+                            req: req,
                             device: request.device,
                             startTime: new Date,
                             staging: request.staging || false
@@ -198,7 +200,7 @@ export function start(port: number) {
                             error: null as {type: string, message: string}|null
                         };
 
-                        context.callId = call.id;
+                        context.call = call;
 
                         if (clearForLogging[call.name])
                             clearForLogging[call.name](call);
