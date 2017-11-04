@@ -103,8 +103,11 @@ function sleep(ms: number) {
     return new Promise<void>(resolve => setTimeout(resolve, ms));
 }
 
+export let server: http.Server;
+
 export function start(port: number) {
-    const server = http.createServer((req, res) => {
+    if (server) return;
+    server = http.createServer((req, res) => {
         req.on("error", (err) => {
             console.error(err);
         });
