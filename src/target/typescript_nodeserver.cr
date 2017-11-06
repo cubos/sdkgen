@@ -15,10 +15,6 @@ export function setCaptureErrorFn(fn: (e: Error, req?: http.IncomingMessage, ext
     captureError = fn;
 }
 
-function failTypeCheck(descr: string, ctx: Context) {
-    setTimeout(() => captureError(new Error("Invalid Type at '" + descr + "'"), ctx.req, ctx.call), 1);
-}
-
 
 END
 
