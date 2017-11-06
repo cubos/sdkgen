@@ -258,7 +258,7 @@ export function start(port: number) {
     @ast.errors.each do |error|
       io << "if (err instanceof #{error})\n    call.error = {type: #{error.inspect}, message: err.message};\n"
     end
-end)}
+  end)}
                                 }
                                 call.running = false;
                                 const deltaTime = process.hrtime(startTime);
