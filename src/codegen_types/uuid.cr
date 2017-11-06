@@ -15,7 +15,8 @@ module AST
     def typescript_check_encoded(expr, descr)
       String.build do |io|
         io << "if (typeof #{expr} !== \"string\" || !#{expr}.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/)) {\n"
-        io << "    failTypeCheck(#{descr}, ctx);\n"
+        io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"'\");\n"
+        io << "    setTimeout(() => captureError(err, ctx.req, ctx.call), 1);\n"
         io << "}\n"
       end
     end
@@ -23,7 +24,8 @@ module AST
     def typescript_check_decoded(expr, descr)
       String.build do |io|
         io << "if (typeof #{expr} !== \"string\" || !#{expr}.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/)) {\n"
-        io << "    failTypeCheck(#{descr}, ctx);\n"
+        io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"'\");\n"
+        io << "    setTimeout(() => captureError(err, ctx.req, ctx.call), 1);\n"
         io << "}\n"
       end
     end
