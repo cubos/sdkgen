@@ -70,9 +70,17 @@ END
     end
     @io << "};\n\n"
 
+    @ast.errors.each do |error|
+      @io << "export class #{error} extends Error {\n"
+      @io << ident "constructor(message: string) {\n"
+      @io << ident ident "super(message ? \"#{error}: \" + message : #{error.inspect});\n"
+      @io << ident "}\n"
+      @io << "}\n\n"
+    end
+
     @io << "export const err = {\n"
     @ast.errors.each do |error|
-      @io << ident "#{error}: (message: string = \"\") => { throw {type: #{error.inspect}, message}; },\n"
+      @io << ident "#{error}: (message: string = \"\") => { throw new #{error}(message); },\n"
     end
     @io << "};\n\n"
 
@@ -242,17 +250,15 @@ export function start(port: number) {
                                 } catch (err) {
                                     console.error(err);
                                     call.ok = false;
-                                    if (err.type) {
-                                        call.error = {
-                                            type: err.type,
-                                            message: err.message
-                                        };
-                                    } else {
-                                        call.error = {
-                                            type: "Fatal",
-                                            message: err.toString()
-                                        };
-                                    }
+                                    call.error = {
+                                        type: "Fatal",
+                                        message: err.toString()
+                                    };
+#{ident ident ident ident ident ident ident ident ident(String.build do |io|
+    @ast.errors.each do |error|
+      io << "if (err instanceof #{error})\n    call.error = {type: #{error.inspect}, message: err.message};\n"
+    end
+end)}
                                 }
                                 call.running = false;
                                 const deltaTime = process.hrtime(startTime);
