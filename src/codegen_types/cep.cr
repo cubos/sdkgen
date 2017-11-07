@@ -16,7 +16,7 @@ module AST
       String.build do |io|
         io << "if (typeof #{expr} !== \"string\" || #{expr}.replace(/[^0-9]/g, \"\").length !== 8) {\n"
         io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"'\");\n"
-        io << "    setTimeout(() => captureError(err, ctx.req, ctx.call), 1);\n"
+        io << "    setTimeout(() => captureError(err, ctx.req, ctx.call), 1000);\n"
         io << "}\n"
       end
     end
@@ -25,7 +25,7 @@ module AST
       String.build do |io|
         io << "if (typeof #{expr} !== \"string\" || #{expr}.replace(/[^0-9]/g, \"\").length !== 8) {\n"
         io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"'\");\n"
-        io << "    setTimeout(() => captureError(err, ctx.req, ctx.call), 1);\n"
+        io << "    setTimeout(() => captureError(err, ctx.req, ctx.call), 1000);\n"
         io << "}\n"
       end
     end
