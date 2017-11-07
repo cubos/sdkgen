@@ -242,7 +242,13 @@ export function start(port: number) {
                                 };
                             } else {
                                 try {
-                                    call.result = await fnExec[request.name](context, request.args);
+                                    const func = fnExec[request.name];
+                                    if (func) {
+                                        call.result = await func(context, request.args);
+                                    } else {
+                                        console.error(JSON.stringify(Object.keys(fnExec)));
+                                        throw "Function does not exist: " + request.name;
+                                    }
                                 } catch (err) {
                                     console.error(err);
                                     call.ok = false;
