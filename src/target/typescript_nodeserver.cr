@@ -68,8 +68,9 @@ END
 
     @ast.errors.each do |error|
       @io << "export class #{error} extends Error {\n"
-      @io << ident "constructor(message: string) {\n"
-      @io << ident ident "super(message ? \"#{error}: \" + message : #{error.inspect});\n"
+      @io << ident "_type = #{error.inspect};\n"
+      @io << ident "constructor(public _msg: string) {\n"
+      @io << ident ident "super(_msg ? \"#{error}: \" + _msg : #{error.inspect});\n"
       @io << ident "}\n"
       @io << "}\n\n"
     end
@@ -258,7 +259,7 @@ export function start(port: number) {
                                     };
 #{ident ident ident ident ident ident ident ident ident(String.build do |io|
     @ast.errors.each do |error|
-      io << "if (err instanceof #{error})\n    call.error = {type: #{error.inspect}, message: err.message};\n"
+      io << "if (err._type === #{error.inspect})\n    call.error = {type: #{error.inspect}, message: err._msg};\n"
     end
   end)}
                                 }
