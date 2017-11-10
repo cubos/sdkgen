@@ -8,7 +8,7 @@
         "vscode": "^1.10.0"
     },
     "categories": [
-        "Languages"
+        "Languages", "Snippets"
     ],
     "contributes": {
         "languages": [{
@@ -21,6 +21,10 @@
             "language": "sdkgen",
             "scopeName": "source.sdkgen",
             "path": "./syntaxes/sdkgen.tmLanguage.json"
+        }],
+        "snippets": [{
+            "language": "sdkgen",
+            "path": "./snippets/sdkgen.json"
         }]
     }
 }
