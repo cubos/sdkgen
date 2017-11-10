@@ -1,0 +1,28 @@
+{
+	"error declaration": {
+		"prefix": "ed",
+		"body": "error ${1:ErrorName}",
+		"description": "Produce a error declaration with a name"
+	},
+	"function declaration": {
+		"prefix": "fd",
+		"body": "function ${1:functionName}(${2:parameterName}${3:: ${4:parameterType}})${5:: ${6:returnType}",
+		"description": "Produce a generic function with name, parameter, parameter type and return type."
+	},
+	"get function declaration": {
+		"prefix": "gfd",
+		"body": "get ${1:functionName}(${2:parameterName}${3:: ${4:parameterType}})${5:: ${6:returnType}}",
+		"description": "Produce a get function with name, parameter, parameter type and return type."
+	},
+	"type declaration": {
+		"prefix": "td",
+		"body": [
+			"type ${1:typeName} {",
+			"  ${2:propertyName}${3:: ${4:parameterType}}",
+			"  ${5:propertyName}${6:: ${7:parameterType}}",
+			"${0}}"
+
+		],
+		"description": "Produce a type declaration with a name, property name and a property type."
+	}
+}
