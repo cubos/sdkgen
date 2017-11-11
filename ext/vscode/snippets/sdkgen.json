@@ -1,6 +1,6 @@
 {
 	"error declaration": {
-		"prefix": "ed",
+		"prefix": "erd",
 		"body": "error ${1:ErrorName}",
 		"description": "Produce a error declaration with a name"
 	},
