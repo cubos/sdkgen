@@ -6,7 +6,7 @@
 	},
 	"function declaration": {
 		"prefix": "fd",
-		"body": "function ${1:functionName}(${2:parameterName}${3:: ${4:parameterType}})${5:: ${6:returnType}",
+		"body": "function ${1:functionName}(${2:parameterName}${3:: ${4:parameterType}})${5:: ${6:returnType}}",
 		"description": "Produce a generic function with name, parameter, parameter type and return type."
 	},
 	"get function declaration": {
