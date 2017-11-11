@@ -17,7 +17,7 @@
 	"type declaration": {
 		"prefix": "td",
 		"body": [
-			"type ${1:typeName} {",
+			"type ${1:TypeName} {",
 			"  ${2:propertyName}${3:: ${4:parameterType}}",
 			"  ${5:propertyName}${6:: ${7:parameterType}}",
 			"${0}}"
