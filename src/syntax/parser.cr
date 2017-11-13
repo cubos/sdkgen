@@ -219,6 +219,14 @@ class Parser
       token = expect StringLiteralToken
       read_next_token
       options.url = token.str
+    when "useRethink"
+      case token = multi_expect(TrueKeywordToken, FalseKeywordToken)
+      when TrueKeywordToken
+        options.useRethink = true
+      when FalseKeywordToken
+        options.useRethink = false
+      end
+      read_next_token
     else
       raise ParserException.new("Unknown option $#{var.name} at #{var.location}")
     end

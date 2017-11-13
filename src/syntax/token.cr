@@ -66,6 +66,18 @@ class ErrorKeywordToken < Token
   end
 end
 
+class TrueKeywordToken < Token
+  def try_ident
+    IdentifierToken.new("true")
+  end
+end
+
+class FalseKeywordToken < Token
+  def try_ident
+    IdentifierToken.new("false")
+  end
+end
+
 class PrimitiveTypeToken < Token
   property name : String
   def_equals name
