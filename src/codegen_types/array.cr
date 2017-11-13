@@ -24,7 +24,7 @@ module AST
 
     def typescript_check_encoded(expr, descr)
       String.build do |io|
-        io << "if (!(#{expr} instanceof Array)) {\n"
+        io << "if (#{expr} === null || #{expr} === undefined || !(#{expr} instanceof Array)) {\n"
         io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"'\");\n"
         io << "    setTimeout(() => captureError(err, ctx.req, ctx.call), 1000);\n"
         io << "} else {\n"
@@ -38,7 +38,7 @@ module AST
 
     def typescript_check_decoded(expr, descr)
       String.build do |io|
-        io << "if (!(#{expr} instanceof Array)) {\n"
+        io << "if (#{expr} === null || #{expr} === undefined || !(#{expr} instanceof Array)) {\n"
         io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"'\");\n"
         io << "    setTimeout(() => captureError(err, ctx.req, ctx.call), 1000);\n"
         io << "} else {\n"
