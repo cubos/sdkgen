@@ -669,6 +669,13 @@ END
             final TimerTask task = new TimerTask() {
                 @Override
                 public void run() {
+#{String.build do |io|
+    unless @ast.options.useRethink
+      io << <<-END
+                    timer.cancel();
+END
+    end
+  end}
                     sentCount[0] += 1;
                     if (sentCount[0] >= 22) {
                         return;
