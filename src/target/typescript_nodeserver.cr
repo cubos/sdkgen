@@ -8,7 +8,44 @@ import crypto from "crypto";
 import os from "os";
 import url from "url";
 import moment from "moment";
+#{String.build do |io|
+    if @ast.options.useRethink
+      io << <<-END
 import r from "../rethinkdb";
+END
+    else
+      io << <<-END
+
+interface DBDevice {
+    id: string
+    ip: string
+    type: "android" | "ios" | "web"
+    platform: any
+    fingerprint: string
+    screen: {width: number, height: number}
+    version: string
+    language: string
+    push?: string
+}
+
+interface DBApiCall {
+    id: string
+    name: string
+    args: any
+    executionId: string
+    running: boolean
+    device: DBDevice
+    date: Date
+    duration: number
+    host: string
+    ok: boolean
+    result: any
+    error: {type: string, message: string} | null
+}
+
+END
+    end
+  end}
 
 let captureError: (e: Error, req?: http.IncomingMessage, extra?: any) => void = () => {};
 export function setCaptureErrorFn(fn: (e: Error, req?: http.IncomingMessage, extra?: any) => void) {
@@ -157,11 +194,23 @@ export function start(port: number) {
                     break;
                 }
                 case "GET": {
-                    r.expr(`{"ok": true}`).then(result => {
+#{String.build do |io|
+    if @ast.options.useRethink
+      io << <<-END
+                    r.expr(`{\"ok\": true}`).then(result => {
                         res.writeHead(200);
                         res.write(result);
                         res.end();
                     });
+END
+    else
+      io << <<-END
+                    res.writeHead(200);
+                    res.write({ok: true});
+                    res.end();
+END
+    end
+  end}
                     break;
                 }
                 case "POST": {
@@ -179,6 +228,9 @@ export function start(port: number) {
 
                         const {id, ...deviceInfo} = context.device;
 
+#{String.build do |io|
+    if @ast.options.useRethink
+      io << <<-END
                         if (!context.device.id || await r.table("devices").get(context.device.id).eq(null)) {
                             context.device.id = crypto.randomBytes(20).toString("hex");
 
@@ -190,6 +242,14 @@ export function start(port: number) {
                         } else {
                             r.table("devices").get(context.device.id).update(deviceInfo).run();
                         }
+END
+    else
+      io << <<-END
+                        context.device.id = crypto.randomBytes(20).toString("hex");
+END
+    end
+  end}
+
 
                         const executionId = crypto.randomBytes(20).toString("hex");
 
@@ -213,6 +273,9 @@ export function start(port: number) {
                         if (clearForLogging[call.name])
                             clearForLogging[call.name](call);
 
+#{String.build do |io|
+    if @ast.options.useRethink
+      io << <<-END
                         async function tryLock(): Promise<boolean> {
                             const priorCall = await r.table("api_calls").get(call.id);
                             if (priorCall === null) {
@@ -233,6 +296,9 @@ export function start(port: number) {
                             if (await tryLock()) break;
                             await sleep(100);
                         }
+END
+    end
+  end}
 
                         if (call.running) {
                             if (call.executionId !== executionId) {
@@ -273,7 +339,13 @@ export function start(port: number) {
                                 }
                             }
 
+#{String.build do |io|
+    if @ast.options.useRethink
+      io << <<-END
                             r.table("api_calls").get(call.id).update(call).run();
+END
+    end
+  end}
                         }
 
                         const response = {
@@ -322,9 +394,15 @@ export function start(port: number) {
 
 fn.ping = async (ctx: Context) => "pong";
 
+#{String.build do |io|
+    if @ast.options.useRethink
+      io << <<-END
 fn.setPushToken = async (ctx: Context, token: string) => {
     await r.table("devices").get(ctx.device.id).update({push: token});
 };
+END
+    end
+  end}
 
 END
   end
