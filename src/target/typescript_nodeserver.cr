@@ -206,7 +206,7 @@ END
     else
       io << <<-END
                     res.writeHead(200);
-                    res.write({ok: true});
+                    res.write(`{\"ok\": true}`);
                     res.end();
 END
     end
