@@ -34,6 +34,15 @@ module AST
       end
     end
 
+    def typescript_expect(expr)
+      String.build do |io|
+        io << "expect(#{expr}).toBeTypeOf(\"object\");\n"
+        fields.each do |field|
+          io << field.type.typescript_expect("#{expr}.#{field.name}")
+        end
+      end
+    end
+
     def typescript_check_encoded(expr, descr)
       String.build do |io|
         io << "if (#{expr} === null || #{expr} === undefined) {\n"
