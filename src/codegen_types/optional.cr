@@ -12,11 +12,21 @@ module AST
       "#{base.typescript_native_type} | null"
     end
 
+    def typescript_expect(expr)
+      String.build do |io|
+        x = random_var
+        io << "const #{x} = #{expr};\n"
+        io << "if (#{x} !== null && #{x} !== undefined) {\n"
+        io << ident base.typescript_expect(x)
+        io << "}\n"
+      end
+    end
+
     def typescript_check_encoded(expr, descr)
       String.build do |io|
         x = random_var
         io << "const #{x} = #{expr};\n"
-        io << "if (#{x}) {\n"
+        io << "if (#{x} !== null && #{x} !== undefined) {\n"
         io << ident base.typescript_check_encoded(x, descr)
         io << "}\n"
       end
@@ -26,7 +36,7 @@ module AST
       String.build do |io|
         x = random_var
         io << "const #{x} = #{expr};\n"
-        io << "if (#{x}) {\n"
+        io << "if (#{x} !== null && #{x} !== undefined) {\n"
         io << ident base.typescript_check_decoded(x, descr)
         io << "}\n"
       end
