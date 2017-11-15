@@ -12,6 +12,13 @@ module AST
       "string"
     end
 
+    def typescript_expect(expr)
+      String.build do |io|
+        io << "expect(#{expr}).toBeTypeOf(\"string\");\n"
+        io << "expect(#{expr}).toMatch(/^([0-9a-f]{2})*$/);\n"
+      end
+    end
+
     def typescript_check_encoded(expr, descr)
       String.build do |io|
         io << "if (#{expr} === null || #{expr} === undefined || typeof #{expr} !== \"string\" || !#{expr}.match(/^([0-9a-f]{2})*$/)) {\n"

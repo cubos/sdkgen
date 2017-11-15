@@ -12,6 +12,14 @@ module AST
       "string"
     end
 
+    def typescript_expect(expr)
+      String.build do |io|
+        io << "expect(#{expr}).toBeTypeOf(\"string\");\n"
+        io << "expect(#{expr}.replace(/[^0-9+]/g, \"\").length).toBeGreaterThanOrEqual(5);\n"
+        io << "expect(#{expr}[0]).toBe(\"+\");\n"
+      end
+    end
+
     def typescript_check_encoded(expr, descr)
       String.build do |io|
         io << "if (#{expr} === null || #{expr} === undefined || typeof #{expr} !== \"string\" || #{expr}.replace(/[^0-9+]/g, \"\").length < 5 || #{expr}[0] !== \"+\") {\n"
