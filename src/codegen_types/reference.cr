@@ -12,6 +12,10 @@ module AST
       type.typescript_native_type
     end
 
+    def typescript_expect(expr)
+      type.typescript_expect(expr)
+    end
+
     def typescript_check_encoded(expr, descr)
       type.typescript_check_encoded(expr, descr)
     end
