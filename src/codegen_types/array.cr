@@ -22,6 +22,16 @@ module AST
       end
     end
 
+    def typescript_expect(expr)
+      String.build do |io|
+        io << "expect(#{expr}).toBeTypeOf(\"array\");\n"
+        i = random_var
+        io << "for (let #{i} = 0; #{i} < #{expr}.length; ++#{i}) {\n"
+        io << ident base.typescript_expect("#{expr}[#{i}]")
+        io << "}\n"
+      end
+    end
+
     def typescript_check_encoded(expr, descr)
       String.build do |io|
         io << "if (#{expr} === null || #{expr} === undefined || !(#{expr} instanceof Array)) {\n"

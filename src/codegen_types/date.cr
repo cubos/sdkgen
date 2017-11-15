@@ -12,6 +12,16 @@ module AST
       "Date"
     end
 
+    def typescript_expect(expr)
+      String.build do |io|
+        io << "expect(#{expr}).toBeInstanceOf(Date);\n"
+        io << "expect(#{expr}.getHours()).toBe(0);\n"
+        io << "expect(#{expr}.getMinutes()).toBe(0);\n"
+        io << "expect(#{expr}.getSeconds()).toBe(0);\n"
+        io << "expect(#{expr}.getMilliseconds()).toBe(0);\n"
+      end
+    end
+
     def typescript_check_encoded(expr, descr)
       String.build do |io|
         io << "if (#{expr} === null || #{expr} === undefined || typeof #{expr} !== \"string\" || !#{expr}.match(/^[0-9]{4}-[01][0-9]-[0123][0-9]$/)) {\n"
