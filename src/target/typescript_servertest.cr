@@ -14,6 +14,7 @@ export interface Context {
     staging: boolean;
 }
 
+/* istanbul ignore next */
 expect.extend({
 	toBeTypeOf(received, argument) {
 		const initialType = typeof received;
