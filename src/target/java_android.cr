@@ -350,7 +350,7 @@ END
         static SecureRandom random = new SecureRandom();
         static boolean initialized = false;
         static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US);
-        static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         static Application application;
 
         static {
@@ -754,7 +754,7 @@ END
         }
 
         static Calendar toCalendar(Date date){
-            Calendar cal = Calendar.getInstance(Locale.US);
+            Calendar cal = Calendar.getInstance();
             cal.setTime(date);
             return cal;
         }
