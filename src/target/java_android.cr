@@ -754,7 +754,7 @@ END
         }
 
         static Calendar toCalendar(Date date){
-            Calendar cal = Calendar.getInstance();
+            Calendar cal = Calendar.getInstance(Locale.US);
             cal.setTime(date);
             return cal;
         }
