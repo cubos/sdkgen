@@ -355,7 +355,7 @@ END
 
         static {
             dateTimeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-            dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+            //dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
             createHttpClient();
         }
 
