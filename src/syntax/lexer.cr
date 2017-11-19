@@ -111,6 +111,15 @@ class Lexer
         next_char
         token = ArraySymbolToken.new
       end
+    when '.'
+      case next_char
+      when '.'
+        case next_char
+        when '.'
+          next_char
+          token = SpreadSymbolToken.new
+        end
+      end
     when '$'
       next_char
       if current_char.ascii_letter?

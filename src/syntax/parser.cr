@@ -142,7 +142,7 @@ class Parser
     field_names = Set(String).new
 
     while true
-      case token = multi_expect(IdentifierToken, CurlyCloseSymbolToken)
+      case token = multi_expect(IdentifierToken, CurlyCloseSymbolToken, SpreadSymbolToken)
       when IdentifierToken
         f = parse_field
         if field_names.includes? f.name
@@ -150,6 +150,14 @@ class Parser
         end
         field_names << f.name
         t.fields << f
+      when SpreadSymbolToken
+        read_next_token
+        token = expect IdentifierToken
+        unless token.name[0].uppercase?
+          raise ParserException.new "Expected a type name but found '#{token.name}', at #{token.location}"
+        end
+        t.spreads << AST::TypeReference.new(token.name)
+        read_next_token
       when CurlyCloseSymbolToken
         read_next_token
         return t

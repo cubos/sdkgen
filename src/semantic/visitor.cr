@@ -29,6 +29,7 @@ module Semantic
 
     def visit(t : AST::StructType)
       t.fields.each { |field| visit field }
+      t.spreads.each { |ref| visit ref }
     end
 
     def visit(t : AST::ArrayType)

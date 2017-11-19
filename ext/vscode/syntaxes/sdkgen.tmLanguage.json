@@ -96,6 +96,13 @@
 							"include": "#type"
 						}
 					]
+				}, {
+					"name": "meta.spread",
+					"match": "(\\.\\.\\.)\\s?([A-Z][a-zA-Z0-9]*)",
+					"captures": {
+						"1": {"name": "markup.bold"},
+						"2": {"name": "entity.name.type"}
+					}
 				}
 			]
 		},
