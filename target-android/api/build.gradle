@@ -2,12 +2,12 @@ apply plugin: 'com.android.library'
 apply plugin: 'maven-publish'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 26
+    buildToolsVersion "26.0.2"
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 26
         versionCode 1
         versionName "1.0"
     }
@@ -22,19 +22,19 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.squareup.okhttp3:okhttp:3.7.0'
+    compile 'com.squareup.okhttp3:okhttp:3.8.0'
     compile 'com.anupcowkur:reservoir:3.1.0'
 }
 
 publishing {
     repositories {
         maven {
-            url 'https://mymavenrepo.com/repo/4XBKk8BMCyMc24joS8Od/'
-            // url 'https://maven.cubos.io/upload/'
-            // credentials {
-            //     username "cubos"
-            //     password "4XBKk8BMCyMc24joS8Od"
-            // }
+//            url 'https://mymavenrepo.com/repo/4XBKk8BMCyMc24joS8Od/'
+            url 'https://maven.cubos.io/upload/'
+            credentials {
+                username "cubos"
+                password "4XBKk8BMCyMc24joS8Od"
+            }
         }
     }
 
@@ -47,10 +47,10 @@ publishing {
                 artifact 'build/outputs/aar/api-release.aar'
 
                 pom.withXml {
-                    //Creating additional node for dependencies
+                    // Creating additional node for dependencies
                     def dependenciesNode = asNode().appendNode('dependencies')
 
-                    //Defining configuration names from which dependencies will be taken (debugCompile or releaseCompile and compile)
+                    // Defining configuration names from which dependencies will be taken (debugCompile or releaseCompile and compile)
                     def configurationNames = ["releaseCompile", 'compile']
 
                     configurationNames.each { configurationName ->
@@ -61,7 +61,7 @@ publishing {
                                 dependencyNode.appendNode('artifactId', it.name)
                                 dependencyNode.appendNode('version', it.version)
 
-                                //If there are any exclusions in dependency
+                                // If there are any exclusions in dependency
                                 if (it.excludeRules.size() > 0) {
                                     def exclusionsNode = dependencyNode.appendNode('exclusions')
                                     it.excludeRules.each { rule ->
