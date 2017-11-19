@@ -143,3 +143,6 @@ end
 
 class CommaSymbolToken < Token
 end
+
+class SpreadSymbolToken < Token
+end

@@ -98,6 +98,16 @@ describe Parser do
     END
     , "redeclare")
   end
+
+  it "handles spreads in structs" do
+    check_parses <<-END
+    type Foo {
+      ...Bar
+      ...Baz
+      aa: string
+    }
+    END
+  end
 end
 
 def clear(code)

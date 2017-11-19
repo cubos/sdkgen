@@ -7,6 +7,7 @@ require "./check_empty_enum"
 require "./give_struct_and_enum_names"
 require "./collect_struct_and_enum_types"
 require "./check_multiple_declaration"
+require "./apply_struct_spreads"
 
 module Semantic
   class SemanticException < Exception
@@ -49,6 +50,7 @@ module AST
       Semantic::GiveStructAndEnumNames.visit(self)
       Semantic::CheckEmptyEnum.visit(self)
       Semantic::CollectStructAndEnumTypes.visit(self)
+      Semantic::ApplyStructSpreads.visit(self)
     end
   end
 

@@ -191,6 +191,9 @@ module AST
   class StructType
     def to_s(io)
       io << "{\n"
+      spreads.each do |ref|
+        io << "  ..." << ref.name << "\n"
+      end
       fields.each do |field|
         io << "  "
         field.to_s(io)

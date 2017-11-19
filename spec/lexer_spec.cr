@@ -20,6 +20,11 @@ describe Lexer do
     IdentifierToken.new("aaa"),
   ]
 
+  it_lexes "...aaa", [
+    SpreadSymbolToken.new,
+    IdentifierToken.new("aaa"),
+  ]
+
   it_lexes "a b c", [
     IdentifierToken.new("a"),
     IdentifierToken.new("b"),
