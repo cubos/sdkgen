@@ -91,6 +91,7 @@ module AST
 
   class StructType < Type
     property fields = [] of Field
+    property spreads = [] of TypeReference
   end
 
   class TypeDefinition
