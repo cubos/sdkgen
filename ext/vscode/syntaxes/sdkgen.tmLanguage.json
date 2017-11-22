@@ -77,6 +77,11 @@
 				{
 					"name": "comment.line",
 					"match": "//(.*?)\n"
+				},
+				{
+					"name": "comment.block",
+					"begin": "/\\*",
+					"end": "\\*/"
 				}
 			]
 		},
