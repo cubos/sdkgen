@@ -196,6 +196,10 @@ describe Lexer do
     StringLiteralToken.new("\n\t\""),
   ]
 
+  it_lexes "\"/* */\"", [
+    StringLiteralToken.new("/* */")
+  ]
+
   it_lexes "//hmmm", [] of Token
 
   it_lexes "x//hmmm", [
@@ -222,10 +226,40 @@ describe Lexer do
   it_lexes "/*a */", [] of Token
   it_lexes "/*a \n*/", [] of Token
   it_lexes "/*a**/", [] of Token
-
   it_lexes "/* *", [] of Token
+  it_lexes "/* *\/", [] of Token
+  it_lexes "/* \tae\n\n", [] of Token
+  it_lexes "/*", [] of Token
+  it_lexes "\/*", [] of Token
 
-  it_lexes "/**/", [] of Token
+  it_lexes "/*a*/b/*c*/", [
+    IdentifierToken.new("b")
+  ]
+
+  it_lexes "/* đðđ\n */u", [
+    IdentifierToken.new("u")
+  ]
+
+  it_lexes "c/* a*/", [
+    IdentifierToken.new("c")
+  ]
+
+  it_lexes "/* bce */a", [
+    IdentifierToken.new("a")
+  ]
+
+  it_lexes "b/* baed */c", [
+    IdentifierToken.new("b"),
+    IdentifierToken.new("c")
+  ]
+
+  it_lexes "/* \n\nb */a", [
+    IdentifierToken.new("a")
+  ]
+
+  it_lexes "/* *\/a", [
+    IdentifierToken.new("a")
+  ]
 end
 
 def it_lexes(code, expected_tokens)
