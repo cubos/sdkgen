@@ -84,6 +84,8 @@ class Lexer
             return nil
           when '*'
             case next_char
+            when '\0'
+              return nil
             when '/'
               next_char
               return next_token
