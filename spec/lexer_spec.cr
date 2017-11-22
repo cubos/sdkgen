@@ -215,6 +215,12 @@ describe Lexer do
   it_lexes "// héýça\n z", [
     IdentifierToken.new("z"),
   ]
+
+  # Add multi-line comments tests
+
+  it_lexes "/**/", [] of Token
+
+  it_lexes "/**/", [] of Token
 end
 
 def it_lexes(code, expected_tokens)
