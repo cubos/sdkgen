@@ -37,6 +37,10 @@ class Lexer
     @reader.current_char
   end
 
+  private def peek_next_char
+    @reader.peek_next_char
+  end
+
   private def substring(start_pos, end_pos)
     reader = Char::Reader.new(@reader.string)
     reader.pos = start_pos
