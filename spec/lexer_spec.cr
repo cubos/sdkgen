@@ -222,15 +222,20 @@ describe Lexer do
 
   # Add multi-line comments tests
 
+  it_doesnt_lex "/* *", "Unexpected end of file"
+  it_doesnt_lex "/* \tae\n\n", "Unexpected end of file"
+  it_doesnt_lex "/*", "Unexpected end of file"
+  it_doesnt_lex "\/*", "Unexpected end of file"
+  it_doesnt_lex "/* dsvibwi", "Unexpected end of file"
+  it_doesnt_lex "/* cdibweic *", "Unexpected end of file"
+  it_doesnt_lex "/* * /", "Unexpected end of file"
+
   it_lexes "/**/", [] of Token
   it_lexes "/*a */", [] of Token
   it_lexes "/*a \n*/", [] of Token
+  it_lexes "/**a*/", [] of Token
   it_lexes "/*a**/", [] of Token
-  it_lexes "/* *", [] of Token
   it_lexes "/* *\/", [] of Token
-  it_lexes "/* \tae\n\n", [] of Token
-  it_lexes "/*", [] of Token
-  it_lexes "\/*", [] of Token
 
   it_lexes "/*a*/b/*c*/", [
     IdentifierToken.new("b")
