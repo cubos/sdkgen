@@ -229,6 +229,7 @@ describe Lexer do
   it_doesnt_lex "/* dsvibwi", "Unexpected end of file"
   it_doesnt_lex "/* cdibweic *", "Unexpected end of file"
   it_doesnt_lex "/* * /", "Unexpected end of file"
+  it_doesnt_lex "/*/", "Unexpected end of file"
 
   it_lexes "/**/", [] of Token
   it_lexes "/*a */", [] of Token
