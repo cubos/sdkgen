@@ -77,6 +77,21 @@ class Lexer
             return next_token
           end
         end
+      when '*'
+        while true
+          case current_char == '*' ? current_char : next_char
+          when '\0'
+            break
+          when '*'
+            case next_char
+            when '\0'
+              break
+            when '/'
+              next_char
+              return next_token
+            end
+          end
+        end
       end
     when '{'
       next_char
