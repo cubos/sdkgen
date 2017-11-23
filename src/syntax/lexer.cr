@@ -79,13 +79,13 @@ class Lexer
         end
       when '*'
         while true
-          case next_char
+          case current_char == '*' ? current_char : next_char
           when '\0'
-            return nil
+            break
           when '*'
             case next_char
             when '\0'
-              return nil
+              break
             when '/'
               next_char
               return next_token
