@@ -224,9 +224,16 @@ describe Lexer do
   it_doesnt_lex "2", "Unexpected character '2' at -:1:1"
   it_doesnt_lex "\n2", "Unexpected character '2' at -:2:1"
   it_doesnt_lex "//\n2", "Unexpected character '2' at -:2:1"
+  it_doesnt_lex "//\n 2", "Unexpected character '2' at -:2:2"
   it_doesnt_lex "//x\n2", "Unexpected character '2' at -:2:1"
+  it_doesnt_lex "//x\n 2", "Unexpected character '2' at -:2:2"
+  it_doesnt_lex "/*\n*/3", "Unexpected character '3' at -:2:3"
+  it_doesnt_lex "/*\n\n\n\n*/2", "Unexpected character '2' at -:5:1"
+  it_doesnt_lex "/*a*/\n2", "Unexpected character '2' at -:2:1"
+  it_doesnt_lex "/*a*/\n 2", "Unexpected character '2' at -:2:2"
 
   # Add multi-line comments tests
+  it_doesnt_lex "/*\n", "Unexpected end of file"
   it_doesnt_lex "/* *", "Unexpected end of file"
   it_doesnt_lex "/* \tae\n\n", "Unexpected end of file"
   it_doesnt_lex "/*", "Unexpected end of file"
@@ -243,6 +250,7 @@ describe Lexer do
   it_doesnt_lex "/*     * * * /", "Unexpected end of file"
   it_doesnt_lex "/*    *a/", "Unexpected end of file"
 
+  it_lexes "/*\n*/", [] of Token
   it_lexes "/* * * * * */", [] of Token
   it_lexes "/* * ***_ */", [] of Token
   it_lexes "/**/", [] of Token
@@ -261,6 +269,7 @@ describe Lexer do
   it_lexes "/***************/", [] of Token
   it_lexes "/*a */", [] of Token
   it_lexes "/*a \n*/", [] of Token
+  it_lexes "/*a \n\n\n\n\n*/", [] of Token
   it_lexes "/**a*/", [] of Token
   it_lexes "/*a**/", [] of Token
   it_lexes "/* *\/", [] of Token
