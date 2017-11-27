@@ -78,6 +78,8 @@ class Lexer
             return nil
           when '\n'
             next_char
+            @column = 1
+            @line += 1
             return next_token
           end
         end
