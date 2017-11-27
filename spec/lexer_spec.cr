@@ -220,18 +220,46 @@ describe Lexer do
     IdentifierToken.new("z"),
   ]
 
-  # Add multi-line comments tests
+  # New-line tests
+  it_doesnt_lex "2", "Unexpected character '2' at -:1:1"
+  it_doesnt_lex "\n2", "Unexpected character '2' at -:2:1"
+  it_doesnt_lex "/*\n*/2", "Unexpected character '2' at -:2:1"
+  it_doesnt_lex "/*\n\n\n\n*/2", "Unexpected character '2' at -:5:1"
+  it_doesnt_lex "//x\n2", "Unexpected character '2' at -:2:1"
 
+  # Add multi-line comments tests
   it_doesnt_lex "/* *", "Unexpected end of file"
   it_doesnt_lex "/* \tae\n\n", "Unexpected end of file"
   it_doesnt_lex "/*", "Unexpected end of file"
   it_doesnt_lex "\/*", "Unexpected end of file"
   it_doesnt_lex "/* dsvibwi", "Unexpected end of file"
   it_doesnt_lex "/* cdibweic *", "Unexpected end of file"
+  it_doesnt_lex "/* cdibweic *a", "Unexpected end of file"
   it_doesnt_lex "/* * /", "Unexpected end of file"
+  it_doesnt_lex "/* *   /", "Unexpected end of file"
+  it_doesnt_lex "/* *     /", "Unexpected end of file"
   it_doesnt_lex "/*/", "Unexpected end of file"
+  it_doesnt_lex "/* /", "Unexpected end of file"
+  it_doesnt_lex "/*     * /", "Unexpected end of file"
+  it_doesnt_lex "/*     * * * /", "Unexpected end of file"
+  it_doesnt_lex "/*    *a/", "Unexpected end of file"
 
+  it_lexes "/* * * * * */", [] of Token
+  it_lexes "/* * ***_ */", [] of Token
   it_lexes "/**/", [] of Token
+  it_lexes "/***/", [] of Token
+  it_lexes "/****/", [] of Token
+  it_lexes "/*****/", [] of Token
+  it_lexes "/******/", [] of Token
+  it_lexes "/*******/", [] of Token
+  it_lexes "/********/", [] of Token
+  it_lexes "/****aas ********/", [] of Token
+  it_lexes "/*******a ********/", [] of Token
+  it_lexes "/**********/", [] of Token
+  it_lexes "/************/", [] of Token
+  it_lexes "/*************/", [] of Token
+  it_lexes "/**************/", [] of Token
+  it_lexes "/***************/", [] of Token
   it_lexes "/*a */", [] of Token
   it_lexes "/*a \n*/", [] of Token
   it_lexes "/**a*/", [] of Token
