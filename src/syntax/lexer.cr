@@ -85,14 +85,9 @@ class Lexer
         end
       when '*'
         while true
-          next_char
-          case current_char
+          case next_char
           when '*'
-            while true
-              next_char
-              if current_char != '*'
-                break
-              end
+            while next_char == '*'
             end
             case current_char
             when '\0'
