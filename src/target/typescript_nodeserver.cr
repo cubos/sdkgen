@@ -245,7 +245,7 @@ END
 END
     else
       io << <<-END
-                        context.device.id = crypto.randomBytes(20).toString("hex");
+                        if (!context.device.id) context.device.id = crypto.randomBytes(20).toString("hex");
 END
     end
   end}
