@@ -88,16 +88,16 @@ class Lexer
             break
           when '*'
             case next_char
-              when '*'
-                if (next_char) == '/'
-                  next_char
-                  return next_token
-                end
-              when '\0'
-                break
-              when '/'
+            when '*'
+              if (next_char) == '/'
                 next_char
                 return next_token
+              end
+            when '\0'
+              break
+            when '/'
+              next_char
+              return next_token
             end
           end
         end
