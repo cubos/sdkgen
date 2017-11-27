@@ -223,8 +223,7 @@ describe Lexer do
   # New-line tests
   it_doesnt_lex "2", "Unexpected character '2' at -:1:1"
   it_doesnt_lex "\n2", "Unexpected character '2' at -:2:1"
-  it_doesnt_lex "/*\n*/2", "Unexpected character '2' at -:2:1"
-  it_doesnt_lex "/*\n\n\n\n*/2", "Unexpected character '2' at -:5:1"
+  it_doesnt_lex "//\n2", "Unexpected character '2' at -:2:1"
   it_doesnt_lex "//x\n2", "Unexpected character '2' at -:2:1"
 
   # Add multi-line comments tests
