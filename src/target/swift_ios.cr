@@ -33,7 +33,8 @@ END
         args << "callback: ((_ result: APIInternal.Result<#{native_type ret}>) -> Void)?"
       end
       @io << ident(String.build do |io|
-        io << "static public func #{op.pretty_name}(#{args.join(", ")}) {\n"
+        io << "@discardableResult\n"
+        io << "static public func #{op.pretty_name}(#{args.join(", ")}) -> DataRequest {\n"
         io << ident(String.build do |io|
           if op.args.size != 0
             io << "var args = [String: Any]()\n"
@@ -45,7 +46,7 @@ END
             io << "args[\"#{arg.name}\"] = #{type_to_json arg.type, arg.name}\n\n"
           end
 
-          io << "APIInternal.makeRequest(#{op.pretty_name.inspect}, args) {  response in \n"
+          io << "return APIInternal.makeRequest(#{op.pretty_name.inspect}, args) {  response in \n"
 
           io << ident(String.build do |io|
             io << "switch response {\n"
@@ -185,7 +186,8 @@ class APIInternal {
         return value == nil || value is NSNull
     }
 
-    static func makeRequest(_ name: String, _ args: [String: Any], callback: @escaping (Result<Any?>) -> Void) {
+    @discardableResult
+    static func makeRequest(_ name: String, _ args: [String: Any], callback: @escaping (Result<Any?>) -> Void) -> DataRequest {
         let api = SessionManager.default
 
         let body = [
@@ -196,7 +198,7 @@ class APIInternal {
             "staging": API.useStaging
         ] as [String : Any]
 
-        api.request("https://\\(baseUrl)\\(API.useStaging ? "-staging" : "")/\\(name)", method: .post, parameters: body, encoding: JSONEncoding.default).responseJSON { response in
+        return api.request("https://\\(baseUrl)\\(API.useStaging ? "-staging" : "")/\\(name)", method: .post, parameters: body, encoding: JSONEncoding.default).responseJSON { response in
             guard let responseValue = response.result.value else {
                 let error = Error(API.ErrorType.Connection, "Erro de Conexão, tente novamente mais tarde")
                 API.globalCallback(name, Result.failure(error), callback)
