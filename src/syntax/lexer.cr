@@ -86,10 +86,16 @@ class Lexer
       when '*'
         while true
           case next_char
+          when '\n'
+            @column = 0
+            @line += 1
           when '*'
             while next_char == '*'
             end
             case current_char
+            when '\n'
+              @column = 0
+              @line += 1
             when '\0'
               break
             when '/'
