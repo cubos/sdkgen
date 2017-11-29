@@ -197,7 +197,7 @@ describe Lexer do
   ]
 
   it_lexes "\"/* */\"", [
-    StringLiteralToken.new("/* */")
+    StringLiteralToken.new("/* */"),
   ]
 
   it_lexes "//hmmm", [] of Token
@@ -228,7 +228,7 @@ describe Lexer do
   it_doesnt_lex "//x\n2", "Unexpected character '2' at -:2:1"
   it_doesnt_lex "//x\n 2", "Unexpected character '2' at -:2:2"
   it_doesnt_lex "/*\n*/3", "Unexpected character '3' at -:2:3"
-  it_doesnt_lex "/*\n\n\n\n*/2", "Unexpected character '2' at -:5:1"
+  it_doesnt_lex "/*\n\n\n\n*/ 2", "Unexpected character '2' at -:5:4"
   it_doesnt_lex "/*a*/\n2", "Unexpected character '2' at -:2:1"
   it_doesnt_lex "/*a*/\n 2", "Unexpected character '2' at -:2:2"
 
@@ -275,32 +275,32 @@ describe Lexer do
   it_lexes "/* *\/", [] of Token
 
   it_lexes "/*a*/b/*c*/", [
-    IdentifierToken.new("b")
+    IdentifierToken.new("b"),
   ]
 
   it_lexes "/* đðđ\n */u", [
-    IdentifierToken.new("u")
+    IdentifierToken.new("u"),
   ]
 
   it_lexes "c/* a*/", [
-    IdentifierToken.new("c")
+    IdentifierToken.new("c"),
   ]
 
   it_lexes "/* bce */a", [
-    IdentifierToken.new("a")
+    IdentifierToken.new("a"),
   ]
 
   it_lexes "b/* baed */c", [
     IdentifierToken.new("b"),
-    IdentifierToken.new("c")
+    IdentifierToken.new("c"),
   ]
 
   it_lexes "/* \n\nb */a", [
-    IdentifierToken.new("a")
+    IdentifierToken.new("a"),
   ]
 
   it_lexes "/* *\/a", [
-    IdentifierToken.new("a")
+    IdentifierToken.new("a"),
   ]
 end
 
