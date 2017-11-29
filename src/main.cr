@@ -24,10 +24,10 @@ end
 
 if sources.size == 0
   STDERR.puts "You must specify one source file"
-  exit
+  exit 1
 elsif sources.size > 1
   STDERR.puts "You must specify only one source file"
-  exit
+  exit 1
 end
 
 source = sources[0]
@@ -39,18 +39,19 @@ begin
 
   if destination == ""
     STDERR.puts "You must specify an output file"
-    exit
+    exit 1
   end
 
   if target_name == ""
     STDERR.puts "You must specify a target"
-    exit
+    exit 1
   end
 
   FileUtils.mkdir_p(File.dirname(destination))
   Target.process(ast, destination, target_name)
 rescue ex : Lexer::LexerException | Parser::ParserException | Semantic::SemanticException
   STDERR.puts (ex.message || "Invalid source").colorize.light_red
+  exit 1
 rescue ex : Exception
   raise ex
 end
