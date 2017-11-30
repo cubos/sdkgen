@@ -78,27 +78,32 @@ class Lexer
             return nil
           when '\n'
             next_char
+            @column = 1
+            @line += 1
             return next_token
           end
         end
       when '*'
         while true
           case next_char
-          when '\0'
-            break
+          when '\n'
+            @column = 0
+            @line += 1
           when '*'
-            case next_char
-            when '*'
-              if (next_char) == '/'
-                next_char
-                return next_token
-              end
+            while next_char == '*'
+            end
+            case current_char
+            when '\n'
+              @column = 0
+              @line += 1
             when '\0'
               break
             when '/'
               next_char
               return next_token
             end
+          when '\0'
+            break
           end
         end
       end
