@@ -48,7 +48,7 @@ END
     @io << <<-END
 //////////////////////////////////////////////////////
 
-let fallbackDeviceId = null;
+let fallbackDeviceId: string | null = null;
 
 function setDeviceId(deviceId: string) {
   fallbackDeviceId = deviceId;
