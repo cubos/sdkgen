@@ -48,6 +48,22 @@ END
     @io << <<-END
 //////////////////////////////////////////////////////
 
+let fallbackDeviceId = null;
+
+function setDeviceId(deviceId: string) {
+  fallbackDeviceId = deviceId;
+  try {
+    localStorage.setItem("deviceId", deviceId);
+  } catch (e) {}
+}
+
+function getDeviceId() {
+  try {
+    return localStorage.getItem("deviceId");
+  } catch (e) {}
+  return fallbackDeviceId;
+}
+
 async function device() {
   const parser = new UAParser();
   parser.setUA(navigator.userAgent);
@@ -68,7 +84,7 @@ async function device() {
     version: me ? me.src : "",
     language: navigator.language
   };
-  const deviceId = localStorage.getItem("deviceId");
+  const deviceId = getDeviceId();
   if (deviceId)
     device.id = deviceId;
   return device;
@@ -124,7 +140,7 @@ async function makeRequest({name, args}: {name: string, args: any}) {
         const response = JSON.parse(req.responseText);
 
         try {
-          localStorage.setItem("deviceId", response.deviceId);
+          setDeviceId(response.deviceId);
           if (response.ok) {
             resolve(response.result);
             listenersDict["success"].forEach(hook => hook(response.result, name, args));
