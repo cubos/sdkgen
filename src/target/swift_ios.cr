@@ -189,15 +189,13 @@ class APIInternal {
 
     static func phoneFingerprint() -> String {
         let keychain = KeychainSwift()
-        let phoneFingerprint = keychain.get("iuFingerprint")
-        if phoneFingerprint == nil {
-            let newPhoneFingerprint = UIDevice.current.identifierForVendor!.uuidString
-            keychain.set(newPhoneFingerprint, forKey: "iuFingerprint", withAccess: .accessibleAlwaysThisDeviceOnly)
+        guard let phoneFingerprint = keychain.get("phoneFingerprint") else {
+            let newPhoneFingerprint = randomBytesHex(len: 32)
+            keychain.set(newPhoneFingerprint, forKey: "phoneFingerprint", withAccess: .accessibleAlwaysThisDeviceOnly)
             return newPhoneFingerprint
-            
-        } else {
-            return phoneFingerprint!
         }
+
+        return phoneFingerprint
     }
 
     @discardableResult
