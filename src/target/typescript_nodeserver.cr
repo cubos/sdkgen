@@ -53,7 +53,7 @@ export function setCaptureErrorFn(fn: (e: Error, req?: http.IncomingMessage, ext
 }
 
 function typeCheckerError(e: Error, ctx: Context) {
-    #{@ast.options.strict ? "throw err;" : "setTimeout(() => captureError(err, ctx.req, ctx.call), 1000);"}
+    #{@ast.options.strict ? "throw e;" : "setTimeout(() => captureError(e, ctx.req, ctx.call), 1000);"}
 }
 
 
