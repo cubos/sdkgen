@@ -173,6 +173,9 @@
 							"match": "\\."
 						}
 					]
+				}, {
+					"name": "keyword.literal",
+					"match": "\\b(true|false)\\b"
 				}
 			]
 		}
