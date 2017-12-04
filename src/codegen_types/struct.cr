@@ -47,7 +47,7 @@ module AST
       String.build do |io|
         io << "if (#{expr} === null || #{expr} === undefined) {\n"
         io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"'\");\n"
-        io << "    setTimeout(() => captureError(err, ctx.req, ctx.call), 1000);\n"
+        io << "    typeCheckerError(err, ctx);\n"
         io << "}\n"
         fields.each do |field|
           io << field.type.typescript_check_encoded("#{expr}.#{field.name}", "#{descr} + \".#{field.name}\"")
@@ -59,7 +59,7 @@ module AST
       String.build do |io|
         io << "if (#{expr} === null || #{expr} === undefined) {\n"
         io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"'\");\n"
-        io << "    setTimeout(() => captureError(err, ctx.req, ctx.call), 1000);\n"
+        io << "    typeCheckerError(err, ctx);\n"
         io << "}\n"
         fields.each do |field|
           io << field.type.typescript_check_decoded("#{expr}.#{field.name}", "#{descr} + \".#{field.name}\"")
