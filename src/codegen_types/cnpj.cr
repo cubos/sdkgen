@@ -23,7 +23,7 @@ module AST
       String.build do |io|
         io << "if (#{expr} === null || #{expr} === undefined || typeof #{expr} !== \"string\" || #{expr}.replace(/[^0-9]/g, \"\").length !== 14) {\n"
         io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"'\");\n"
-        io << "    setTimeout(() => captureError(err, ctx.req, ctx.call), 1000);\n"
+        io << "    typeCheckerError(err, ctx);\n"
         io << "}\n"
       end
     end
@@ -32,7 +32,7 @@ module AST
       String.build do |io|
         io << "if (#{expr} === null || #{expr} === undefined || typeof #{expr} !== \"string\" || #{expr}.replace(/[^0-9]/g, \"\").length !== 14) {\n"
         io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"'\");\n"
-        io << "    setTimeout(() => captureError(err, ctx.req, ctx.call), 1000);\n"
+        io << "    typeCheckerError(err, ctx);\n"
         io << "}\n"
       end
     end

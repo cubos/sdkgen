@@ -235,6 +235,14 @@ class Parser
         options.useRethink = false
       end
       read_next_token
+    when "strict"
+      case token = multi_expect(TrueKeywordToken, FalseKeywordToken)
+      when TrueKeywordToken
+        options.strict = true
+      when FalseKeywordToken
+        options.strict = false
+      end
+      read_next_token
     else
       raise ParserException.new("Unknown option $#{var.name} at #{var.location}")
     end
