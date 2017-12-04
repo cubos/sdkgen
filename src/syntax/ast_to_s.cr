@@ -156,6 +156,18 @@ module AST
         io << "\n"
         anyop = true
       end
+      if options.useRethink != ""
+        io << "$useRethink = "
+        options.useRethink.inspect(io)
+        io << "\n"
+        anyop = true
+      end
+      if options.strict != ""
+        io << "$strict = "
+        options.strict.inspect(io)
+        io << "\n"
+        anyop = true
+      end
       io << "\n" if anyop && errors.size != 0
       errors.each do |err|
         io << "error " << err << "\n"

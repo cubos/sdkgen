@@ -22,7 +22,7 @@ module AST
       String.build do |io|
         io << "if (#{expr} !== true && #{expr} !== false) {\n"
         io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"'\");\n"
-        io << "    setTimeout(() => captureError(err, ctx.req, ctx.call), 1000);\n"
+        io << "    typeCheckerError(err, ctx);\n"
         io << "}\n"
       end
     end
@@ -31,7 +31,7 @@ module AST
       String.build do |io|
         io << "if (#{expr} !== true && #{expr} !== false) {\n"
         io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"'\");\n"
-        io << "    setTimeout(() => captureError(err, ctx.req, ctx.call), 1000);\n"
+        io << "    typeCheckerError(err, ctx);\n"
         io << "}\n"
       end
     end

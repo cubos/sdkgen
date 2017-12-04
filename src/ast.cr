@@ -116,6 +116,7 @@ module AST
   class Options
     property url = ""
     property useRethink = true
+    property strict = false
   end
 
   class Field
