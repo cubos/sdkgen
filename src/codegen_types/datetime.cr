@@ -22,7 +22,7 @@ module AST
       String.build do |io|
         io << "if (#{expr} === null || #{expr} === undefined || typeof #{expr} !== \"string\" || !#{expr}.match(/^[0-9]{4}-[01][0-9]-[0123][0-9]T[012][0-9]:[0123456][0-9]:[0123456][0-9].[0-9]{3}$/)) {\n"
         io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"'\");\n"
-        io << "    setTimeout(() => captureError(err, ctx.req, ctx.call), 1000);\n"
+        io << "    typeCheckerError(err, ctx);\n"
         io << "}\n"
       end
     end
@@ -31,7 +31,7 @@ module AST
       String.build do |io|
         io << "if (#{expr} === null || #{expr} === undefined || !(#{expr} instanceof Date)) {\n"
         io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"'\");\n"
-        io << "    setTimeout(() => captureError(err, ctx.req, ctx.call), 1000);\n"
+        io << "    typeCheckerError(err, ctx);\n"
         io << "}\n"
       end
     end
