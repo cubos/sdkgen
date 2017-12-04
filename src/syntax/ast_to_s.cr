@@ -156,13 +156,13 @@ module AST
         io << "\n"
         anyop = true
       end
-      if options.useRethink != ""
+      if options.useRethink != true
         io << "$useRethink = "
         options.useRethink.inspect(io)
         io << "\n"
         anyop = true
       end
-      if options.strict != ""
+      if options.strict != false
         io << "$strict = "
         options.strict.inspect(io)
         io << "\n"
