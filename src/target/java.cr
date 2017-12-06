@@ -234,7 +234,7 @@ END
     end
   end
 
-  def type_to_json(t : AST::Type, src : String)
+  def type_-to_json(t : AST::Type, src : String)
     case t
     when AST::StringPrimitiveType, AST::IntPrimitiveType, AST::UIntPrimitiveType, AST::FloatPrimitiveType, AST::BoolPrimitiveType
       "#{src}"
@@ -245,9 +245,9 @@ END
     when AST::BytesPrimitiveType
       "Base64.encodeToString(#{src}, Base64.DEFAULT)"
     when AST::VoidPrimitiveType
-      "null"
+      "JSONObject.NULL"
     when AST::OptionalType
-      "#{src} == null ? null : #{type_to_json(t.base, src)}"
+      "#{src} == null ? JSONObject.NULL : #{type_to_json(t.base, src)}"
     when AST::ArrayType
       el = "el" + SecureRandom.hex[0, 5]
       "new JSONArray() {{ for (final #{native_type t.base} #{el} : #{src}) put(#{type_to_json t.base, "#{el}"}); }}"
