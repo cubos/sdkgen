@@ -107,6 +107,12 @@ END
     end
     @io << "};\n\n"
 
+    @ast.struct_types.each do |t|
+      @io << "export function transform#{t.name}ToJson(x: #{t.typescript_native_type}) {\n"
+      @io << ident "return " + t.typescript_encode("x") + ";\n"
+      @io << "}\n"
+    end
+
     @ast.errors.each do |error|
       @io << "export class #{error} extends Error {\n"
       @io << ident "_type = #{error.inspect};\n"
