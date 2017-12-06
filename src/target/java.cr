@@ -234,7 +234,7 @@ END
     end
   end
 
-  def type_-to_json(t : AST::Type, src : String)
+  def type_to_json(t : AST::Type, src : String)
     case t
     when AST::StringPrimitiveType, AST::IntPrimitiveType, AST::UIntPrimitiveType, AST::FloatPrimitiveType, AST::BoolPrimitiveType
       "#{src}"
