@@ -149,7 +149,11 @@ END
     when AST::VoidPrimitiveType
       "nil"
     when AST::OptionalType
-      "APIInternal.isNull(value: #{src}) ? nil : (#{type_from_json(t.base, src)})"
+      if t.base.is_a? AST::EnumType
+        "APIInternal.isNull(value: #{src}) ? nil : #{t.base.name}(rawValue: #{src} as! String)"
+      else
+        "APIInternal.isNull(value: #{src}) ? nil : (#{type_from_json(t.base, src)})"
+      end
     when AST::ArrayType
       "(#{src} as! [AnyObject]).map({ #{type_from_json t.base, "$0"} })"
     when AST::StructType
