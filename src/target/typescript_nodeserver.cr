@@ -302,7 +302,7 @@ END
                             return false;
                         }
 
-                        for (let i = 0; i < 600; ++i) {
+                        for (let i = 0; i < 1500; ++i) {
                             if (await tryLock()) break;
                             await sleep(100);
                         }
