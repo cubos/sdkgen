@@ -149,8 +149,9 @@ END
     when AST::VoidPrimitiveType
       "nil"
     when AST::OptionalType
-      if t.base.is_a? AST::EnumType
-        "APIInternal.isNull(value: #{src}) ? nil : #{t.base.name}(rawValue: #{src} as! String)"
+      base = t.base
+      if base.is_a? AST::EnumType
+        "APIInternal.isNull(value: #{src}) ? nil : #{base.name}(rawValue: #{src} as! String)"
       else
         "APIInternal.isNull(value: #{src}) ? nil : (#{type_from_json(t.base, src)})"
       end
