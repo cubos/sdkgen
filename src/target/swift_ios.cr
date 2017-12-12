@@ -4,6 +4,7 @@ class SwiftIosTarget < SwiftTarget
   def gen
     @io << <<-END
 import Alamofire
+import KeychainSwift
 
 class API {
     static var useStaging = false
@@ -119,7 +120,7 @@ class APIInternal {
     static func device() -> [String: Any] {
         var device = [String: Any]()
         device["platform"] = "ios"
-        device["fingerprint"] = "."
+        device["fingerprint"] = phoneFingerprint()
         device["platformVersion"] = "iOS " + UIDevice.current.systemVersion + " on " + UIDevice.current.model
         if let version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
             device["version"] = version
@@ -184,6 +185,17 @@ class APIInternal {
 
     static func isNull(value: Any?) -> Bool {
         return value == nil || value is NSNull
+    }
+
+    static func phoneFingerprint() -> String {
+        let keychain = KeychainSwift()
+        guard let phoneFingerprint = keychain.get("phoneFingerprint") else {
+            let newPhoneFingerprint = randomBytesHex(len: 32)
+            keychain.set(newPhoneFingerprint, forKey: "phoneFingerprint", withAccess: .accessibleAlwaysThisDeviceOnly)
+            return newPhoneFingerprint
+        }
+
+        return phoneFingerprint
     }
 
     @discardableResult
