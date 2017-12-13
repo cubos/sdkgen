@@ -59,7 +59,7 @@ END
             if op.return_type.is_a? AST::VoidPrimitiveType
               io << <<-END
               case .success:
-                  callback?(APIInternal.Result.success())\n
+                  callback?(APIInternal.Result.success(()))\n
               END
             else
               io << <<-END
