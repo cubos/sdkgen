@@ -113,6 +113,12 @@ END
       @io << "}\n"
     end
 
+    @ast.struct_types.each do |t|
+      @io << "export function transform#{t.name}FromJson(x: string) {\n"
+      @io << ident "return " + t.typescript_decode("x") + ";\n"
+      @io << "}\n"
+    end
+
     @ast.errors.each do |error|
       @io << "export class #{error} extends Error {\n"
       @io << ident "_type = #{error.inspect};\n"
