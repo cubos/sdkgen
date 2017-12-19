@@ -116,7 +116,7 @@ END
     @ast.struct_types.each do |t|
       @io << "export function transformJsonTo#{t.name}(x: string) {\n"
       @io << "const y = JSON.parse(x);"
-      @io << ident "return " + t.typescript_decode("x") + ";\n"
+      @io << ident "return " + t.typescript_decode("y") + ";\n"
       @io << "}\n"
     end
 
