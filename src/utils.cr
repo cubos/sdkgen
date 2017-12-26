@@ -1,5 +1,5 @@
 module RandomGen
-  @@gen = Random::PCG32.new(17)
+  @@gen = Random::PCG32.new(17u64)
 
   def self.random_u
     @@gen.next_u
