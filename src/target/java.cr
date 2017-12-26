@@ -1,5 +1,5 @@
 require "./target"
-require "secure_random"
+require "random/secure"
 
 abstract class JavaTarget < Target
   def mangle(ident)
@@ -220,8 +220,8 @@ END
     when AST::OptionalType
       "#{obj}.isNull(#{name}) ? null : #{type_from_json(t.base, obj, name)}"
     when AST::ArrayType
-      i = "i" + SecureRandom.hex[0, 5]
-      ary = "ary" + SecureRandom.hex[0, 5]
+      i = "i" + Random::Secure.hex[0, 5]
+      ary = "ary" + Random::Secure.hex[0, 5]
       "new #{native_type t}() {{ final JSONArray #{ary} = #{obj}.getJSONArray(#{name}); for (int #{i} = 0; #{i} < #{ary}.length(); ++#{i}) {final int x#{i} = #{i}; add(#{type_from_json(t.base, "#{ary}", "x#{i}")});} }}"
     when AST::StructType
       "#{mangle t.name}.fromJSON(#{obj}.getJSONObject(#{name}))"
@@ -249,7 +249,7 @@ END
     when AST::OptionalType
       "#{src} == null ? JSONObject.NULL : #{type_to_json(t.base, src)}"
     when AST::ArrayType
-      el = "el" + SecureRandom.hex[0, 5]
+      el = "el" + Random::Secure.hex[0, 5]
       "new JSONArray() {{ for (final #{native_type t.base} #{el} : #{src}) put(#{type_to_json t.base, "#{el}"}); }}"
     when AST::StructType
       "#{src}.toJSON()"
