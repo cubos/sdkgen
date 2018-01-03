@@ -8,6 +8,7 @@ import crypto from "crypto";
 import os from "os";
 import url from "url";
 import moment from "moment";
+import Raven from "raven";
 #{String.build do |io|
     if @ast.options.useRethink
       io << <<-END
@@ -50,6 +51,11 @@ END
 let captureError: (e: Error, req?: http.IncomingMessage, extra?: any) => void = () => {};
 export function setCaptureErrorFn(fn: (e: Error, req?: http.IncomingMessage, extra?: any) => void) {
     captureError = fn;
+}
+
+let sentryUrl: string | null = null
+export function setSentryUrl(url: string) {
+    sentryUrl = url;
 }
 
 function typeCheckerError(e: Error, ctx: Context) {
@@ -404,9 +410,34 @@ END
     if ((server as any).keepAliveTimeout)
         (server as any).keepAliveTimeout = 0;
 
-    server.listen(port, () => {
-        console.log(`Listening on ${server.address().address}:${server.address().port}`);
-    });
+    if (!process.env.TEST && !process.env.DEBUGGING && sentryUrl) {
+        Raven.config(sentryUrl).install();
+        api.setCaptureErrorFn((e, req, extra) =>
+            Raven.captureException(e, {
+                req,
+                extra,
+                fingerprint: [e.message.replace(/[0-9]+/g, "X").replace(/"[^"]*"/g, "X")]
+            })
+        );
+    }
+
+    if (process.env.DEBUGGING) {
+        port = (Math.random() * 50000 + 10000) | 0;
+    }
+
+    if (!process.env.TEST) {
+        server.listen(port, () => {
+            console.log(`Listening on ${server.address().address}:${server.address().port}`);
+        });
+    }
+
+    if (process.env.DEBUGGING) {
+        const subdomain = require("crypto").createHash("md5").update(process.argv[1]).digest("hex").substr(0, 8);
+        require("localtunnel")(8000, {subdomain}, (err: Error | null, tunnel: any) => {
+            if (err) throw err;
+            console.log("Tunnel URL:", tunnel.url);
+        });
+    }
 }
 
 fn.ping = async (ctx: Context) => "pong";
