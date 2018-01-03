@@ -170,7 +170,7 @@ function sleep(ms: number) {
 
 export let server: http.Server;
 
-export function start(port: number) {
+export function start(port: number = 8000) {
     if (server) return;
     server = http.createServer((req, res) => {
         req.on("error", (err) => {
@@ -412,13 +412,11 @@ END
 
     if (!process.env.TEST && !process.env.DEBUGGING && sentryUrl) {
         Raven.config(sentryUrl).install();
-        api.setCaptureErrorFn((e, req, extra) =>
-            Raven.captureException(e, {
-                req,
-                extra,
-                fingerprint: [e.message.replace(/[0-9]+/g, "X").replace(/"[^"]*"/g, "X")]
-            })
-        );
+        captureError = (e, req, extra) => Raven.captureException(e, {
+            req,
+            extra,
+            fingerprint: [e.message.replace(/[0-9]+/g, "X").replace(/"[^"]*"/g, "X")]
+        });
     }
 
     if (process.env.DEBUGGING) {
