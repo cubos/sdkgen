@@ -343,7 +343,12 @@ END
         return Internal.getHttpClientForThirdParty();
     }
 
+    static public void setApiUrl(String url) {
+        Internal.forcedUrl = url;
+    }
+
     private static class Internal {
+        statis String forcedUrl = null;
         static String baseUrl = #{@ast.options.url.inspect};
         static OkHttpClient http = null;
         static ConnectionPool connectionPool;
@@ -659,7 +664,7 @@ END
             }
 
             final Request request = new Request.Builder()
-                    .url("https://" + baseUrl + (API.useStaging ? "-staging" : "") + "/" + name)
+                    .url(forcedUrl != null ? forcedUrl : "https://" + baseUrl + (API.useStaging ? "-staging" : "") + "/" + name)
                     .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), body.toString()))
                     .build();
 
