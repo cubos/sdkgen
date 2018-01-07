@@ -431,7 +431,7 @@ END
 
     if (process.env.DEBUGGING) {
         const subdomain = require("crypto").createHash("md5").update(process.argv[1]).digest("hex").substr(0, 8);
-        require("localtunnel")(8000, {subdomain}, (err: Error | null, tunnel: any) => {
+        require("localtunnel")(port, {subdomain}, (err: Error | null, tunnel: any) => {
             if (err) throw err;
             console.log("Tunnel URL:", tunnel.url);
         });
