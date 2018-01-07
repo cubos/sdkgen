@@ -348,7 +348,7 @@ END
     }
 
     private static class Internal {
-        statis String forcedUrl = null;
+        static String forcedUrl = null;
         static String baseUrl = #{@ast.options.url.inspect};
         static OkHttpClient http = null;
         static ConnectionPool connectionPool;
