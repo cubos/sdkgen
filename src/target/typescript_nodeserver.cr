@@ -26,6 +26,7 @@ interface DBDevice {
     screen: {width: number, height: number}
     version: string
     language: string
+    lastActiveAt?: Date
     push?: string
 }
 
@@ -240,6 +241,7 @@ END
                     (async () => {
                         const request = JSON.parse(body);
                         request.device.ip = ip;
+                        request.device.lastActiveAt = new Date();
                         const context: Context = {
                             call: null as any,
                             req: req,
