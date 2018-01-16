@@ -13,7 +13,13 @@ module AST
     end
 
     def typescript_definition
-      "export type #{name} = #{values.map(&.inspect).join(" | ")};"
+      String::Builder.build do |io|
+        io << "export enum #{name}{\n"
+        values.each do |value|
+          io << ident "#{value} = \"#{value}\",\n"
+        end
+        io << "}"
+      end
     end
 
     def typescript_expect(expr)
