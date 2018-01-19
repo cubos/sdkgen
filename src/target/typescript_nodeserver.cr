@@ -117,14 +117,14 @@ END
     @ast.struct_types.each do |t|
       @io << "export function transform#{t.name}ToJson(x: #{t.typescript_native_type}) {\n"
       @io << ident "return " + t.typescript_encode("x") + ";\n"
-      @io << "}\n"
+      @io << "}\n\n"
     end
 
     @ast.struct_types.each do |t|
       @io << "export function transformJsonTo#{t.name}(x: string) {\n"
-      @io << "const y = JSON.parse(x);"
+      @io << ident "const y = JSON.parse(x);\n"
       @io << ident "return " + t.typescript_decode("y") + ";\n"
-      @io << "}\n"
+      @io << "}\n\n"
     end
 
     @ast.errors.each do |error|
