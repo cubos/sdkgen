@@ -86,7 +86,7 @@ public JSONObject toJSON() {
 
 END
       t.fields.each do |field|
-        io << ident ident ident ident "put(\"#{field.name}\", #{type_to_json field.type, field.name});\n"
+        io << ident ident ident ident "put(\"#{field.name}\", #{type_to_json field.type, mangle field.name});\n"
       end
       io << ident <<-END
         }};
