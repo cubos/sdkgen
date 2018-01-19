@@ -162,7 +162,7 @@ try {
 
 END
             op.args.each do |arg|
-              io << ident ident "put(\"#{arg.name}\", #{type_to_json arg.type, arg.name});\n"
+              io << ident ident "put(\"#{arg.name}\", #{type_to_json arg.type, mangle arg.name});\n"
             end
             io << <<-END
     }};
