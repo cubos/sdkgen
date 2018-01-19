@@ -139,7 +139,7 @@ protected #{mangle t.name}(final JSONObject json) {
 
 END
       t.fields.each do |field|
-        io << ident ident ident "#{field.name} = #{type_from_json field.type, "json", field.name.inspect};\n"
+        io << ident ident ident "#{mangle field.name} = #{type_from_json field.type, "json", field.name.inspect};\n"
       end
       io << ident <<-END
 
@@ -154,7 +154,7 @@ protected #{mangle t.name}(Parcel in) {
 
 END
       t.fields.each do |field|
-        io << ident ident ident "#{field.name} = #{type_from_json field.type, "json", field.name.inspect};\n"
+        io << ident ident ident "#{mangle field.name} = #{type_from_json field.type, "json", field.name.inspect};\n"
       end
       io << ident <<-END
     } catch (JSONException e) {
