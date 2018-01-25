@@ -117,6 +117,7 @@ module AST
     property url = ""
     property useRethink = true
     property strict = false
+    property syntheticDefaultImports = true
   end
 
   class Field
