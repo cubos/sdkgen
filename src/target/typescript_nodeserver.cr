@@ -3,16 +3,31 @@ require "./target"
 class TypeScriptServerTarget < Target
   def gen
     @io << <<-END
+#{String.build do |io|
+    if @ast.options.syntheticDefaultImports
+      io << <<-END
 import http from "http";
 import crypto from "crypto";
 import os from "os";
 import url from "url";
 import moment from "moment";
 import Raven from "raven";
+END
+    else
+      io << <<-END
+import * http from "http";
+import * crypto from "crypto";
+import * os from "os";
+import * url from "url";
+import * moment from "moment";
+import * Raven from "raven";
+END
+    end
+  end}
 #{String.build do |io|
     if @ast.options.useRethink
       io << <<-END
-import r from "../rethinkdb";
+import * as r from "../rethinkdb";
 END
     else
       io << <<-END
