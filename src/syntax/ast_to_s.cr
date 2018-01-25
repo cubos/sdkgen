@@ -168,7 +168,7 @@ module AST
         io << "\n"
         anyop = true
       end
-      if options.syntheticDefaultImports != false
+      if options.syntheticDefaultImports != true
         io << "$syntheticDefaultImports = "
         options.syntheticDefaultImports.inspect(io)
         io << "\n"
