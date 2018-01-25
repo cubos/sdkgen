@@ -168,6 +168,12 @@ module AST
         io << "\n"
         anyop = true
       end
+      if options.syntheticDefaultImports != false
+        io << "$syntheticDefaultImports = "
+        options.syntheticDefaultImports.inspect(io)
+        io << "\n"
+        anyop = true
+      end
       io << "\n" if anyop && errors.size != 0
       errors.each do |err|
         io << "error " << err << "\n"

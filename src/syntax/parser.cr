@@ -243,6 +243,14 @@ class Parser
         options.strict = false
       end
       read_next_token
+    when "syntheticDefaultImports"
+      case token = multi_expect(TrueKeywordToken, FalseKeywordToken)
+      when TrueKeywordToken
+        options.syntheticDefaultImports = true
+      when FalseKeywordToken
+        options.syntheticDefaultImports = false
+      end
+      read_next_token
     else
       raise ParserException.new("Unknown option $#{var.name} at #{var.location}")
     end
