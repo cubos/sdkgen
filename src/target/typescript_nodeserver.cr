@@ -15,12 +15,12 @@ import Raven from "raven";
 END
     else
       io << <<-END
-import * http from "http";
-import * crypto from "crypto";
-import * os from "os";
-import * url from "url";
-import * moment from "moment";
-import * Raven from "raven";
+import * as http from "http";
+import * as crypto from "crypto";
+import * as os from "os";
+import * as url from "url";
+import * as moment from "moment";
+import * as Raven from "raven";
 END
     end
   end}
