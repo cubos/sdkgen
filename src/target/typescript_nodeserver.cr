@@ -19,7 +19,7 @@ import * as http from "http";
 import * as crypto from "crypto";
 import * as os from "os";
 import * as url from "url";
-import * as moment from "moment";
+const moment = require("moment");
 const Raven = require("raven");
 END
     end
