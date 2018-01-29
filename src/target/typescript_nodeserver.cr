@@ -411,7 +411,8 @@ END
                         );
                     })().catch(err => {
                         console.error(err);
-                        res.writeHead(500);
+                        if (!res.headersSent)
+                            res.writeHead(500);
                         res.end();
                     });
                     break;
