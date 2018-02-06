@@ -718,7 +718,7 @@ END
                         @Override
                         public void onResponse(Call call, final Response response) throws IOException {
                             if (!shouldReceiveResponse[0]) return;
-                            if (response.code() != 200) {
+                            if (response.code() == 502) {
                                 Log.e("API", "HTTP " + response.code());
                                 return;
                             }
