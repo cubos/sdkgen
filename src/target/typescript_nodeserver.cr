@@ -400,7 +400,7 @@ END
                             error: call.error
                         };
 
-                        res.writeHead(200);
+                        res.writeHead(response.ok ? 200 : response.error.type === "Fatal" ? 500 : 400);
                         res.write(JSON.stringify(response));
                         res.end();
 
