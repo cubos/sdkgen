@@ -17,14 +17,10 @@ export interface Context {
 /* istanbul ignore next */
 expect.extend({
 	toBeTypeOf(received, argument) {
-		const initialType = typeof received;
-		const type = initialType === "object" ? Array.isArray(received) ? "array" : initialType : initialType;
-		return type === argument ? {
+		const type = Array.isArray(received) ? "array" : typeof received;
+		return {
 			message: () => `expected ${received} to be type ${argument}`,
-			pass: true
-		} : {
-			message: () => `expected ${received} to be type ${argument}`,
-			pass: false
+			pass: type === argument
 		};
 	}
 });
