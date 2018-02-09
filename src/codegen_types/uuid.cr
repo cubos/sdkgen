@@ -22,7 +22,7 @@ module AST
     def typescript_check_encoded(expr, descr)
       String.build do |io|
         io << "if (#{expr} === null || #{expr} === undefined || typeof #{expr} !== \"string\" || !#{expr}.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/)) {\n"
-        io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"', expected #{class.name}, got '\" + #{expr} + \"'\");\n"
+        io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"', expected #{self.class.name}, got '\" + #{expr} + \"'\");\n"
         io << "    typeCheckerError(err, ctx);\n"
         io << "}\n"
       end
@@ -31,7 +31,7 @@ module AST
     def typescript_check_decoded(expr, descr)
       String.build do |io|
         io << "if (#{expr} === null || #{expr} === undefined || typeof #{expr} !== \"string\" || !#{expr}.match(/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/)) {\n"
-        io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"', expected #{class.name}, got '\" + #{expr} + \"'\");\n"
+        io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"', expected #{self.class.name}, got '\" + #{expr} + \"'\");\n"
         io << "    typeCheckerError(err, ctx);\n"
         io << "}\n"
       end

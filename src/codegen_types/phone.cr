@@ -23,7 +23,7 @@ module AST
     def typescript_check_encoded(expr, descr)
       String.build do |io|
         io << "if (#{expr} === null || #{expr} === undefined || typeof #{expr} !== \"string\" || #{expr}.replace(/[^0-9+]/g, \"\").length < 5 || #{expr}[0] !== \"+\") {\n"
-        io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"', expected #{class.name}, got '\" + #{expr} + \"'\");\n"
+        io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"', expected #{self.class.name}, got '\" + #{expr} + \"'\");\n"
         io << "    typeCheckerError(err, ctx);\n"
         io << "}\n"
       end
@@ -32,7 +32,7 @@ module AST
     def typescript_check_decoded(expr, descr)
       String.build do |io|
         io << "if (#{expr} === null || #{expr} === undefined || typeof #{expr} !== \"string\" || #{expr}.replace(/[^0-9+]/g, \"\").length < 5 || #{expr}[0] !== \"+\") {\n"
-        io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"', expected #{class.name}, got '\" + #{expr} + \"'\");\n"
+        io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"', expected #{self.class.name}, got '\" + #{expr} + \"'\");\n"
         io << "    typeCheckerError(err, ctx);\n"
         io << "}\n"
       end
