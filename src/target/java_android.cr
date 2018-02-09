@@ -416,7 +416,7 @@ END
                     .sslSocketFactory(sslSocketFactory, trustManager)
                     .connectTimeout(5, TimeUnit.MINUTES);
 
-            if (interceptor)
+            if (interceptor != null)
                 builder.addInterceptor(interceptor);
 
             http = builder.build();
