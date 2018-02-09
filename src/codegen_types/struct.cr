@@ -46,7 +46,7 @@ module AST
     def typescript_check_encoded(expr, descr)
       String.build do |io|
         io << "if (#{expr} === null || #{expr} === undefined) {\n"
-        io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"', expected #{class.name}, got '\" + #{expr} + \"'\");\n"
+        io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"', expected #{self.class.name}, got '\" + #{expr} + \"'\");\n"
         io << "    typeCheckerError(err, ctx);\n"
         io << "}\n"
         fields.each do |field|
@@ -58,7 +58,7 @@ module AST
     def typescript_check_decoded(expr, descr)
       String.build do |io|
         io << "if (#{expr} === null || #{expr} === undefined) {\n"
-        io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"', expected #{class.name}, got '\" + #{expr} + \"'\");\n"
+        io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"', expected #{self.class.name}, got '\" + #{expr} + \"'\");\n"
         io << "    typeCheckerError(err, ctx);\n"
         io << "}\n"
         fields.each do |field|
