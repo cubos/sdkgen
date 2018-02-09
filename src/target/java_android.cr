@@ -364,7 +364,7 @@ END
         static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US);
         static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         static Application application;
-        static Interceptor interceptor = null
+        static Interceptor interceptor = null;
 
         static {
             dateTimeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
