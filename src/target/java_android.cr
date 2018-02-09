@@ -75,6 +75,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+import okhttp3.Interceptor;
 
 public class API {
     public interface GlobalRequestCallback {
@@ -338,9 +339,15 @@ END
         }
     }
 
+    static public void setHttpClientInterceptor(Interceptor interceptor) {
+        Internal.initialize();
+        Internal.interceptor = interceptor;
+        Internal.createHttpClient();
+    }
+
     static public OkHttpClient getHttpClient() {
         Internal.initialize();
-        return Internal.getHttpClientForThirdParty();
+        return Internal.getHttpClient();
     }
 
     static public void setApiUrl(String url) {
@@ -357,6 +364,7 @@ END
         static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US);
         static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         static Application application;
+        static Interceptor interceptor = null
 
         static {
             dateTimeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -364,7 +372,7 @@ END
             createHttpClient();
         }
 
-        static OkHttpClient getHttpClientForThirdParty() {
+        static OkHttpClient getHttpClient() {
             if (http == null) {
                 createHttpClient();
             }
@@ -402,12 +410,16 @@ END
             dispatcher.setMaxRequests(200);
             dispatcher.setMaxRequestsPerHost(200);
 
-            http = new OkHttpClient.Builder()
+            OkHttpClient.Builder builder = new OkHttpClient.Builder()
                     .connectionPool(connectionPool)
                     .dispatcher(dispatcher)
                     .sslSocketFactory(sslSocketFactory, trustManager)
                     .connectTimeout(5, TimeUnit.MINUTES)
-                    .build();
+
+            if (interceptor)
+                builder.addInterceptor(interceptor);
+
+            http = builder.build();
         }
 
         static void initialize() {
