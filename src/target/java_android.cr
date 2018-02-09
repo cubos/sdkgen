@@ -417,7 +417,7 @@ END
                     .connectTimeout(5, TimeUnit.MINUTES);
 
             if (interceptor != null)
-                builder.addInterceptor(interceptor);
+                builder.addNetworkInterceptor(interceptor);
 
             http = builder.build();
         }
