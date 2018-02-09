@@ -414,7 +414,7 @@ END
                     .connectionPool(connectionPool)
                     .dispatcher(dispatcher)
                     .sslSocketFactory(sslSocketFactory, trustManager)
-                    .connectTimeout(5, TimeUnit.MINUTES)
+                    .connectTimeout(5, TimeUnit.MINUTES);
 
             if (interceptor)
                 builder.addInterceptor(interceptor);
