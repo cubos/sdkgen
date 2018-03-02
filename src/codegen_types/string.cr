@@ -1,5 +1,5 @@
 module AST
-  class StringPrimitiveType
+  class StringPrimitiveType 
     def typescript_decode(expr)
       "#{expr}"
       # "#{expr}.normalize()"
@@ -37,5 +37,17 @@ module AST
         io << "}\n"
       end
     end
+
+# KOTLIN
+    def kt_decode(expr)
+      "#{expr}"
+
+    def kt_encode(expr)
+      "#{expr}"
+
+    def kt_native_type
+      "String"
+# KOTLIN
+
   end
 end
