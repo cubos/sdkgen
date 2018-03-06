@@ -70,11 +70,10 @@ module AST
     # KOTLIN
     def kt_decode(expr)
       String::Builder.build do |io|
-        io << "{\n"
         fields.each do |field|
+          field.type.kt_native_type
           io << ident "#{field.name}: #{field.type.kt_decode("#{expr}.#{field.name}")},\n"
         end
-        io << "}"
       end
     end
 
@@ -101,6 +100,10 @@ module AST
         io << "}"
       end
     end
+
+    def kt_return_type_name
+      name[0].downcase + name[1..-1] 
+    end 
     # KOTLIN
 
   end

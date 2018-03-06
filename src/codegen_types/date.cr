@@ -39,5 +39,21 @@ module AST
         io << "}\n"
       end
     end
+
+    def kt_decode(expr)      
+      "SimpleDateFormat(\"yyyy-MM-dd\").format(#{expr})"
+    end
+
+    def kt_encode(expr)
+      "Calendar.getInstance().apply { time = SimpleDateFormat(\"yyyy-MM-dd\").parse(#{expr}) }"
+    end
+
+    def kt_native_type
+      "Calendar"
+    end
+
+    def kt_return_type_name
+      "date"
+    end
   end
 end
