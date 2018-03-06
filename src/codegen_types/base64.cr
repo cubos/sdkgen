@@ -36,5 +36,24 @@ module AST
         io << "}\n"
       end
     end
+
+    # KOTLIN
+    def kt_decode(expr)
+      "#{expr}"
+    end 
+
+    def kt_encode(expr)
+      "#{expr}"
+    end 
+
+    def kt_native_type
+      "String"
+    end
+
+    def kt_return_type_name
+      "string" 
+    end 
+    # KOTLIN
+
   end
 end

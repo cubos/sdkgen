@@ -1,6 +1,7 @@
 require "./syntax/parser"
 require "./semantic/ast_semantic"
 require "./target/java_android"
+require "./target/kt_android.cr"
 require "./target/swift_ios"
 require "./target/typescript_nodeserver"
 require "./target/typescript_servertest"
@@ -11,7 +12,7 @@ require "colorize"
 
 is_server = false
 destination = ""
-target_name = ""
+target_name = "" 
 sources = [] of String
 
 OptionParser.parse! do |parser|

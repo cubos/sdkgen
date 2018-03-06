@@ -23,5 +23,22 @@ module AST
     def typescript_check_decoded(expr, descr)
       type.typescript_check_decoded(expr, descr)
     end
+
+    def kt_encode(expr) 
+      type.kt_encode(expr)
+    end 
+
+    def kt_decode(expr)
+      type.kt_decode(expr)
+    end
+
+    def kt_native_type
+      type.kt_native_type
+    end
+
+    def kt_return_type_name
+      type.kt_return_type_name
+    end 
+
   end
 end

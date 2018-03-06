@@ -41,5 +41,14 @@ module AST
         io << "}\n"
       end
     end
+
+    def kt_decode(expr) 
+      "#{base.kt_decode(expr)}? = null"
+    end
+
+    def kt_return_type_name
+      base.kt_return_type_name 
+    end 
+
   end
 end

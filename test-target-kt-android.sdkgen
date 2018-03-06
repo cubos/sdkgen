@@ -1,0 +1,13 @@
+type FooType {
+    fooStr: string
+}
+
+get foo(var1: string, var2: base64, var3: bool var4: cep, var5: cnpj): FooType
+
+get fooCnpj(var1: string, var2: base64, var3: bool var4: cep, var5: cnpj): cnpj
+
+get fooCep(var1: string, var2: base64, var3: bool var4: cep): cep
+
+get fooCpf(var1: cpf): cpf
+
+get fooDate(var2: date): date
