@@ -1,7 +1,7 @@
-# sdkgen
+# sdkgen [![Build Status](https://travis-ci.org/cubos/sdkgen.svg?branch=master)](https://travis-ci.org/cubos/sdkgen)
 
 The sdkgen is a tool that aims on solving client-server communication and data layout sharing between server, web, android and ios using a description language also called sdkgen.
- 
+
 
 ## TODO
 
