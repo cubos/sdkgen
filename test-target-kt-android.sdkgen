@@ -2,12 +2,22 @@ type FooType {
     fooStr: string
 }
 
-get foo(var1: string, var2: base64, var3: bool var4: cep, var5: cnpj): FooType
+get fooString(var1: string): string
 
-get fooCnpj(var1: string, var2: base64, var3: bool var4: cep, var5: cnpj): cnpj
+// get fooBase64(var1: base64): base64
 
-get fooCep(var1: string, var2: base64, var3: bool var4: cep): cep
+// get fooCnpj(var1: cnpj): cnpj
 
-get fooCpf(var1: cpf): cpf
+// get fooCep(var1: cep): cep
 
-get fooDate(var2: date): date
+// get fooCpf(var1: cpf): cpf
+
+// get fooDate(var1: date): date
+
+// get fooEmail(var1: email): email
+
+// get fooFloat(var1: float): float
+
+// get fooInt(var1: int): int
+
+// get fooLocation(var1: latlng): latlng

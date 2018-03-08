@@ -51,7 +51,7 @@ module AST
     end
 
     def kt_return_type_name
-      "string" 
+      "value" 
     end 
     # KOTLIN
 
