@@ -9,6 +9,10 @@ module AST
     def kt_return_type_name 
 			raise "todo: kt_return_type_name in #{self.class.name}"
 		end
+  
+    def kt_encode(expr) 
+			raise "todo: kt_encode in #{self.class.name}"
+		end
 	end
 end 
 
@@ -35,6 +39,10 @@ class KtAndroidTarget < Target
   def gen
     @io << <<-END
 
+import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.*
+
 open class API {
     interface Calls {\n
 END
@@ -42,7 +50,7 @@ END
       args = op.args.map { |arg| "#{mangle arg.name}: #{arg.type.kt_native_type}" }
       args << "flag: Int? = null" # TODO make it something like API.DEFAULT and insert error parameter to callback
       args << if !op.return_type.is_a? AST::VoidPrimitiveType 
-                "callback: (#{op.return_type.kt_return_type_name}: #{op.return_type.kt_native_type}) -> Unit" 
+                "callback: (#{op.return_type.kt_return_type_name}: #{op.return_type.kt_native_type}?) -> Unit" 
               else 
                 "callback: () -> Unit"
               end
@@ -59,15 +67,21 @@ END
 
     @ast.operations.each do |op|
       args = op.args.map { |arg| "#{mangle arg.name}: #{arg.type.kt_native_type}" }
-      args << "flag: Int? = null" # TODO make it something like API.DEFAULT and insert error parameter to callback
+      args << "flag: Int?" # TODO make it something like API.DEFAULT and insert error parameter to callback
       args << if !op.return_type.is_a? AST::VoidPrimitiveType 
-                "callback: (#{op.return_type.kt_return_type_name}: #{op.return_type.kt_native_type}) -> Unit" 
+                "callback: (#{op.return_type.kt_return_type_name}: #{op.return_type.kt_native_type}?) -> Unit" 
               else
                 "callback: () -> Unit"
               end
       @io << ident(String.build do |io|
         io << "     override fun #{mangle op.pretty_name}(#{args.join(", ")}) {\n"
-        io << "\n"
+        io << if op.args.size > 0
+                 "         var json = JSONObject().apply { put(\"vra\", #{op.args[0].type.kt_encode(mangle op.args[0].name)}) }  \n
+                           #{op.args[0].type.kt_decode(mangle op.args[0].name)}  \n"
+
+              else 
+                  ""
+              end
         io << "     }\n"
       end)
     end
@@ -76,9 +90,6 @@ END
       } 
     }
 }
-
-
-
 END
   end
 end
