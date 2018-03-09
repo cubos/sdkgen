@@ -1,3 +1,4 @@
+require "json"
 require "./target"
 
 class TypeScriptServerTarget < Target
@@ -26,9 +27,6 @@ END
   end}
 #{String.build do |io|
     if @ast.options.useRethink
-      io << <<-END
-import r from "../rethinkdb";
-END
     else
       io << <<-END
 
@@ -186,6 +184,18 @@ function sleep(ms: number) {
 
 export let server: http.Server;
 
+export const hook: {
+    onHealthCheck: () => Promise<boolean>
+    onDevice: (id: string, deviceInfo: any) => Promise<void>
+    onReceiveCall: (call: DBApiCall) => Promise<DBApiCall | void>
+    afterProcessCall: (call: DBApiCall) => Promise<void>
+} = {
+    onHealthCheck: async () => true,
+    onDevice: async () => {},
+    onReceiveCall: async () => {},
+    afterProcessCall: async () => {}
+};
+
 export function start(port: number = 8000) {
     if (server) return;
     server = http.createServer((req, res) => {
@@ -233,23 +243,16 @@ export function start(port: number = 8000) {
                     break;
                 }
                 case "GET": {
-#{String.build do |io|
-    if @ast.options.useRethink
-      io << <<-END
-                    r.expr(`{\"ok\": true}`).then(result => {
-                        res.writeHead(200);
-                        res.write(result);
+                    hook.onHealthCheck().then(ok => {
+                        res.writeHead(ok ? 200 : 500);
+                        res.write(JSON.stringify({ok}));
+                        res.end();
+                    }, error => {
+                        console.error(error);
+                        res.writeHead(500);
+                        res.write(JSON.stringify({ok: false}));
                         res.end();
                     });
-END
-    else
-      io << <<-END
-                    res.writeHead(200);
-                    res.write(`{\"ok\": true}`);
-                    res.end();
-END
-    end
-  end}
                     break;
                 }
                 case "POST": {
@@ -268,28 +271,10 @@ END
 
                         const {id, ...deviceInfo} = context.device;
 
-#{String.build do |io|
-    if @ast.options.useRethink
-      io << <<-END
-                        if (!context.device.id || await r.table("devices").get(context.device.id).eq(null)) {
+                        if (!context.device.id)
                             context.device.id = crypto.randomBytes(20).toString("hex");
 
-                            await r.table("devices").insert({
-                                id: context.device.id,
-                                date: r.now(),
-                                ...deviceInfo
-                            });
-                        } else {
-                            r.table("devices").get(context.device.id).update(deviceInfo).run();
-                        }
-END
-    else
-      io << <<-END
-                        if (!context.device.id) context.device.id = crypto.randomBytes(20).toString("hex");
-END
-    end
-  end}
-
+                        await hook.onDevice(context.device.id, deviceInfo);
 
                         const executionId = crypto.randomBytes(20).toString("hex");
 
@@ -313,79 +298,49 @@ END
                         if (clearForLogging[call.name])
                             clearForLogging[call.name](call);
 
-#{String.build do |io|
-    if @ast.options.useRethink
-      io << <<-END
-                        async function tryLock(): Promise<boolean> {
-                            const priorCall = await r.table("api_calls").get(call.id);
-                            if (priorCall === null) {
-                                const res = await r.table("api_calls").insert(call);
-                                return res.inserted > 0 ? true : await tryLock();
-                            }
-                            call = priorCall;
-                            if (!call.running) {
-                                return true;
-                            }
-                            if (call.executionId === executionId) {
-                                return true;
-                            }
-                            return false;
+                        try {
+                            call = await hook.onReceiveCall(call) || call;
+                        } catch (e) {
+                            call.ok = false;
+                            call.error = {
+                                type: "Fatal",
+                                message: e.message
+                            };
+                            call.running = false;
                         }
-
-                        for (let i = 0; i < 1500; ++i) {
-                            if (await tryLock()) break;
-                            await sleep(100);
-                        }
-END
-    end
-  end}
 
                         if (call.running) {
-                            if (call.executionId !== executionId) {
+                            try {
+                                const func = fnExec[request.name];
+                                if (func) {
+                                    call.result = await func(context, request.args);
+                                } else {
+                                    console.error(JSON.stringify(Object.keys(fnExec)));
+                                    throw "Function does not exist: " + request.name;
+                                }
+                            } catch (err) {
+                                console.error(err);
                                 call.ok = false;
-                                call.error = {
-                                    type: "Fatal",
-                                    message: "CallExecutionTimeout: Timeout while waiting for execution somewhere else (is the original container that received this request dead?)"
-                                };
-                            } else {
-                                try {
-                                    const func = fnExec[request.name];
-                                    if (func) {
-                                        call.result = await func(context, request.args);
-                                    } else {
-                                        console.error(JSON.stringify(Object.keys(fnExec)));
-                                        throw "Function does not exist: " + request.name;
-                                    }
-                                } catch (err) {
-                                    console.error(err);
-                                    call.ok = false;
+                                if (#{@ast.errors.to_json}.includes(err._type)) {
+                                    call.error = {
+                                        type: err._type,
+                                        message: err._msg
+                                    };
+                                } else {
                                     call.error = {
                                         type: "Fatal",
                                         message: err.toString()
                                     };
-#{ident ident ident ident ident ident ident ident ident(String.build do |io|
-    @ast.errors.each do |error|
-      io << "if (err._type === #{error.inspect})\n    call.error = {type: #{error.inspect}, message: err._msg};\n"
-    end
-  end)}
-                                }
-                                call.running = false;
-                                const deltaTime = process.hrtime(startTime);
-                                call.duration = deltaTime[0] + deltaTime[1] * 1e-9;
-                                if (call.error && call.error.type === "Fatal") {
-                                    setTimeout(() => captureError(new Error(call.error!.type + ": " + call.error!.message), req, {
+                                    setTimeout(() => captureError(err, req, {
                                         call
                                     }), 1);
                                 }
                             }
+                            call.running = false;
+                            const deltaTime = process.hrtime(startTime);
+                            call.duration = deltaTime[0] + deltaTime[1] * 1e-9;
 
-#{String.build do |io|
-    if @ast.options.useRethink
-      io << <<-END
-                            r.table("api_calls").get(call.id).update(call).run();
-END
-    end
-  end}
+                            await hook.afterProcessCall(call);
                         }
 
                         const response = {
@@ -469,6 +424,57 @@ END
     end
   end}
 
+#{String.build do |io|
+    if @ast.options.useRethink
+      io << <<-END
+import r from "../rethinkdb";
+
+hook.onHealthCheck = async () => {
+    return await r.expr(true);
+};
+
+hook.onDevice = async (id, deviceInfo) => {
+    if (await r.table("devices").get(id).eq(null)) {
+        await r.table("devices").insert({
+            id: id,
+            date: r.now(),
+            ...deviceInfo
+        });
+    } else {
+        r.table("devices").get(id).update(deviceInfo).run();
+    }
+};
+
+hook.onReceiveCall = async (call) => {
+    for (let i = 0; i < 1500; ++i) {
+        const priorCall = await r.table("api_calls").get(call.id);
+        if (priorCall === null) {
+            const res = await r.table("api_calls").insert(call);
+            if (res.inserted > 0)
+                return;
+            else
+                continue;
+        }
+        if (!priorCall.running) {
+            return priorCall;
+        }
+        if (priorCall.executionId === call.executionId) {
+            return;
+        }
+
+        await sleep(100);
+    }
+
+    throw "CallExecutionTimeout: Timeout while waiting for execution somewhere else (is the original container that received this request dead?)";
+};
+
+hook.afterProcessCall = async (call) => {
+    r.table("api_calls").get(call.id).update(call).run();
+};
+
+END
+    end
+end}
 END
   end
 
