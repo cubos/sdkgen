@@ -350,6 +350,10 @@ END
         return Internal.getHttpClient();
     }
 
+    static public String getApiUrl() {
+        return Internal.forcedUrl == null ? Internal.baseUrl : Internal.forcedUrl;
+    }
+
     static public void setApiUrl(String url) {
         Internal.forcedUrl = url;
     }
