@@ -1,0 +1,23 @@
+type FooType {
+    fooStr: string
+}
+
+get fooString(var1: string): string
+
+// get fooBase64(var1: base64): base64
+
+// get fooCnpj(var1: cnpj): cnpj
+
+// get fooCep(var1: cep): cep
+
+// get fooCpf(var1: cpf): cpf
+
+// get fooDate(var1: date): date
+
+// get fooEmail(var1: email): email
+
+// get fooFloat(var1: float): float
+
+// get fooInt(var1: int): int
+
+// get fooLocation(var1: latlng): latlng

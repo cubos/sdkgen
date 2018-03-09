@@ -27,6 +27,9 @@ END
   end}
 #{String.build do |io|
     if @ast.options.useRethink
+      io << <<-END
+import r from "../rethinkdb";
+END
     else
       io << <<-END
 

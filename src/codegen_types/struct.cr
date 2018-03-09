@@ -66,5 +66,45 @@ module AST
         end
       end
     end
+
+    # KOTLIN
+    def kt_decode(expr)
+      String::Builder.build do |io|
+        fields.each do |field|
+          field.type.kt_native_type
+          io << ident "#{field.name}: #{field.type.kt_decode("#{expr}.#{field.name}")},\n"
+        end
+      end
+    end
+
+    def kt_encode(expr)
+      String::Builder.build do |io|
+        io << "{\n"
+        fields.each do |field|
+          io << ident "#{field.name}: #{field.type.typescript_encode("#{expr}.#{field.name}")},\n"
+        end
+        io << "}"
+      end
+    end
+
+    def kt_native_type
+      name
+    end
+
+    def kt_definition
+      String.build do |io|
+        io << "class #{name} {\n"
+        fields.each do |field|
+          io << "    var #{field.name}: #{field.type.kt_native_type}\n"
+        end
+        io << "}"
+      end
+    end
+
+    def kt_return_type_name
+      name[0].downcase + name[1..-1] 
+    end 
+    # KOTLIN
+
   end
 end
