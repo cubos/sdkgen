@@ -36,5 +36,25 @@ module AST
         io << "}\n"
       end
     end
+
+    def kt_decode(expr)
+      "#{expr}.replace(/(..)(...)(...)(....)(..)/, \"$1.$2.$3/$4-$5\")"
+    end
+
+    def kt_encode(expr)
+      "#{expr}.replace(/[^0-9]/g, \"\").padStart(14, \"0\")"
+    end
+
+    def kt_native_type
+      "String"
+    end
+  
+    def kt_native_type
+      "String"
+    end
+
+    def kt_return_type_name
+      "cnpj"
+    end
   end
 end

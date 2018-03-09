@@ -32,5 +32,22 @@ module AST
     def typescript_check_decoded(expr, descr)
       typescript_check_encoded(expr, descr)
     end
+
+    def kt_decode(expr)
+      "Location(\"\").apply { latitude = #{expr}.lat ; longitude = #{expr}.lng }"
+    end
+
+    def kt_encode(expr)
+      "{ lat: #{expr}.latitude, lng: #{expr}.longitude }"
+    end
+
+    def kt_native_type
+      "Location"
+    end
+
+    def kt_return_type_name
+      "location"
+    end
+
   end
 end
