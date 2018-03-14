@@ -732,6 +732,7 @@ END
                             if (!shouldReceiveResponse[0]) return;
                             if (response.code() == 502) {
                                 Log.e("API", "HTTP " + response.code());
+                                callback.onResult(new Error() {{type = ErrorType.Fatal; message = e.getMessage();}}, null);
                                 return;
                             }
                             shouldReceiveResponse[0] = false;
