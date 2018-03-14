@@ -350,10 +350,6 @@ END
         return Internal.getHttpClient();
     }
 
-    static public String getApiUrl() {
-        return Internal.forcedUrl == null ? Internal.baseUrl : Internal.forcedUrl;
-    }
-
     static public void setApiUrl(String url) {
         Internal.forcedUrl = url;
     }
@@ -736,7 +732,7 @@ END
                             if (!shouldReceiveResponse[0]) return;
                             if (response.code() == 502) {
                                 Log.e("API", "HTTP " + response.code());
-                                callback.onResult(new Error() {{type = ErrorType.Fatal; message = e.getMessage();}}, null);
+                                callback.onResult(new Error() {{type = ErrorType.Fatal; message = "Erro Fatal (502) - Tente novamente";}}, null);
                                 return;
                             }
                             shouldReceiveResponse[0] = false;
