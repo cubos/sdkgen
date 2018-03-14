@@ -389,7 +389,7 @@ export function start(port: number = 8000) {
         captureError = (e, req, extra) => Raven.captureException(e, {
             req,
             extra,
-            fingerprint: [e.message.replace(/[0-9]+/g, "X").replace(/"[^"]*"/g, "X")]
+            fingerprint: [(e.message || e.toString()).replace(/[0-9]+/g, "X").replace(/"[^"]*"/g, "X")]
         });
     }
 
