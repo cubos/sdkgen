@@ -732,7 +732,7 @@ END
                             if (!shouldReceiveResponse[0]) return;
                             if (response.code() == 502) {
                                 Log.e("API", "HTTP " + response.code());
-                                callback.onResult(new Error() {{type = ErrorType.Fatal; message = "Erro Fatal (502) - Tente novamente";}}, null);
+                                // callback.onResult(new Error() {{type = ErrorType.Fatal; message = "Erro Fatal (502) - Tente novamente";}}, null);
                                 return;
                             }
                             shouldReceiveResponse[0] = false;
