@@ -354,6 +354,10 @@ END
         Internal.forcedUrl = url;
     }
 
+    static public String getApiUrl() {
+        return Internal.forcedUrl != null ? Internal.forcedUrl : "https://" + Internal.baseUrl + (API.useStaging ? "-staging" : "")
+    }
+
     private static class Internal {
         static String forcedUrl = null;
         static String baseUrl = #{@ast.options.url.inspect};
