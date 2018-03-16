@@ -355,7 +355,7 @@ END
     }
 
     static public String getApiUrl() {
-        return Internal.forcedUrl != null ? Internal.forcedUrl : "https://" + Internal.baseUrl + (API.useStaging ? "-staging" : "")
+        return Internal.forcedUrl != null ? Internal.forcedUrl : "https://" + Internal.baseUrl + (API.useStaging ? "-staging" : "");
     }
 
     private static class Internal {
