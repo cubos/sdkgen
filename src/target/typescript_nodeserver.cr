@@ -304,7 +304,7 @@ export function start(port: number = 8000) {
                             call.ok = false;
                             call.error = {
                                 type: "Fatal",
-                                message: e.message
+                                message: e.toString()
                             };
                             call.running = false;
                         }
