@@ -2,6 +2,10 @@
 
 The sdkgen is a tool that aims on solving client-server communication and data layout sharing between server, web, android and ios using a description language also called sdkgen.
 
+## How to use it
+
+`crystal run main.cr -- api.sdkgen -o api.ts -t typescript_nodeserver`
+
 
 ## TODO
 
