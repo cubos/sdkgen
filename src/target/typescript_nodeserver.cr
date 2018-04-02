@@ -11,7 +11,6 @@ import http from "http";
 import crypto from "crypto";
 import os from "os";
 import url from "url";
-import moment from "moment";
 import Raven from "raven";
 END
     else
@@ -20,7 +19,6 @@ import * as http from "http";
 import * as crypto from "crypto";
 import * as os from "os";
 import * as url from "url";
-const moment = require("moment");
 const Raven = require("raven");
 END
     end
