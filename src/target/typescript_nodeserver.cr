@@ -11,7 +11,6 @@ import http from "http";
 import crypto from "crypto";
 import os from "os";
 import url from "url";
-import moment from "moment";
 import Raven from "raven";
 END
     else
@@ -20,7 +19,6 @@ import * as http from "http";
 import * as crypto from "crypto";
 import * as os from "os";
 import * as url from "url";
-const moment = require("moment");
 const Raven = require("raven");
 END
     end
@@ -76,6 +74,9 @@ function typeCheckerError(e: Error, ctx: Context) {
     #{@ast.options.strict ? "throw e;" : "setTimeout(() => captureError(e, ctx.req, ctx.call), 1000);"}
 }
 
+function toDateTimeString(date: Date) {
+  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+}
 
 END
 
@@ -224,13 +225,13 @@ export function start(port: number = 8000) {
             const ip = req.headers["x-real-ip"] as string || "";
             const signature = req.method! + url.parse(req.url || "").pathname;
             if (httpHandlers[signature]) {
-                console.log(`${moment().format("YYYY-MM-DD HH:mm:ss")} http ${signature}`);
+                console.log(`${toDateTimeString(new Date())} http ${signature}`);
                 httpHandlers[signature](body, res, req);
                 return;
             }
             for (let target in httpHandlers) {
                 if (("prefix " + signature).startsWith(target)) {
-                    console.log(`${moment().format("YYYY-MM-DD HH:mm:ss")} http ${target}`);
+                    console.log(`${toDateTimeString(new Date())} http ${target}`);
                     httpHandlers[target](body, res, req);
                     return;
                 }
@@ -361,7 +362,7 @@ export function start(port: number = 8000) {
                         res.end();
 
                         console.log(
-                            `${moment().format("YYYY-MM-DD HH:mm:ss")} ` +
+                            `${toDateTimeString(new Date())} ` +
                             `${call.id} [${call.duration.toFixed(6)}s] ` +
                             `${call.name}() -> ${call.ok ? "OK" : call.error ? call.error.type : "???"}`
                         );
