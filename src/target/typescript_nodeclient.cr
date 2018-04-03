@@ -3,7 +3,6 @@ require "./target"
 class TypeScriptNodeClient < Target
   def gen
     @io << <<-END
-import * as moment from "moment";
 import * as https from "https";
 import { URL } from "url";
 
