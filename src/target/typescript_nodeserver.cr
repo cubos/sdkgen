@@ -82,7 +82,7 @@ function toDateTimeString(date: Date) {
     return `${
         padNumber(date.getFullYear(), 4)
     }-${
-        padNumber(date.getMonth(), 2)
+        padNumber(date.getMonth() + 1, 2)
     }-${
         padNumber(date.getDate(), 2)
     } ${
