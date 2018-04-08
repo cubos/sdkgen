@@ -74,8 +74,24 @@ function typeCheckerError(e: Error, ctx: Context) {
     #{@ast.options.strict ? "throw e;" : "setTimeout(() => captureError(e, ctx.req, ctx.call), 1000);"}
 }
 
+function padNumber(value: number, length: number) {
+    return value.toString().padStart(length, "0");
+}
+
 function toDateTimeString(date: Date) {
-  return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`;
+    return `${
+        padNumber(date.getFullYear(), 4)
+    }-${
+        padNumber(date.getMonth() + 1, 2)
+    }-${
+        padNumber(date.getDate(), 2)
+    } ${
+        padNumber(date.getHours(), 2)
+    }:${
+        padNumber(date.getMinutes(), 2)
+    }:${
+        padNumber(date.getSeconds(), 2)
+    }`;
 }
 
 END
