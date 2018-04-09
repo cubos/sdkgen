@@ -385,7 +385,7 @@ END
         }
 
         static void createHttpClient() {
-            connectionPool = new ConnectionPool(100, 5, TimeUnit.MINUTES);
+            connectionPool = new ConnectionPool(100, 45, TimeUnit.SECONDS);
 
             TrustManagerFactory trustManagerFactory;
             try {
@@ -418,7 +418,7 @@ END
                     .connectionPool(connectionPool)
                     .dispatcher(dispatcher)
                     .sslSocketFactory(sslSocketFactory, trustManager)
-                    .connectTimeout(5, TimeUnit.MINUTES);
+                    .connectTimeout(45, TimeUnit.SECONDS);
 
             if (interceptor != null)
                 builder.addNetworkInterceptor(interceptor);
