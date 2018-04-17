@@ -6,11 +6,15 @@ class TypeScriptNodeClient < Target
 import * as https from "https";
 import { URL } from "url";
 
-const baseUrl = #{@ast.options.url.inspect};
+let baseUrl = #{@ast.options.url.inspect};
 let useStaging = false;
 
 export function setStaging(use: boolean) {
   useStaging = !!use;
+}
+
+export function setBaseUrl(url: string) {
+  baseUrl = url;
 }
 
 END
