@@ -5,10 +5,13 @@ services:
 
 script:
   - docker build -t cubos/sdkgen .
+  - docker build -t cubos/sdkgen:target-web target-web
+  - docker build -t cubos/sdkgen:target-node target-node
+  - docker build -t cubos/sdkgen:target-android target-android
 
 deploy:
   provider: script
   skip_cleanup: true
-  script: docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" && docker push cubos/sdkgen
+  script: docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" && docker push cubos/sdkgen && docker push cubos/sdkgen:target-web && docker push cubos/sdkgen:target-node && docker push cubos/sdkgen:target-android
   on:
     branch: master
