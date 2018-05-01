@@ -22,6 +22,8 @@ END
     @ast.enum_types.each do |t|
       @io << ident generate_enum_type(t)
       @io << "\n\n"
+      @io << ident generate_enum_type_extension(t)
+      @io << "\n\n"
     end
 
     @ast.operations.each do |op|
@@ -228,6 +230,34 @@ class APIInternal {
         }
     }
 }
+
+protocol EnumCollection: Hashable {
+    static var allValues: [Self] { get }
+}
+
+extension EnumCollection {
+
+    static func cases() -> AnySequence<Self> {
+        typealias S = Self
+        return AnySequence { () -> AnyIterator<S> in
+            var raw = 0
+            return AnyIterator {
+                let current: Self = withUnsafePointer(to: &raw) {
+                    $0.withMemoryRebound(to: S.self, capacity: 1) { $0.pointee }
+                }
+
+                guard current.hashValue == raw else { return nil }
+                raw += 1
+                return current
+            }
+        }
+    }
+
+    static var allValues: [Self] {
+        return Array(self.cases())
+    }
+}
+
 END
   end
 end
