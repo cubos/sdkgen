@@ -44,7 +44,7 @@ abstract class SwiftTarget < Target
     when AST::BoolPrimitiveType    ; path
     when AST::BytesPrimitiveType   ; path
     when AST::ArrayType            ; "#{path}.map { #{generate_property_copy(t.base, "$0")} }"
-    when AST::EnumType             ; "#{native_type(t)}(rawValue: #{path}.rawValue)"
+    when AST::EnumType             ; "#{native_type(t)}(rawValue: #{path}.rawValue)!"
     when AST::StructType           ; "#{path}.copy"
     when AST::OptionalType         ; "#{path} != nil ? #{generate_property_copy(t.base, path + "!")} : nil"
     when AST::TypeReference        ; generate_property_copy(t.type, path)
