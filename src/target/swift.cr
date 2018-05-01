@@ -114,44 +114,34 @@ END
   def generate_enum_type(t)
     String.build do |io|
       if t.name == "ErrorType"
-        io << "enum #{t.name}: String,Error {\n"
+        io << "enum #{t.name}: String, Error {\n"
       else
-        io << "enum #{t.name}: String {\n"
+        io << "enum #{t.name}: String, EnumCollection {\n"
       end
 
       t.values.each do |value|
         io << ident "case #{value} = #{value.inspect}\n"
       end
-      io << ident "\nvar copy: #{t.name} {\n"
-      io << ident ident "return #{t.name}(rawValue: self.rawValue)!\n"
-      io << ident "}\n"
-      io << "}"
-    end
-  end
+      if t.name != "ErrorType"
+        io << ident "\nvar copy: #{t.name} {\n"
+        io << ident ident "return #{t.name}(rawValue: self.rawValue)!\n"
+        io << ident "}\n"
+        io << ident "\nstatic func valuesDictionary() -> [String: #{t.name}] {\n"
+        io << ident ident "var dictionary: [String: #{t.name}] = [:]\n"
+        io << ident ident "for enumCase in self.allValues {\n"
+        io << ident ident ident "dictionary[enumCase.displayableValue] = enumCase\n"
+        io << ident ident "}\n"
+        io << ident ident "return dictionary\n"
+        io << ident "}\n"
 
-  def generate_enum_type_extension(t)
-    String.build do |io|
-      io << "extension #{t.name}: EnumCollection {\n"
-      io << ident "func displayableValue() -> String {\n"
-      io << ident ident "return self.rawValue\n"
-      io << ident "}\n"
-
-      io << ident "\nstatic func valuesDictionary() -> [String : #{t.name}] {\n"
-      io << ident ident "var dictionary: [String : #{t.name}] = [:]\n"
-      io << ident ident "for enumCase in self.allValues {\n"
-      io << ident ident ident "dictionary[enumCase.displayableValue()] = enumCase\n"
-      io << ident ident "}\n"
-      io << ident ident "return dictionary\n"
-      io << ident "}\n"
-
-      io << ident "\nstatic func allDisplayableValues() -> [String] {\n"
-      io << ident ident "var displayableValues: [String] = []\n"
-      io << ident ident "for value in self.allValues {\n"
-      io << ident ident ident "displayableValues.append(value.displayableValue())\n"
-      io << ident ident "}\n"
-      io << ident ident "return displayableValues.sorted()\n"
-      io << ident "}\n"
-
+        io << ident "\nstatic func allDisplayableValues() -> [String] {\n"
+        io << ident ident "var displayableValues: [String] = []\n"
+        io << ident ident "for enumCase in self.allValues {\n"
+        io << ident ident ident "displayableValues.append(enumCase.displayableValue)\n"
+        io << ident ident "}\n"
+        io << ident ident "return displayableValues.sorted()\n"
+        io << ident "}\n"
+      end
       io << "}"
     end
   end

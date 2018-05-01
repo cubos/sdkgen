@@ -22,8 +22,6 @@ END
     @ast.enum_types.each do |t|
       @io << ident generate_enum_type(t)
       @io << "\n\n"
-      @io << ident generate_enum_type_extension(t)
-      @io << "\n\n"
     end
 
     @ast.operations.each do |op|
@@ -231,8 +229,18 @@ class APIInternal {
     }
 }
 
-protocol EnumCollection: Hashable {
+protocol EnumCollection: Hashable, EnumDisplayableValue {
     static var allValues: [Self] { get }
+}
+
+protocol EnumDisplayableValue: RawRepresentable {
+    var displayableValue: String { get }
+}
+
+extension EnumDisplayableValue where RawValue == String {
+    var displayableValue: String {
+        return self.rawValue
+    }
 }
 
 extension EnumCollection {
