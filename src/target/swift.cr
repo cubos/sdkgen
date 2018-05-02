@@ -53,7 +53,6 @@ abstract class SwiftTarget < Target
     end
   end
 
-
   def generate_struct_type(t)
     String.build do |io|
       io << "class #{t.name} {\n"
@@ -62,9 +61,16 @@ abstract class SwiftTarget < Target
       end
       io << ident "\nvar copy: #{t.name} {\n"
       io << ident ident "return #{t.name}(\n"
-      io << ident ident ident t.fields.map { |field| "#{field.name}: #{generate_property_copy(field.type, field.name)}"}.join(",\n")
+      io << ident ident ident t.fields.map { |field| "#{field.name}: #{generate_property_copy(field.type, field.name)}" }.join(",\n")
       io << ident ident "\n)\n"
       io << ident "}\n"
+      t.spreads.map(&.type.as(AST::StructType)).map { |spread|
+        io << ident "\nvar #{spread.name.split("").map_with_index { |char, i| i == 0 ? char.downcase : char }.join("")}: #{spread.name} {\n"
+        io << ident ident "return #{spread.name}(\n"
+        spread.fields.map { |field| io << ident ident ident "#{field.name}: #{field.name}\n" }
+        io << ident ident ")\n"
+        io << ident "}\n"
+      }
       io << ident <<-END
 
 
