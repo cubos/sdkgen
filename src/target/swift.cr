@@ -67,8 +67,8 @@ abstract class SwiftTarget < Target
       t.spreads.map(&.type.as(AST::StructType)).map { |spread|
         io << ident "\nvar #{spread.name.split("").map_with_index { |char, i| i == 0 ? char.downcase : char }.join("")}: #{spread.name} {\n"
         io << ident ident "return #{spread.name}(\n"
-        spread.fields.map { |field| io << ident ident ident "#{field.name}: #{field.name}\n" }
-        io << ident ident ")\n"
+        io << ident ident ident spread.fields.map { |field| "#{field.name}: #{field.name}" }.join(",\n")
+        io << ident ident "\n)\n"
         io << ident "}\n"
       }
       io << ident <<-END
