@@ -1,11 +1,11 @@
 module AST
   class DateTimePrimitiveType
     def typescript_decode(expr)
-      "new Date(#{expr} + 'Z')"
+      "new Date(#{expr} + \"Z\")"
     end
 
     def typescript_encode(expr)
-      "#{expr}.toISOString().replace('Z', '')"
+      "#{expr}.toISOString().replace(\"Z\", \"\")"
     end
 
     def typescript_native_type
