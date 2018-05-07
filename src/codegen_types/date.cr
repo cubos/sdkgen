@@ -5,7 +5,7 @@ module AST
     end
 
     def typescript_encode(expr)
-      "#{expr}.toISOString().split('T')[0]"
+      "#{expr}.toISOString().split(\"T\")[0]"
     end
 
     def typescript_native_type
