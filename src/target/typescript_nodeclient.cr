@@ -6,17 +6,6 @@ class TypeScriptNodeClient < Target
 import * as https from "https";
 import { URL } from "url";
 
-let baseUrl = #{@ast.options.url.inspect};
-let useStaging = false;
-
-export function setStaging(use: boolean) {
-  useStaging = !!use;
-}
-
-export function setBaseUrl(url: string) {
-  baseUrl = url;
-}
-
 END
 
     @ast.struct_types.each do |t|
@@ -29,145 +18,107 @@ END
       @io << "\n\n"
     end
 
+    @io << <<-END
+export class ApiClient {
+  useStaging = false;
+  deviceId: string | null = null;
+
+  constructor(private baseUrl = #{("https://" + @ast.options.url).inspect}) {}
+
+
+END
+
     @ast.operations.each do |op|
       args = op.args.map { |arg| "#{arg.name}: #{arg.type.typescript_native_type}" }
-      @io << "export async function #{op.pretty_name}(#{args.join(", ")}): Promise<#{op.return_type.typescript_native_type}> {\n"
+      @io << "  async #{op.pretty_name}(#{args.join(", ")}): Promise<#{op.return_type.typescript_native_type}> {\n"
       if op.args.size > 0
-        @io << "  const args = {\n"
+        @io << "    const args = {\n"
         op.args.each do |arg|
-          @io << ident ident "#{arg.name}: #{arg.type.typescript_encode(arg.name)},"
+          @io << "      #{arg.name}: #{arg.type.typescript_encode(arg.name)},"
           @io << "\n"
         end
-        @io << "  };\n"
+        @io << "    };\n"
       end
 
-      @io << "  "
+      @io << "    "
       @io << "const ret = " unless op.return_type.is_a? AST::VoidPrimitiveType
-      @io << "await makeRequest({name: #{op.pretty_name.inspect}, #{op.args.size > 0 ? "args" : "args: {}"}});\n"
-      @io << ident "return " + op.return_type.typescript_decode("ret") + ";"
-      @io << "\n"
-      @io << "}\n\n"
+      @io << "await this.makeRequest({name: #{op.pretty_name.inspect}, #{op.args.size > 0 ? "args" : "args: {}"}});\n"
+      @io << "    return " + op.return_type.typescript_decode("ret") + ";\n" unless op.return_type.is_a? AST::VoidPrimitiveType
+      @io << "  }\n\n"
     end
 
     @io << <<-END
-//////////////////////////////////////////////////////
+  private device() {
+    const device: any = {
+      type: "node",
+    };
+    if (this.deviceId)
+      device.id = this.deviceId;
+    return device;
+  }
 
-let fallbackDeviceId: string | null = null;
+  private randomBytesHex(len: number) {
+    let hex = "";
+    for (let i = 0; i < 2 * len; ++i)
+      hex += "0123456789abcdef"[Math.floor(Math.random() * 16)];
+    return hex;
+  }
 
-function setDeviceId(deviceId: string) {
-  fallbackDeviceId = deviceId;
-  try {
-    localStorage.setItem("deviceId", deviceId);
-  } catch (e) {}
-}
+  private async makeRequest({name, args}: {name: string, args: any}) {
+    const deviceData = this.device();
+    const body = {
+      id: this.randomBytesHex(8),
+      device: deviceData,
+      name: name,
+      args: args
+    };
 
-function getDeviceId() {
-  try {
-    return localStorage.getItem("deviceId");
-  } catch (e) {}
-  return fallbackDeviceId;
-}
+    const url = new URL(this.baseUrl + (this.useStaging ? "-staging" : "") + "/" + name);
+    const options = {
+      hostname: url.hostname,
+      path: url.pathname,
+      method: "POST",
+    };
 
-async function device() {
-  const device: any = {
-    type: "node",
-  };
-  const deviceId = getDeviceId();
-  if (deviceId)
-    device.id = deviceId;
-  return device;
-}
-
-function randomBytesHex(len: number) {
-  let hex = "";
-  for (let i = 0; i < 2 * len; ++i)
-    hex += "0123456789abcdef"[Math.floor(Math.random()*16)];
-  return hex;
-}
-
-export interface ListenerTypes {
-  fail: (e: Error, name: string, args: any) => void;
-  fatal: (e: Error, name: string, args: any) => void;
-  success: (res: string, name: string, args: any) => void;
-}
-
-type HookArray = Array<Function>;
-export type Listenables = keyof ListenerTypes;
-export type ListenersDict = { [k in Listenables]: Array<ListenerTypes[k]> };
-
-const listenersDict: ListenersDict = {
-  fail: [],
-  fatal: [],
-  success: [],
-};
-
-export function addEventListener(listenable: Listenables, hook: ListenerTypes[typeof listenable]) {
-  const listeners: HookArray = listenersDict[listenable];
-  listeners.push(hook);
-}
-
-export function removeEventListener(listenable: Listenables, hook: ListenerTypes[typeof listenable]) {
-  const listeners: HookArray = listenersDict[listenable];
-  listenersDict[listenable] = listeners.filter(h => h !== hook) as any;
-}
-
-async function makeRequest({name, args}: {name: string, args: any}) {
-  const deviceData = await device();
-  const body = {
-    id: randomBytesHex(8),
-    device: deviceData,
-    name: name,
-    args: args
-  };
-
-  const url = new URL("https://" + baseUrl + (useStaging ? "-staging" : "") + "/" + name);
-  const options = {
-    hostname: url.hostname,
-    path: url.pathname,
-    method: 'POST',
-  };
-  
-  return new Promise<any>((resolve, reject) => {
-    const req = https.request(options, (resp) => {
-      let data = '';
-      resp.on('data', (chunk) => {
-        data += chunk;
-      });
-      resp.on('end', () => {
-        try {
-          const response = JSON.parse(data);
-
+    return new Promise<any>((resolve, reject) => {
+      const req = https.request(options, resp => {
+        let data = "";
+        resp.on("data", (chunk) => {
+          data += chunk;
+        });
+        resp.on("end", () => {
           try {
-            setDeviceId(response.deviceId);
-            if (response.ok) {
-              resolve(response.result);
-              listenersDict["success"].forEach(hook => hook(response.result, name, args));
-            } else {
-              reject(response.error);
-              listenersDict["fail"].forEach(hook => hook(response.error, name, args));
+            const response = JSON.parse(data);
+
+            try {
+              this.deviceId = response.deviceId;
+              if (response.ok) {
+                resolve(response.result);
+              } else {
+                reject(response.error);
+              }
+            } catch (e) {
+              console.error(e);
+              reject({type: "Fatal", message: e.toString()});
             }
           } catch (e) {
             console.error(e);
-            reject({type: "Fatal", message: e.toString()});
-            listenersDict["fatal"].forEach(hook => hook(e, name, args));
+            reject({type: "BadFormattedResponse", message: `Response couldn't be parsed as JSON (${data}):\\n${e.toString()}`});
           }
-        } catch (e) {
-          console.error(e);
-          reject({type: "BadFormattedResponse", message: `Response couldn't be parsed as JSON (${data}):\\n${e.toString()}`});
-          listenersDict["fatal"].forEach(hook => hook(e, name, args));
-        }
+        });
+
       });
-    
-    });
 
-    req.on('error', (e) => {
-      console.error(`problem with request: ${e.message}`);
-    });
+      req.on("error", (e) => {
+        console.error(`problem with request: ${e.message}`);
+        reject({type: "Fatal", message: e.toString()});
+      });
 
-    // write data to request body
-    req.write(JSON.stringify(body));
-    req.end();
-  });
+      // write data to request body
+      req.write(JSON.stringify(body));
+      req.end();
+    });
+  }
 }
 
 END
