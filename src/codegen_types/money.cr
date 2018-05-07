@@ -1,11 +1,11 @@
 module AST
   class MoneyPrimitiveType
     def typescript_decode(expr)
-      "#{expr}|0"
+      "#{expr} | 0"
     end
 
     def typescript_encode(expr)
-      "#{expr}|0"
+      "#{expr} | 0"
     end
 
     def typescript_native_type
@@ -15,7 +15,7 @@ module AST
     def typescript_expect(expr)
       String.build do |io|
         io << "expect(#{expr}).toBeTypeOf(\"number\");\n"
-        io << "expect(#{expr} - (#{expr}|0)).toBe(0);\n"
+        io << "expect(#{expr} - (#{expr} | 0)).toBe(0);\n"
         io << "expect(#{expr}).toBeGreaterThanOrEqual(0);\n"
       end
     end
