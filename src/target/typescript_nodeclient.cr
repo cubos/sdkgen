@@ -20,10 +20,9 @@ END
 
     @io << <<-END
 export class ApiClient {
-  useStaging = false;
   deviceId: string | null = null;
 
-  constructor(private baseUrl = #{("https://" + @ast.options.url).inspect}) {}
+  constructor(private baseUrl = #{("https://" + @ast.options.url).inspect}, private useStaging = false) {}
 
 
 END
