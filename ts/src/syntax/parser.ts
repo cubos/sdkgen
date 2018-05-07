@@ -1,0 +1,357 @@
+import { readFileSync } from "fs";
+import { resolve } from "path";
+import { ArrayType, AstRoot, Base64PrimitiveType, BoolPrimitiveType, BytesPrimitiveType, CepPrimitiveType, CnpjPrimitiveType, CpfPrimitiveType, DatePrimitiveType, DateTimePrimitiveType, EmailPrimitiveType, EnumType, Field, FloatPrimitiveType, FunctionOperation, GetOperation, HexPrimitiveType, IntPrimitiveType, LatLngPrimitiveType, MoneyPrimitiveType, Operation, OptionalType, Options, PhonePrimitiveType, SafeHtmlPrimitiveType, StringPrimitiveType, StructType, Type, TypeDefinition, TypeReference, UIntPrimitiveType, UrlPrimitiveType, UuidPrimitiveType, VoidPrimitiveType, XmlPrimitiveType } from "../ast";
+import { Lexer } from "./lexer";
+import { ArraySymbolToken, ColonSymbolToken, CommaSymbolToken, CurlyCloseSymbolToken, CurlyOpenSymbolToken, EnumKeywordToken, EqualSymbolToken, ErrorKeywordToken, ExclamationMarkSymbolToken, FalseKeywordToken, FunctionKeywordToken, GetKeywordToken, GlobalOptionToken, IdentifierToken, ImportKeywordToken, OptionalSymbolToken, ParensCloseSymbolToken, ParensOpenSymbolToken, PrimitiveTypeToken, SpreadSymbolToken, StringLiteralToken, Token, TrueKeywordToken, TypeKeywordToken } from "./token";
+
+export class ParserError extends Error {}
+
+interface MultiExpectMatcher {
+    ImportKeywordToken?: (token: ImportKeywordToken) => any
+    TypeKeywordToken?: (token: TypeKeywordToken) => any
+    GetKeywordToken?: (token: GetKeywordToken) => any
+    FunctionKeywordToken?: (token: FunctionKeywordToken) => any
+    GlobalOptionToken?: (token: GlobalOptionToken) => any
+    ErrorKeywordToken?: (token: ErrorKeywordToken) => any
+    IdentifierToken?: (token: IdentifierToken) => any
+    CurlyOpenSymbolToken?: (token: CurlyOpenSymbolToken) => any
+    EnumKeywordToken?: (token: EnumKeywordToken) => any
+    PrimitiveTypeToken?: (token: PrimitiveTypeToken) => any
+    ArraySymbolToken?: (token: ArraySymbolToken) => any
+    OptionalSymbolToken?: (token: OptionalSymbolToken) => any
+    CurlyCloseSymbolToken?: (token: CurlyCloseSymbolToken) => any
+    SpreadSymbolToken?: (token: SpreadSymbolToken) => any
+    TrueKeywordToken?: (token: TrueKeywordToken) => any
+    FalseKeywordToken?: (token: FalseKeywordToken) => any
+}
+
+export class Parser {
+    private lexers: Lexer[];
+    private token: Token | null = null;
+
+    constructor(source: Lexer | string) {
+        if (!(source instanceof Lexer)) {
+            source = new Lexer(readFileSync(source).toString(), source);
+        }
+        this.lexers = [source];
+        this.nextToken();
+    }
+
+    private nextToken() {
+        while (this.lexers.length > 0) {
+            this.token = this.lexers[this.lexers.length - 1].nextToken();
+            if (this.token) {
+                return;
+            } else {
+                this.lexers.pop();
+            }
+        }
+    }
+
+    private get currentFileName() {
+        return this.token === null ? null : this.token.filename;
+    }
+
+    private multiExpect(matcher: MultiExpectMatcher) {
+        if (!this.token) {
+            throw new ParserError(`Expected ${Object.keys(matcher).map(x => x.replace("Token", "")).join(" or ")}, but found end of file`);
+        }
+
+        const tokenName = (this.token.constructor as any).name;
+
+        if (tokenName in matcher) {
+            return (matcher as any)[tokenName](this.token);
+        } else if ("IdentifierToken" in matcher) {
+            const tokenAsIdent = this.token.tryIdent();
+            if (tokenAsIdent instanceof IdentifierToken) {
+                return matcher["IdentifierToken"]!(tokenAsIdent);
+            }
+        }
+
+        throw new ParserError(`Expected ${Object.keys(matcher).map(x => x.replace("Token", "")).join(" or ")} at ${this.token.location}, but found ${this.token}`);
+    }
+
+    private expect(x: typeof IdentifierToken): IdentifierToken;
+    private expect(x: typeof StringLiteralToken): StringLiteralToken;
+    private expect(type: any): Token {
+        if (this.token === null) {
+            throw new ParserError(`Expected ${(type as any).name.replace("Token", "")}, but found end of file`);
+        } else if (this.token instanceof type) {
+            return this.token
+        } else {
+            if (type === IdentifierToken) {
+                const tokenAsIdent = this.token.tryIdent();
+                if (tokenAsIdent instanceof IdentifierToken) {
+                    return tokenAsIdent;
+                }
+            }
+            throw new ParserError(`Expected ${(type as any).name.replace("Token", "")} at ${this.token.location}, but found ${this.token}`);
+        }
+    }
+
+    parse() {
+        const operations: Operation[] = [];
+        const typeDefinition: TypeDefinition[] = [];
+        const errors: string[] = [];
+        const options = new Options;
+
+        while (this.token) {
+            this.multiExpect({
+                ImportKeywordToken: token => {
+                    this.nextToken();
+                    const path = this.expect(StringLiteralToken).value;
+                    this.lexers.push(new Lexer(resolve(path + ".sdkgen", this.currentFileName!)));
+                    this.nextToken();
+                },
+                TypeKeywordToken: token => {
+                    typeDefinition.push(this.parseTypeDefinition());
+                },
+                GetKeywordToken: token => {
+                    operations.push(this.parseOperation());
+                },
+                FunctionKeywordToken: token => {
+                    operations.push(this.parseOperation());
+                },
+                GlobalOptionToken: token => {
+                    this.parseOption(options);
+                },
+                ErrorKeywordToken: token => {
+                    this.nextToken();
+                    errors.push(this.expect(IdentifierToken).value);
+                    this.nextToken();
+                },
+            });
+        }
+
+        return new AstRoot(typeDefinition, operations, options, errors);
+    }
+
+    private parseTypeDefinition(): TypeDefinition {
+        const typeToken = this.expect(TypeKeywordToken);
+        this.nextToken();
+
+        const name = this.expect(IdentifierToken).value;
+        if (!name[0].match(/[A-Z]/)) {
+            throw new ParserError(`The custom type name must start with an uppercase letter, but found '${JSON.stringify(name)}' at ${this.token!.location}`);
+        }
+        this.nextToken();
+
+        const type = this.parseType();
+
+        return new TypeDefinition(name, type).at(typeToken);
+    }
+
+    private parseOperation(): Operation {
+        const openingToken: GetKeywordToken | FunctionKeywordToken = this.multiExpect({
+            GetKeywordToken: token => token,
+            FunctionKeywordToken: token => token
+        });
+        this.nextToken();
+
+        const name = this.expect(IdentifierToken).value;
+        this.nextToken();
+
+        this.expect(ParensOpenSymbolToken);
+        this.nextToken();
+
+        const argNames = new Set<string>();
+        const args: Field[] = [];
+
+        while (this.token instanceof IdentifierToken) {
+            const field = this.parseField();
+            if (argNames.has(field.name)) {
+                throw new ParserError(`Cannot redeclare argument '${field.name}'`);
+            }
+            argNames.add(field.name);
+            args.push(field);
+
+            if (this.token instanceof CommaSymbolToken) {
+                this.nextToken();
+            } else {
+                break;
+            }
+        }
+
+        const parensCloseToken = this.expect(ParensCloseSymbolToken);
+        this.nextToken();
+
+        let returnType = new VoidPrimitiveType().at(parensCloseToken);
+        if (this.token instanceof ColonSymbolToken) {
+            this.nextToken();
+            returnType = this.parseType();
+        }
+
+        if (openingToken instanceof GetKeywordToken) {
+            return new GetOperation(name, args, returnType);
+        } else {
+            return new FunctionOperation(name, args, returnType);
+        }
+    }
+
+    private parseOption(options: Options) {
+        const varToken = this.expect(GlobalOptionToken);
+        this.nextToken();
+
+        this.expect(EqualSymbolToken);
+        this.nextToken();
+
+        switch (varToken.value) {
+            case "url":
+                options.url = this.expect(StringLiteralToken).value;
+                this.nextToken();
+                break;
+            case "useRethink":
+                options.useRethink = this.multiExpect({TrueKeywordToken: () => true, FalseKeywordToken: () => false});
+                this.nextToken();
+                break;
+            case "strict":
+                options.strict = this.multiExpect({TrueKeywordToken: () => true, FalseKeywordToken: () => false});
+                this.nextToken();
+                break;
+            case "syntheticDefaultImports":
+                options.syntheticDefaultImports = this.multiExpect({TrueKeywordToken: () => true, FalseKeywordToken: () => false});
+                this.nextToken();
+                break;
+            default:
+                throw new ParserError(`Unknown option $${varToken.value} at ${varToken.location}`);
+        }
+    }
+
+    private parseEnum(): EnumType {
+        const enumToken = this.expect(EnumKeywordToken);
+        this.nextToken();
+
+        this.expect(CurlyOpenSymbolToken);
+        this.nextToken();
+
+        const values: string[] = [];
+
+        while (true) {
+            this.multiExpect({
+                IdentifierToken: token => {
+                    values.push(token.value);
+                    this.nextToken();
+                },
+                CurlyCloseSymbolToken: () => {
+                    this.nextToken();
+                    return new EnumType(values).at(enumToken);
+                }
+            })
+        }
+    }
+
+    private parseField(): Field {
+        const nameToken = this.expect(IdentifierToken);
+        this.nextToken();
+
+        this.expect(ColonSymbolToken);
+        this.nextToken();
+
+        const type = this.parseType();
+        const field = new Field(nameToken.value, type).at(nameToken);
+
+        while (this.token instanceof ExclamationMarkSymbolToken) {
+            this.nextToken();
+            switch (this.expect(IdentifierToken).value) {
+                case "secret":
+                    field.secret = true;
+                    break;
+                default:
+                    throw new ParserError(`Unknown field mark !${this.token.value} at ${this.token.location}`);
+            }
+            this.nextToken();
+        }
+
+        return field;
+    }
+
+    private parseStruct(): StructType {
+        const openingToken = this.expect(CurlyOpenSymbolToken);
+        this.nextToken();
+
+        const fields: Field[] = [];
+        const spreads: TypeReference[] = [];
+        const fieldNames = new Set<string>();
+
+        let finished = false;
+        while (!finished) {
+            this.multiExpect({
+                IdentifierToken: token => {
+                    const field = this.parseField();
+                    if (fieldNames.has(field.name)) {
+                        throw new ParserError(`Cannot redeclare field '${field.name}'`);
+                    }
+                    fieldNames.add(field.name);
+                    fields.push(field);
+                },
+                SpreadSymbolToken: () => {
+                    this.nextToken();
+                    const identToken = this.expect(IdentifierToken);
+                    this.nextToken();
+                    if (!identToken.value[0].match(/[A-Z]/)) {
+                        throw new ParserError(`Expected a type but found '${JSON.stringify(identToken.value)}' at ${identToken.location}`);
+                    }
+                    spreads.push(new TypeReference(identToken.value).at(identToken));
+                },
+                CurlyCloseSymbolToken: () => {
+                    this.nextToken();
+                    finished = true;
+                }
+            })
+        }
+
+        return new StructType(fields, spreads).at(openingToken);
+    }
+
+    private parseType(): Type {
+        let result = this.multiExpect({
+            CurlyOpenSymbolToken: () => this.parseStruct(),
+            EnumKeywordToken: () => this.parseEnum(),
+            IdentifierToken: token => {
+                this.nextToken();
+                if (!token.value[0].match(/[A-Z]/)) {
+                    throw new ParserError(`Expected a type but found '${JSON.stringify(token.value)}' at ${token.location}`);
+                }
+                return new TypeReference(token.value).at(token);
+            },
+            PrimitiveTypeToken: token => {
+                this.nextToken();
+                switch (token.value) {
+                    case "string":   return new StringPrimitiveType().at(token);
+                    case "int":      return new IntPrimitiveType().at(token);
+                    case "uint":     return new UIntPrimitiveType().at(token);
+                    case "date":     return new DatePrimitiveType().at(token);
+                    case "datetime": return new DateTimePrimitiveType().at(token);
+                    case "float":    return new FloatPrimitiveType().at(token);
+                    case "bool":     return new BoolPrimitiveType().at(token);
+                    case "bytes":    return new BytesPrimitiveType().at(token);
+                    case "money":    return new MoneyPrimitiveType().at(token);
+                    case "cpf":      return new CpfPrimitiveType().at(token);
+                    case "cnpj":     return new CnpjPrimitiveType().at(token);
+                    case "email":    return new EmailPrimitiveType().at(token);
+                    case "phone":    return new PhonePrimitiveType().at(token);
+                    case "cep":      return new CepPrimitiveType().at(token);
+                    case "latlng":   return new LatLngPrimitiveType().at(token);
+                    case "url":      return new UrlPrimitiveType().at(token);
+                    case "uuid":     return new UuidPrimitiveType().at(token);
+                    case "hex":      return new HexPrimitiveType().at(token);
+                    case "base64":   return new Base64PrimitiveType().at(token);
+                    case "safehtml": return new SafeHtmlPrimitiveType().at(token);
+                    case "xml":      return new XmlPrimitiveType().at(token);
+                    default:
+                        throw new ParserError(`BUG! Should handle primitive ${token.value}`);
+                }
+            }
+        });
+
+        while (this.token instanceof ArraySymbolToken || this.token instanceof OptionalSymbolToken) {
+            this.multiExpect({
+                ArraySymbolToken: token => result = new ArrayType(result).at(token),
+                OptionalSymbolToken: token => result = new OptionalType(result).at(token)
+            });
+            this.nextToken();
+        }
+
+        return result;
+    }
+}

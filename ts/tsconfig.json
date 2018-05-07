@@ -1,0 +1,18 @@
+{
+  "compileOnSave": false,
+  "compilerOptions": {
+    "strict": true,
+    "target": "esnext",
+    "noEmitOnError": true,
+    "module": "commonjs"
+  },
+  "include": [
+    "spec/*.ts",
+    "src/*.ts",
+    "src/*/*.ts",
+    "src/*/*/*.ts",
+    "src/*/*/*/*.ts",
+    "src/*/*/*/*/*.ts"
+  ],
+  "exclude": []
+}
