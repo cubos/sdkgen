@@ -416,7 +416,9 @@ export function start(port: number = 8000) {
 
     if (!process.env.TEST) {
         server.listen(port, () => {
-            console.log(`Listening on ${server.address().address}:${server.address().port}`);
+            const addr = server.address();
+            const addrString = typeof addr === "string" ? addr : `${addr.address}:${addr.port}`;
+            console.log(`Listening on ${addrString}`);
         });
     }
 
