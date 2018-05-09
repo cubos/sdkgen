@@ -1,7 +1,7 @@
 module AST
   class DatePrimitiveType
     def typescript_decode(expr)
-      "new Date(#{expr})"
+      "new Date(parseInt(#{expr}.split(\"-\")[0], 10), parseInt(#{expr}.split(\"-\")[1], 10) - 1, parseInt(#{expr}.split(\"-\")[2], 10))"
     end
 
     def typescript_encode(expr)
