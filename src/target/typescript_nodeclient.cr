@@ -128,4 +128,3 @@ END
 end
 
 Target.register(TypeScriptNodeClient, target_name: "typescript_nodeclient")
-
