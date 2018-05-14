@@ -25,6 +25,30 @@ interface MultiExpectMatcher {
     FalseKeywordToken?: (token: FalseKeywordToken) => any
 }
 
+export const primitiveToAstClass = new Map<string, any>();
+primitiveToAstClass.set("string", StringPrimitiveType);
+primitiveToAstClass.set("string", StringPrimitiveType);
+primitiveToAstClass.set("int", IntPrimitiveType);
+primitiveToAstClass.set("uint", UIntPrimitiveType);
+primitiveToAstClass.set("date", DatePrimitiveType);
+primitiveToAstClass.set("datetime", DateTimePrimitiveType);
+primitiveToAstClass.set("float", FloatPrimitiveType);
+primitiveToAstClass.set("bool", BoolPrimitiveType);
+primitiveToAstClass.set("bytes", BytesPrimitiveType);
+primitiveToAstClass.set("money", MoneyPrimitiveType);
+primitiveToAstClass.set("cpf", CpfPrimitiveType);
+primitiveToAstClass.set("cnpj", CnpjPrimitiveType);
+primitiveToAstClass.set("email", EmailPrimitiveType);
+primitiveToAstClass.set("phone", PhonePrimitiveType);
+primitiveToAstClass.set("cep", CepPrimitiveType);
+primitiveToAstClass.set("latlng", LatLngPrimitiveType);
+primitiveToAstClass.set("url", UrlPrimitiveType);
+primitiveToAstClass.set("uuid", UuidPrimitiveType);
+primitiveToAstClass.set("hex", HexPrimitiveType);
+primitiveToAstClass.set("base64", Base64PrimitiveType);
+primitiveToAstClass.set("safehtml", SafeHtmlPrimitiveType);
+primitiveToAstClass.set("xml", XmlPrimitiveType);
+
 export class Parser {
     private lexers: Lexer[];
     private token: Token | null = null;
@@ -316,31 +340,10 @@ export class Parser {
             },
             PrimitiveTypeToken: token => {
                 this.nextToken();
-                switch (token.value) {
-                    case "string":   return new StringPrimitiveType().at(token);
-                    case "int":      return new IntPrimitiveType().at(token);
-                    case "uint":     return new UIntPrimitiveType().at(token);
-                    case "date":     return new DatePrimitiveType().at(token);
-                    case "datetime": return new DateTimePrimitiveType().at(token);
-                    case "float":    return new FloatPrimitiveType().at(token);
-                    case "bool":     return new BoolPrimitiveType().at(token);
-                    case "bytes":    return new BytesPrimitiveType().at(token);
-                    case "money":    return new MoneyPrimitiveType().at(token);
-                    case "cpf":      return new CpfPrimitiveType().at(token);
-                    case "cnpj":     return new CnpjPrimitiveType().at(token);
-                    case "email":    return new EmailPrimitiveType().at(token);
-                    case "phone":    return new PhonePrimitiveType().at(token);
-                    case "cep":      return new CepPrimitiveType().at(token);
-                    case "latlng":   return new LatLngPrimitiveType().at(token);
-                    case "url":      return new UrlPrimitiveType().at(token);
-                    case "uuid":     return new UuidPrimitiveType().at(token);
-                    case "hex":      return new HexPrimitiveType().at(token);
-                    case "base64":   return new Base64PrimitiveType().at(token);
-                    case "safehtml": return new SafeHtmlPrimitiveType().at(token);
-                    case "xml":      return new XmlPrimitiveType().at(token);
-                    default:
-                        throw new ParserError(`BUG! Should handle primitive ${token.value}`);
-                }
+                if (primitiveToAstClass.has(token.value))
+                    return (new (primitiveToAstClass.get(token.value)!)).at(token);
+                else
+                    throw new ParserError(`BUG! Should handle primitive ${token.value}`);
             }
         });
 

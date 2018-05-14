@@ -1,9 +1,24 @@
 import { Token } from "./syntax/token";
 
+export class AstRoot {
+    constructor(
+        public typeDefinitions: TypeDefinition[] = [],
+        public operations: Operation[] = [],
+        public options: Options = new Options,
+        public errors: string[] = []
+    ) {}
+}
+
 export abstract class AstNode {
     public filename = "?"
     public line = 0
     public column = 0
+
+    constructor() {
+        Object.defineProperty(this, "filename", { enumerable: false });
+        Object.defineProperty(this, "line", { enumerable: false });
+        Object.defineProperty(this, "column", { enumerable: false });
+    }
 
     at(token: Token): this {
         this.filename = token.filename;
@@ -60,15 +75,6 @@ export class TypeDefinition extends AstNode {
 
 export class TypeReference extends Type {
     constructor(public name: string, public type: Type = null as any) { super(); }
-}
-
-export class AstRoot {
-    constructor(
-        public typeDefinitions: TypeDefinition[] = [],
-        public operations: Operation[] = [],
-        public options: Options = new Options,
-        public errors: string[] = []
-    ) {}
 }
 
 export class Options extends AstNode {
