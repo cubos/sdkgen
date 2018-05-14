@@ -4,6 +4,7 @@ class TypeScriptNodeClient < Target
   def gen
     @io << <<-END
 import * as https from "https";
+import * as http from "http";
 import { URL } from "url";
 
 END
@@ -77,8 +78,46 @@ END
       hostname: url.hostname,
       path: url.pathname,
       method: "POST",
+      port: url.port
     };
 
+    if (url.protocol === "http:") {
+      return new Promise<any>((resolve, reject) => {
+        const req = http.request(options, resp => {
+          let data = "";
+          resp.on("data", (chunk) => {
+            data += chunk;
+          });
+          resp.on("end", () => {
+            try {
+              const response = JSON.parse(data);
+
+              try {
+                this.deviceId = response.deviceId;
+                if (response.ok) {
+                  resolve(response.result);
+                } else {
+                  reject(response.error);
+                }
+              } catch (e) {
+                console.error(e);
+                reject({type: "Fatal", message: e.toString()});
+              }
+            } catch (e) {
+              console.error(e);
+              reject({type: "BadFormattedResponse", message: `Response couldn't be parsed as JSON (${data}):\n${e.toString()}`});
+            }
+          });
+        });
+        req.on("error", (e) => {
+          console.error(`problem with request: ${e.message}`);
+          reject({type: "Fatal", message: e.toString()});
+        });
+        // write data to request body
+        req.write(JSON.stringify(body));
+        req.end();
+      });
+    }
     return new Promise<any>((resolve, reject) => {
       const req = https.request(options, resp => {
         let data = "";
@@ -125,3 +164,4 @@ END
 end
 
 Target.register(TypeScriptNodeClient, target_name: "typescript_nodeclient")
+
