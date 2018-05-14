@@ -4,6 +4,7 @@ class TypeScriptNodeClient < Target
   def gen
     @io << <<-END
 import * as https from "https";
+import * as http from "http";
 import { URL } from "url";
 
 END
@@ -77,10 +78,12 @@ END
       hostname: url.hostname,
       path: url.pathname,
       method: "POST",
+      port: url.port
     };
 
     return new Promise<any>((resolve, reject) => {
-      const req = https.request(options, resp => {
+      const request = (url.protocol === "http:" ? http.request : https.request)
+      const req = request(options, resp => {
         let data = "";
         resp.on("data", (chunk) => {
           data += chunk;
@@ -125,3 +128,4 @@ END
 end
 
 Target.register(TypeScriptNodeClient, target_name: "typescript_nodeclient")
+
