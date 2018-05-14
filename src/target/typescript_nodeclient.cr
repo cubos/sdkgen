@@ -105,7 +105,7 @@ END
             }
           } catch (e) {
             console.error(e);
-            reject({type: "BadFormattedResponse", message: `Response couldn't be parsed as JSON (${data}):\n${e.toString()}`});
+            reject({type: "BadFormattedResponse", message: `Response couldn't be parsed as JSON (${data}):\\n${e.toString()}`});
           }
         });
 
