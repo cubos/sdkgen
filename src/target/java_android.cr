@@ -736,7 +736,12 @@ END
                             if (!shouldReceiveResponse[0]) return;
                             if (response.code() == 502) {
                                 Log.e("API", "HTTP " + response.code());
-                                callback.onResult(new Error() {{type = ErrorType.Fatal; message = "Erro Fatal (502) - Tente novamente";}}, null);
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        callback.onResult(new Error() {{type = ErrorType.Fatal; message = "Erro Fatal (502) - Tente novamente";}}, null);
+                                    }
+                                });
                                 return;
                             }
                             shouldReceiveResponse[0] = false;
