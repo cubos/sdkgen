@@ -8,10 +8,11 @@
     "noImplicitAny": true,
     "noImplicitThis": true,
     "sourceMap": true,
-    "target": "ES2017",
+    "target": "es5",
     "strictNullChecks": true,
     "module": "commonjs",
-    "lib": ["dom", "es2017"]
+    "lib": ["dom", "es2017"],
+    "importHelpers": true
   },
   "include": [
     "*.ts"

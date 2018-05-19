@@ -10,10 +10,10 @@ cd /root/stage
 export PATH=$(npm bin):$PATH
 json -I -f package.json -e 'this.name="@cubos/'$NAME'"'
 npm version $VERSION || true
-echo "[tsc] START"
+echo "[tsc-cjs] START"
 tsc
-echo "[tsc] END"
-echo "[babel] START"
-babel api.js -o api.js
-echo "[babel] END"
+echo "[tsc-cjs] END"
+echo "[tsc-esmodule] START"
+tsc -m es2015 --outFile api.mjs
+echo "[tsc-esmodule] END"
 npm publish
