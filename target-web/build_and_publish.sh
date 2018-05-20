@@ -14,6 +14,6 @@ echo "[tsc-cjs] START"
 tsc
 echo "[tsc-cjs] END"
 echo "[tsc-esmodule] START"
-tsc -m es2015 --outFile api.mjs api.ts
+tsc -m es2015 --outFile api.es.js api.ts
 echo "[tsc-esmodule] END"
 npm publish
