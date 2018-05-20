@@ -1,80 +1,80 @@
 export class Token {
-  public filename!: string
-  public line!: number
-  public column!: number
+    public filename!: string
+    public line!: number
+    public column!: number
 
-  constructor(public value: string = "") { }
+    constructor(public value: string = "") { }
 
-  get location() {
-    return `${this.filename}:${this.line}:${this.column}`;
-  }
+    get location() {
+        return `${this.filename}:${this.line}:${this.column}`;
+    }
 
-  tryIdent(): Token {
-    return this;
-  }
+    tryIdent(): Token {
+        return this;
+    }
 
-  toString() {
-    const name = (this.constructor as any).name.replace("Token", "");
-    return this.value === "" ? name : `${name}(${JSON.stringify(this.value)})`;
-  }
+    toString() {
+        const name = (this.constructor as any).name.replace("Token", "");
+        return this.value === "" ? name : `${name}(${JSON.stringify(this.value)})`;
+    }
 
-  equal(other: Token) {
-    return this.constructor === other.constructor && this.value === other.value;
-  }
+    equal(other: Token) {
+        return this.constructor === other.constructor && this.value === other.value;
+    }
 }
 
 export class ImportKeywordToken extends Token {
-  tryIdent() {
-    return new IdentifierToken("import");
-  }
+    tryIdent() {
+        return new IdentifierToken("import");
+    }
 }
 
 export class TypeKeywordToken extends Token {
-  tryIdent() {
-    return new IdentifierToken("type");
-  }
+    tryIdent() {
+        return new IdentifierToken("type");
+    }
 }
 
 export class EnumKeywordToken extends Token {
-  tryIdent() {
-    return new IdentifierToken("enum");
-  }
+    tryIdent() {
+        return new IdentifierToken("enum");
+    }
 }
 
 export class GetKeywordToken extends Token {
-  tryIdent() {
-    return new IdentifierToken("get");
-  }
+    tryIdent() {
+        return new IdentifierToken("get");
+    }
 }
 
 export class FunctionKeywordToken extends Token {
-  tryIdent() {
-    return new IdentifierToken("function");
-  }
+    tryIdent() {
+        return new IdentifierToken("function");
+    }
 }
 
 export class ErrorKeywordToken extends Token {
-  tryIdent() {
-    return new IdentifierToken("error");
-  }
+    tryIdent() {
+        return new IdentifierToken("error");
+    }
 }
 
 export class TrueKeywordToken extends Token {
-  tryIdent() {
-    return new IdentifierToken("true");
-  }
+    tryIdent() {
+        return new IdentifierToken("true");
+    }
 }
 
 export class FalseKeywordToken extends Token {
-  tryIdent() {
-    return new IdentifierToken("false");
-  }
+    tryIdent() {
+        return new IdentifierToken("false");
+    }
 }
 
 export class PrimitiveTypeToken extends Token {
-  tryIdent() {
-    return new IdentifierToken(this.value);
-  }
+    tryIdent() {
+        return new IdentifierToken(this.value);
+    }
 }
 
 export class IdentifierToken extends Token {}

@@ -1,6 +1,9 @@
 import { Token } from "./syntax/token";
 
 export class AstRoot {
+    structTypes: StructType[] = [];
+    enumTypes: EnumType[] = [];
+
     constructor(
         public typeDefinitions: TypeDefinition[] = [],
         public operations: Operation[] = [],
@@ -25,6 +28,10 @@ export abstract class AstNode {
         this.line = token.line;
         this.column = token.column;
         return this;
+    }
+
+    get location() {
+        return `${this.filename}:${this.line}:${this.column}`;
     }
 }
 
@@ -62,10 +69,12 @@ export class ArrayType extends Type {
 }
 
 export class EnumType extends Type {
+    name!: string
     constructor(public values: string[]) { super(); }
 }
 
 export class StructType extends Type {
+    name!: string
     constructor(public fields: Field[], public spreads: TypeReference[]) { super(); }
 }
 
@@ -74,7 +83,8 @@ export class TypeDefinition extends AstNode {
 }
 
 export class TypeReference extends Type {
-    constructor(public name: string, public type: Type = null as any) { super(); }
+    type!: Type
+    constructor(public name: string) { super(); }
 }
 
 export class Options extends AstNode {
