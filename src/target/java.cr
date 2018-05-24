@@ -239,9 +239,9 @@ END
     when AST::StringPrimitiveType, AST::IntPrimitiveType, AST::UIntPrimitiveType, AST::FloatPrimitiveType, AST::BoolPrimitiveType
       "#{src}"
     when AST::DatePrimitiveType
-      "Internal.encodeDate(#{src})"
+      "DateHelpers.encodeDate(#{src})"
     when AST::DateTimePrimitiveType
-      "Internal.encodeDateTime(#{src})"
+      "DateHelpers.encodeDateTime(#{src})"
     when AST::BytesPrimitiveType
       "Base64.encodeToString(#{src}, Base64.DEFAULT)"
     when AST::VoidPrimitiveType
