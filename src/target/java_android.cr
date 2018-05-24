@@ -358,6 +358,19 @@ END
         return Internal.forcedUrl != null ? Internal.forcedUrl : "https://" + Internal.baseUrl + (API.useStaging ? "-staging" : "");
     }
 
+    private static class DateHelpers {
+        static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US);
+        static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
+        static String encodeDateTime(Calendar cal) {
+            return dateTimeFormat.format(cal.getTime());
+        }
+
+        static String encodeDate(Calendar cal) {
+            return dateFormat.format(cal.getTime());
+        }
+    }
+
     private static class Internal {
         static String forcedUrl = null;
         static String baseUrl = #{@ast.options.url.inspect};
