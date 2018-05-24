@@ -369,6 +369,24 @@ END
         static String encodeDate(Calendar cal) {
             return dateFormat.format(cal.getTime());
         }
+
+        static Calendar decodeDateTime(String str) {
+            try {
+                return toCalendar(dateTimeFormat.parse(str));
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        static Calendar decodeDate(String str) {
+            try {
+                return toCalendar(dateFormat.parse(str));
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
     }
 
     private static class Internal {
