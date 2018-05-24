@@ -210,9 +210,9 @@ END
     when AST::BoolPrimitiveType
       "#{obj}.getBoolean(#{name})"
     when AST::DatePrimitiveType
-      "Internal.decodeDate(#{obj}.getString(#{name}))"
+      "DateHelpers.decodeDate(#{obj}.getString(#{name}))"
     when AST::DateTimePrimitiveType
-      "Internal.decodeDateTime(#{obj}.getString(#{name}))"
+      "DateHelpers.decodeDateTime(#{obj}.getString(#{name}))"
     when AST::BytesPrimitiveType
       "Base64.decode(#{obj}.getString(#{name}), Base64.DEFAULT)"
     when AST::VoidPrimitiveType
