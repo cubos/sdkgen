@@ -370,6 +370,12 @@ END
             return dateFormat.format(cal.getTime());
         }
 
+        static Calendar toCalendar(Date date){
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            return cal;
+        }
+
         static Calendar decodeDateTime(String str) {
             try {
                 return toCalendar(dateTimeFormat.parse(str));
