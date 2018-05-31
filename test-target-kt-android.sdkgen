@@ -35,3 +35,5 @@ get fooPhone(var1: phone): phone
 get fooUrl(var1: url): url 
 
 get fooUuid(var1: uuid): uuid
+
+get fooXml(var1: xml): xml
