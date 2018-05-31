@@ -35,5 +35,23 @@ module AST
         io << "}\n"
       end
     end
+
+        # KOTLIN
+    def kt_decode(expr)
+      "Base64.decode(#{expr}, Base64.DEFAULT)"
+    end 
+
+    def kt_encode(expr)
+      "Base64.encodeToString(#{expr}, Base64.DEFAULT)"
+    end 
+
+    def kt_native_type
+      "ByteArray"
+    end
+
+    def kt_return_type_name
+      "value"
+    end 
+    # KOTLIN
   end
 end

@@ -39,11 +39,11 @@ module AST
 
 
     def kt_decode(expr)
-      "#{expr}.replace(/(..)(...)(...)/, \"$1.$2-$3\")"
+      "#{expr}.replace(Regex(\"/(..)(...)(...)/\"), \"$1.$2-$3\")"
     end
 
     def kt_encode(expr)
-      "#{expr}.replace(/[^0-9]/g, \"\").padStart(8, \"0\")"
+      "#{expr}.replace(Regex(\"/[^0-9]/g\"), \"\").padStart(8, 0.toChar())"
     end
 
     def kt_native_type

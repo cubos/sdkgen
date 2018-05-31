@@ -35,5 +35,24 @@ module AST
         io << "}\n"
       end
     end
+
+    # KOTLIN
+    def kt_decode(expr)      
+      "SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\").format(#{expr})"
+    end
+
+    def kt_encode(expr)
+      "Calendar.getInstance().apply { time = SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\").parse(#{expr}) }"
+    end
+
+    def kt_native_type
+      "Calendar"
+    end
+
+    def kt_return_type_name
+      "datetime"
+    end
+    # KOTLIN
+    
   end
 end

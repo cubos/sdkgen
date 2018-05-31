@@ -36,5 +36,23 @@ module AST
         io << "}\n"
       end
     end
+
+        # KOTLIN
+    def kt_decode(expr)
+      raise "Not implemented"
+    end 
+
+    def kt_encode(expr)
+      raise "Not implemented"
+    end 
+
+    def kt_native_type
+      raise "Not implemented"
+    end
+
+    def kt_return_type_name
+      raise "Not implemented"
+    end 
+    # KOTLIN
   end
 end

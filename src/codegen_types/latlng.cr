@@ -34,7 +34,7 @@ module AST
     end
 
     def kt_decode(expr)
-      "Location(\"\").apply { latitude = #{expr}.lat ; longitude = #{expr}.lng }"
+      "Location(\"\").apply { latitude = #{expr}.  ; longitude = #{expr}.lng }"
     end
 
     def kt_encode(expr)
@@ -46,7 +46,7 @@ module AST
     end
 
     def kt_return_type_name
-      "location"
+      "latlng"
     end
 
   end
