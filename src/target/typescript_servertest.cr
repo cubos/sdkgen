@@ -4,7 +4,6 @@ class TypeScriptServerTestTarget < Target
   def gen
     @io << <<-END
 import http from "http";
-import moment from "moment";
 
 export interface Context {
     call: DBApiCall;

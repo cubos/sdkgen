@@ -354,6 +354,47 @@ END
         Internal.forcedUrl = url;
     }
 
+    static public String getApiUrl() {
+        return Internal.forcedUrl != null ? Internal.forcedUrl : "https://" + Internal.baseUrl + (API.useStaging ? "-staging" : "");
+    }
+
+    private static class DateHelpers {
+        static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US);
+        static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+
+        static String encodeDateTime(Calendar cal) {
+            return dateTimeFormat.format(cal.getTime());
+        }
+
+        static String encodeDate(Calendar cal) {
+            return dateFormat.format(cal.getTime());
+        }
+
+        static Calendar toCalendar(Date date){
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(date);
+            return cal;
+        }
+
+        static Calendar decodeDateTime(String str) {
+            try {
+                return toCalendar(dateTimeFormat.parse(str));
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+
+        static Calendar decodeDate(String str) {
+            try {
+                return toCalendar(dateFormat.parse(str));
+            } catch (ParseException e) {
+                e.printStackTrace();
+                return null;
+            }
+        }
+    }
+
     private static class Internal {
         static String forcedUrl = null;
         static String baseUrl = #{@ast.options.url.inspect};
@@ -381,7 +422,7 @@ END
         }
 
         static void createHttpClient() {
-            connectionPool = new ConnectionPool(100, 5, TimeUnit.MINUTES);
+            connectionPool = new ConnectionPool(100, 45, TimeUnit.SECONDS);
 
             TrustManagerFactory trustManagerFactory;
             try {
@@ -414,7 +455,7 @@ END
                     .connectionPool(connectionPool)
                     .dispatcher(dispatcher)
                     .sslSocketFactory(sslSocketFactory, trustManager)
-                    .connectTimeout(5, TimeUnit.MINUTES);
+                    .connectTimeout(45, TimeUnit.SECONDS);
 
             if (interceptor != null)
                 builder.addNetworkInterceptor(interceptor);
@@ -732,6 +773,12 @@ END
                             if (!shouldReceiveResponse[0]) return;
                             if (response.code() == 502) {
                                 Log.e("API", "HTTP " + response.code());
+                                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        callback.onResult(new Error() {{type = ErrorType.Fatal; message = "Erro Fatal (502) - Tente novamente";}}, null);
+                                    }
+                                });
                                 return;
                             }
                             shouldReceiveResponse[0] = false;

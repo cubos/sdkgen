@@ -3,14 +3,17 @@ require "./target"
 class TypeScriptWebTarget < Target
   def gen
     @io << <<-END
-import * as moment from "moment";
 import {UAParser} from "ua-parser-js";
 
-const baseUrl = #{@ast.options.url.inspect};
+let baseUrl = #{@ast.options.url.inspect};
 let useStaging = false;
 
 export function setStaging(use: boolean) {
   useStaging = !!use;
+}
+
+export function setBaseUrl(url: string) {
+  baseUrl = url;
 }
 
 END

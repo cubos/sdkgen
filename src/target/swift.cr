@@ -33,13 +33,46 @@ abstract class SwiftTarget < Target
     native_type ref.type
   end
 
+  def generate_property_copy(t : AST::Type, path : String)
+    case t
+    when AST::StringPrimitiveType  ; path
+    when AST::IntPrimitiveType     ; path
+    when AST::UIntPrimitiveType    ; path
+    when AST::FloatPrimitiveType   ; path
+    when AST::DatePrimitiveType    ; path
+    when AST::DateTimePrimitiveType; path
+    when AST::BoolPrimitiveType    ; path
+    when AST::BytesPrimitiveType   ; path
+    when AST::ArrayType            ; "#{path}.map { #{generate_property_copy(t.base, "$0")} }"
+    when AST::EnumType             ; "#{path}.copy"
+    when AST::StructType           ; "#{path}.copy"
+    when AST::OptionalType         ; "#{path} != nil ? #{generate_property_copy(t.base, path + "!")} : nil"
+    when AST::TypeReference        ; generate_property_copy(t.type, path)
+    else
+      raise "BUG! Should handle primitive #{t.class}"
+    end
+  end
+
   def generate_struct_type(t)
     String.build do |io|
       io << "class #{t.name} {\n"
       t.fields.each do |field|
         io << ident "var #{field.name}: #{native_type field.type}\n"
       end
+      io << ident "\nvar copy: #{t.name} {\n"
+      io << ident ident "return #{t.name}(\n"
+      io << ident ident ident t.fields.map { |field| "#{field.name}: #{generate_property_copy(field.type, field.name)}" }.join(",\n")
+      io << ident ident "\n)\n"
+      io << ident "}\n"
+      t.spreads.map(&.type.as(AST::StructType)).map { |spread|
+        io << ident "\nvar #{spread.name.split("").map_with_index { |char, i| i == 0 ? char.downcase : char }.join("")}: #{spread.name} {\n"
+        io << ident ident "return #{spread.name}(\n"
+        io << ident ident ident spread.fields.map { |field| "#{field.name}: #{field.name}" }.join(",\n")
+        io << ident ident "\n)\n"
+        io << ident "}\n"
+      }
       io << ident <<-END
+
 
 init() {
 
@@ -87,13 +120,33 @@ END
   def generate_enum_type(t)
     String.build do |io|
       if t.name == "ErrorType"
-        io << "enum #{t.name}: String,Error {\n"
+        io << "enum #{t.name}: String, Error {\n"
       else
-        io << "enum #{t.name}: String {\n"
+        io << "enum #{t.name}: String, EnumCollection {\n"
       end
 
       t.values.each do |value|
         io << ident "case #{value} = #{value.inspect}\n"
+      end
+      if t.name != "ErrorType"
+        io << ident "\nvar copy: #{t.name} {\n"
+        io << ident ident "return #{t.name}(rawValue: self.rawValue)!\n"
+        io << ident "}\n"
+        io << ident "\nstatic func valuesDictionary() -> [String: #{t.name}] {\n"
+        io << ident ident "var dictionary: [String: #{t.name}] = [:]\n"
+        io << ident ident "for enumCase in self.allValues {\n"
+        io << ident ident ident "dictionary[enumCase.displayableValue] = enumCase\n"
+        io << ident ident "}\n"
+        io << ident ident "return dictionary\n"
+        io << ident "}\n"
+
+        io << ident "\nstatic func allDisplayableValues() -> [String] {\n"
+        io << ident ident "var displayableValues: [String] = []\n"
+        io << ident ident "for enumCase in self.allValues {\n"
+        io << ident ident ident "displayableValues.append(enumCase.displayableValue)\n"
+        io << ident ident "}\n"
+        io << ident ident "return displayableValues.sorted()\n"
+        io << ident "}\n"
       end
       io << "}"
     end
