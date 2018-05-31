@@ -4,20 +4,34 @@ type FooType {
 
 get fooString(var1: string): string
 
-// get fooBase64(var1: base64): base64
+get fooBase64(var1: base64): base64
 
-// get fooCnpj(var1: cnpj): cnpj
+get fooCnpj(var1: cnpj): cnpj
 
-// get fooCep(var1: cep): cep
+get fooCep(var1: cep): cep
 
-// get fooCpf(var1: cpf): cpf
+get fooCpf(var1: cpf): cpf
 
-// get fooDate(var1: date): date
+get fooDate(var1: date): date
 
-// get fooEmail(var1: email): email
+get fooEmail(var1: email): email
 
-// get fooFloat(var1: float): float
+get fooFloat(var1: float): float
 
-// get fooInt(var1: int): int
+get fooInt(var1: int): int
 
-// get fooLocation(var1: latlng): latlng
+get fooUInt(var1: uint): uint
+
+get fooLocation(var1: latlng): latlng
+
+get fooBytes(var1: bytes): bytes
+
+get fooDateTime(var1: datetime): datetime
+
+get fooMoney(var1: money): money 
+
+get fooPhone(var1: phone): phone
+
+get fooUrl(var1: url): url 
+
+get fooUuid(var1: uuid): uuid

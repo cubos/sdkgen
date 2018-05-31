@@ -37,5 +37,23 @@ module AST
         io << "}\n"
       end
     end
+    
+    #Kotlin
+    def kt_decode(expr)
+      "#{expr}"
+    end
+
+    def kt_encode(expr)
+      "#{expr}"
+    end
+
+    def kt_native_type
+      "Int"
+    end
+
+    def kt_return_type_name
+      "value"
+    end
+    #Kotlin
   end
 end

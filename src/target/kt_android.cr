@@ -39,9 +39,13 @@ class KtAndroidTarget < Target
   def gen
     @io << <<-END
 
+import android.location.Location
+import android.os.Build
+import android.text.Html
+import android.util.Base64
 import org.json.JSONObject
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Calendar
 
 open class API {
     interface Calls {\n
@@ -76,7 +80,7 @@ END
       @io << ident(String.build do |io|
         io << "     override fun #{mangle op.pretty_name}(#{args.join(", ")}) {\n"
         io << if op.args.size > 0
-                 "         var json = JSONObject().apply { put(\"vra\", #{op.args[0].type.kt_encode(mangle op.args[0].name)}) }  \n
+                 "         var json = JSONObject().apply { put(\"var\", #{op.args[0].type.kt_encode(mangle op.args[0].name)}) }  \n
                            #{op.args[0].type.kt_decode(mangle op.args[0].name)}  \n"
 
               else 
