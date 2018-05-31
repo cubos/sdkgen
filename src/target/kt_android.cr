@@ -40,12 +40,14 @@ class KtAndroidTarget < Target
     @io << <<-END
 
 import android.location.Location
-import android.os.Build
-import android.text.Html
 import android.util.Base64
+import okhttp3.ConnectionPool
+import okhttp3.Dispatcher
+import okhttp3.OkHttpClient
 import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.concurrent.TimeUnit
 
 open class API {
     interface Calls {\n
@@ -66,6 +68,15 @@ END
     }
 
 	companion object {
+      const val BASE_URL = #{@ast.options.url.inspect}
+
+      var connectionPool = ConnectionPool(100, 45, TimeUnit.SECONDS)
+      var client = OkHttpClient.Builder()
+            .connectionPool(connectionPool)
+            .dispatcher(Dispatcher().apply { maxRequests = 200 ; maxRequestsPerHost = 200 })
+            .connectTimeout(45, TimeUnit.SECONDS)
+            .build()
+      
       var calls = object: Calls { \n
 END
 
@@ -79,10 +90,12 @@ END
               end
       @io << ident(String.build do |io|
         io << "     override fun #{mangle op.pretty_name}(#{args.join(", ")}) {\n"
+        puts = op.args.map { |arg| "put(\"#{arg.name}\", #{arg.type.kt_encode(arg.name)})"}.join("\n")
         io << if op.args.size > 0
-                 "         var json = JSONObject().apply { put(\"var\", #{op.args[0].type.kt_encode(mangle op.args[0].name)}) }  \n
+                 "          var bodyArgs = JSONObject().apply { 
+                                #{puts}
+                            }  \n
                            #{op.args[0].type.kt_decode(mangle op.args[0].name)}  \n"
-
               else 
                   ""
               end
@@ -93,6 +106,8 @@ END
     @io << <<-END
       } 
     }
+
+    
 }
 END
   end
