@@ -7,6 +7,7 @@ import Alamofire
 import KeychainSwift
 
 class API {
+    static var customUrl: String?
     static var useStaging = false
     static var globalCallback: (_ method: String, _ result: APIInternal.Result<Any?>, _ callback: @escaping ((APIInternal.Result<Any?>) -> Void)) -> Void = { _, result, callback in
         callback(result)
@@ -47,7 +48,7 @@ END
             io << "args[\"#{arg.name}\"] = #{type_to_json arg.type, arg.name}\n\n"
           end
 
-          io << "return APIInternal.makeRequest(#{op.pretty_name.inspect}, args) {  response in \n"
+          io << "return APIInternal.makeRequest(#{op.pretty_name.inspect}, args) { response in \n"
 
           io << ident(String.build do |io|
             io << "switch response {\n"
@@ -83,6 +84,23 @@ END
 
 class APIInternal {
     static var baseUrl = #{@ast.options.url.inspect}
+
+    private static let dateAndTimeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.timeZone = TimeZone(abbreviation: "UTC")
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
+        return formatter
+    }()
+
+    private static let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.calendar = Calendar(identifier: .gregorian)
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
 
     enum Result<T> {
         case success(T)
@@ -141,37 +159,19 @@ class APIInternal {
     }
 
     static func decodeDate(str: String) -> Date {
-        let formatter = DateFormatter()
-        formatter.calendar = Calendar(identifier: .gregorian)
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter.date(from: str)!
+        return dateFormatter.date(from: str) ?? Date()
     }
 
     static func encodeDate(date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.calendar = Calendar(identifier: .gregorian)
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter.string(from: date)
+        return dateFormatter.string(from: date)
     }
 
     static func decodeDateTime(str: String) -> Date {
-        let formatter = DateFormatter()
-        formatter.calendar = Calendar(identifier: .gregorian)
-        formatter.timeZone = TimeZone(abbreviation: "UTC")
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
-        return formatter.date(from: str)!
+        return dateAndTimeFormatter.date(from: str) ?? Date()
     }
 
     static func encodeDateTime(date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.calendar = Calendar(identifier: .gregorian)
-        formatter.timeZone = TimeZone(abbreviation: "UTC")
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS"
-        return formatter.string(from: date)
+        return dateAndTimeFormatter.string(from: date)
     }
 
     static var deviceID: String? {
@@ -210,7 +210,13 @@ class APIInternal {
             "staging": API.useStaging
         ] as [String : Any]
 
-        return api.request("https://\\(baseUrl)\\(API.useStaging ? "-staging" : "")/\\(name)", method: .post, parameters: body, encoding: JSONEncoding.default).responseJSON { response in
+        let url = API.customUrl ?? "https://\\(baseUrl)\\(API.useStaging ? "-staging" : "")"
+        return api.request(
+            "\\(url)/\\(name)",
+            method: .post,
+            parameters: body,
+            encoding: JSONEncoding.default
+           ).responseJSON { response in
             guard let responseValue = response.result.value else {
                 let error = Error(API.ErrorType.Connection, "Erro de Conexão, tente novamente mais tarde")
                 API.globalCallback(name, Result.failure(error), callback)
@@ -224,10 +230,49 @@ class APIInternal {
                 API.globalCallback(name, Result.failure(response.error!), callback)
                 return
             }
+
             API.globalCallback(name, Result.success(response.result), callback)
         }
     }
 }
+
+protocol EnumCollection: Hashable, EnumDisplayableValue {
+    static var allValues: [Self] { get }
+}
+
+protocol EnumDisplayableValue: RawRepresentable {
+    var displayableValue: String { get }
+}
+
+extension EnumDisplayableValue where RawValue == String {
+    var displayableValue: String {
+        return self.rawValue
+    }
+}
+
+extension EnumCollection {
+
+    static func cases() -> AnySequence<Self> {
+        typealias S = Self
+        return AnySequence { () -> AnyIterator<S> in
+            var raw = 0
+            return AnyIterator {
+                let current: Self = withUnsafePointer(to: &raw) {
+                    $0.withMemoryRebound(to: S.self, capacity: 1) { $0.pointee }
+                }
+
+                guard current.hashValue == raw else { return nil }
+                raw += 1
+                return current
+            }
+        }
+    }
+
+    static var allValues: [Self] {
+        return Array(self.cases())
+    }
+}
+
 END
   end
 end

@@ -1,11 +1,11 @@
 module AST
   class DateTimePrimitiveType
     def typescript_decode(expr)
-      "moment.utc(#{expr}, \"YYYY-MM-DDTHH:mm:ss.SSS\").toDate()"
+      "new Date(#{expr} + \"Z\")"
     end
 
     def typescript_encode(expr)
-      "moment.utc(#{expr}).format(\"YYYY-MM-DDTHH:mm:ss.SSS\")"
+      "#{expr}.toISOString().replace(\"Z\", \"\")"
     end
 
     def typescript_native_type

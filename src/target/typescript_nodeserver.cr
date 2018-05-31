@@ -11,7 +11,6 @@ import http from "http";
 import crypto from "crypto";
 import os from "os";
 import url from "url";
-import moment from "moment";
 import Raven from "raven";
 END
     else
@@ -20,7 +19,6 @@ import * as http from "http";
 import * as crypto from "crypto";
 import * as os from "os";
 import * as url from "url";
-const moment = require("moment");
 const Raven = require("raven");
 END
     end
@@ -79,6 +77,25 @@ function typeCheckerError(e: Error, ctx: Context) {
     #{@ast.options.strict ? "throw e;" : "setTimeout(() => captureError(e, ctx.req, ctx.call), 1000);"}
 }
 
+function padNumber(value: number, length: number) {
+    return value.toString().padStart(length, "0");
+}
+
+function toDateTimeString(date: Date) {
+    return `${
+        padNumber(date.getFullYear(), 4)
+    }-${
+        padNumber(date.getMonth() + 1, 2)
+    }-${
+        padNumber(date.getDate(), 2)
+    } ${
+        padNumber(date.getHours(), 2)
+    }:${
+        padNumber(date.getMinutes(), 2)
+    }:${
+        padNumber(date.getSeconds(), 2)
+    }`;
+}
 
 END
 
@@ -227,13 +244,13 @@ export function start(port: number = 8000) {
             const ip = req.headers["x-real-ip"] as string || "";
             const signature = req.method! + url.parse(req.url || "").pathname;
             if (httpHandlers[signature]) {
-                console.log(`${moment().format("YYYY-MM-DD HH:mm:ss")} http ${signature}`);
+                console.log(`${toDateTimeString(new Date())} http ${signature}`);
                 httpHandlers[signature](body, res, req);
                 return;
             }
             for (let target in httpHandlers) {
                 if (("prefix " + signature).startsWith(target)) {
-                    console.log(`${moment().format("YYYY-MM-DD HH:mm:ss")} http ${target}`);
+                    console.log(`${toDateTimeString(new Date())} http ${target}`);
                     httpHandlers[target](body, res, req);
                     return;
                 }
@@ -307,7 +324,7 @@ export function start(port: number = 8000) {
                             call.ok = false;
                             call.error = {
                                 type: "Fatal",
-                                message: e.message
+                                message: e.toString()
                             };
                             call.running = false;
                         }
@@ -364,7 +381,7 @@ export function start(port: number = 8000) {
                         res.end();
 
                         console.log(
-                            `${moment().format("YYYY-MM-DD HH:mm:ss")} ` +
+                            `${toDateTimeString(new Date())} ` +
                             `${call.id} [${call.duration.toFixed(6)}s] ` +
                             `${call.name}() -> ${call.ok ? "OK" : call.error ? call.error.type : "???"}`
                         );
@@ -392,7 +409,7 @@ export function start(port: number = 8000) {
         captureError = (e, req, extra) => Raven.captureException(e, {
             req,
             extra,
-            fingerprint: [e.message.replace(/[0-9]+/g, "X").replace(/"[^"]*"/g, "X")]
+            fingerprint: [(e.message || e.toString()).replace(/[0-9]+/g, "X").replace(/"[^"]*"/g, "X")]
         });
     }
 
@@ -402,7 +419,9 @@ export function start(port: number = 8000) {
 
     if (!process.env.TEST) {
         server.listen(port, () => {
-            console.log(`Listening on ${server.address().address}:${server.address().port}`);
+            const addr = server.address();
+            const addrString = typeof addr === "string" ? addr : `${addr.address}:${addr.port}`;
+            console.log(`Listening on ${addrString}`);
         });
     }
 
