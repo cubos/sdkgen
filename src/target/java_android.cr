@@ -771,6 +771,8 @@ END
                         @Override
                         public void onResponse(Call call, final Response response) throws IOException {
                             if (!shouldReceiveResponse[0]) return;
+                            shouldReceiveResponse[0] = false;
+                            timer.cancel();
                             if (response.code() == 502) {
                                 Log.e("API", "HTTP " + response.code());
                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -781,8 +783,6 @@ END
                                 });
                                 return;
                             }
-                            shouldReceiveResponse[0] = false;
-                            timer.cancel();
                             final String stringBody = response.body().string();
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
