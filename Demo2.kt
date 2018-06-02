@@ -55,10 +55,27 @@ open class API {
       var client = OkHttpClient.Builder()
             .connectionPool(connectionPool)
             .dispatcher(Dispatcher().apply { maxRequests = 200 ; maxRequestsPerHost = 200 })
-            .connectTimeout(45, TimeUnit.SECONDS)
+            .connectTimeout(15, TimeUnit.SECONDS)
             .build()
       
-      var calls = object: Calls { 
+      class FooType(
+    var fooStr: String, 
+    var fooInt: Int, 
+    var fooFloat: Float, 
+    var fooEnum: FooTypeFooEnum 
+)
+
+enum class FooTypeFooEnum {
+eu, 
+voce
+}
+
+enum class ErrorType {
+Fatal, 
+Connection
+}
+
+var calls = object: Calls { 
          override fun getFooString(var1: String, flag: Int?, callback: (error: Error?, value: String?) -> Unit) {
               var bodyArgs = JSONObject().apply { 
                                     put("var1", var1)

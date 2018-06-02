@@ -90,12 +90,23 @@ END
       var client = OkHttpClient.Builder()
             .connectionPool(connectionPool)
             .dispatcher(Dispatcher().apply { maxRequests = 200 ; maxRequestsPerHost = 200 })
-            .connectTimeout(45, TimeUnit.SECONDS)
+            .connectTimeout(15, TimeUnit.SECONDS)
             .build()
       
-      var calls = object: Calls { \n
+      
 END
 
+    @ast.struct_types.each do |t| 
+    @io << t.kt_definition
+    @io << "\n\n"
+    end  
+
+    @ast.enum_types.each do |e| 
+    @io << e.kt_definition
+    @io << "\n\n"
+    end  
+
+    @io << "var calls = object: Calls { \n"
     @ast.operations.each do |op|
       args = op.args.map { |arg| "#{mangle arg.name}: #{arg.type.kt_native_type}" }
       args << "flag: Int?" # TODO make it something like API.DEFAULT and insert error parameter to callback
