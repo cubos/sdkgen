@@ -50,19 +50,27 @@ module AST
 
         # KOTLIN
     def kt_decode(expr)
-      raise "Not implemented"
+      "#{name}.valueOf(#{expr})"
     end 
 
     def kt_encode(expr)
-      raise "Not implemented"
+      "#{expr}.name"
     end 
 
+    def kt_definition
+      String.build do |io|
+      io << "enum class #{name} {\n"
+        io << values.join(", \n")
+        io << "\n}"
+      end
+    end
+
     def kt_native_type
-      raise "Not implemented"
+      "#{name}"
     end
 
     def kt_return_type_name
-      raise "Not implemented"
+      "#{name}"
     end 
     # KOTLIN
   end

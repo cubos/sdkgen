@@ -70,10 +70,11 @@ module AST
     # KOTLIN
     def kt_decode(expr)
       String::Builder.build do |io|
+      io << "#{name}().apply {\n"
         fields.each do |field|
-          field.type.kt_native_type
-          io << ident "#{field.name}: #{field.type.kt_decode("#{expr}.#{field.name}")},\n"
+          io << ident "this.#{field.name} = #{field.type.kt_decode("#{expr}.#{field.name}")},\n"
         end
+      io << "}"
       end
     end
 
@@ -93,11 +94,20 @@ module AST
 
     def kt_definition
       String.build do |io|
-        io << "class #{name} {\n"
+        io << "class #{name}(\n"
+        index = 0
         fields.each do |field|
-          io << "    var #{field.name}: #{field.type.kt_native_type}\n"
+          io << "    var #{field.name}: #{field.type.kt_native_type}"  
+          
+          suffix = ""  
+          if index < fields.size - 1 
+            suffix = "," 
+          end
+
+          io << "#{suffix} \n"
+          index += 1
         end
-        io << "}"
+        io << ")"
       end
     end
 
