@@ -41,24 +41,32 @@ class KtAndroidTarget < Target
 
 import android.location.Location
 import android.util.Base64
-import okhttp3.ConnectionPool
-import okhttp3.Dispatcher
-import okhttp3.OkHttpClient
 import org.json.JSONObject
 import java.text.SimpleDateFormat
-import java.util.Calendar
+import java.util.*
 import java.util.concurrent.TimeUnit
+import android.view.WindowManager
+import android.content.pm.PackageManager
+import android.os.Build
+import org.json.JSONException
+import android.annotation.SuppressLint
+import android.content.Context
+import android.graphics.Point
+import android.provider.Settings
+import okhttp3.*
 
 open class API {
+    private lateinit var context: Context
+    
     interface Calls {\n
 END
     @ast.operations.each do |op|
       args = op.args.map { |arg| "#{mangle arg.name}: #{arg.type.kt_native_type}" }
       args << "flag: Int? = null" # TODO make it something like API.DEFAULT and insert error parameter to callback
       args << if !op.return_type.is_a? AST::VoidPrimitiveType 
-                "callback: (#{op.return_type.kt_return_type_name}: #{op.return_type.kt_native_type}?) -> Unit" 
-              else 
-                "callback: () -> Unit"
+                "callback: (error: Error?, #{op.return_type.kt_return_type_name}: #{op.return_type.kt_native_type}?) -> Unit" 
+              else
+                "callback: (error: Error?, result: Boolean?) -> Unit"
               end
       @io << ident(String.build do |io|
         io << "   fun #{mangle op.pretty_name}(#{args.join(", ")}) \n"
@@ -68,8 +76,16 @@ END
     }
 
 	companion object {
+      var instance: API? = null
+      fun init(context: Context, useStaging: Boolean) {
+            API.useStaging = useStaging
+            instance = API().apply { this.context = context }
+      }
+      
       const val BASE_URL = #{@ast.options.url.inspect}
-
+      var useStaging = false
+      private val hexArray = "0123456789abcdef".toCharArray()
+      
       var connectionPool = ConnectionPool(100, 45, TimeUnit.SECONDS)
       var client = OkHttpClient.Builder()
             .connectionPool(connectionPool)
@@ -84,9 +100,9 @@ END
       args = op.args.map { |arg| "#{mangle arg.name}: #{arg.type.kt_native_type}" }
       args << "flag: Int?" # TODO make it something like API.DEFAULT and insert error parameter to callback
       args << if !op.return_type.is_a? AST::VoidPrimitiveType 
-                "callback: (#{op.return_type.kt_return_type_name}: #{op.return_type.kt_native_type}?) -> Unit" 
+                "callback: (error: Error?, #{op.return_type.kt_return_type_name}: #{op.return_type.kt_native_type}?) -> Unit" 
               else
-                "callback: () -> Unit"
+                "callback: (error: Error?, result: Boolean?) -> Unit"
               end
       @io << ident(String.build do |io|
         io << "     override fun #{mangle op.pretty_name}(#{args.join(", ")}) {\n"
@@ -94,8 +110,8 @@ END
         io << if op.args.size > 0
                  "          var bodyArgs = JSONObject().apply { 
                                 #{puts}
-                            }  \n
-                           #{op.args[0].type.kt_decode(mangle op.args[0].name)}  \n"
+                            } 
+                           makeRequest(\"#{mangle op.pretty_name}\", bodyArgs, callback) \n "
               else 
                   ""
               end
@@ -105,9 +121,132 @@ END
 
     @io << <<-END
       } 
-    }
 
-    
+      class Error {
+            var type: ErrorType? = null
+            var message: String? = null
+      }
+
+      fun randomBytesHex(len: Int): String {
+          val bytes = ByteArray(len)
+          Random().nextBytes(bytes)
+          return bytesToHex(bytes)
+      }
+
+      private fun bytesToHex(bytes: ByteArray): String {
+          val hexChars = CharArray(bytes.size * 2)
+          for (j in bytes.indices) {
+              val v = bytes[j].toInt() and 0xFF
+              hexChars[j * 2] = hexArray[v ushr 4 ]
+              hexChars[j * 2 + 1] = hexArray[v and 0x0F]
+          }
+          return String(hexChars)
+      }
+
+      @SuppressLint("HardwareIds")
+      @Throws(JSONException::class)
+      fun device(): JSONObject =
+          JSONObject().apply {
+              put("type", "android")
+              put("fingerprint", "" + Settings.Secure.getString(instance!!.context.contentResolver, Settings.Secure.ANDROID_ID))
+              put("platform", object : JSONObject() {
+                  init {
+                      put("version", Build.VERSION.RELEASE)
+                      put("sdkVersion", Build.VERSION.SDK_INT)
+                      put("brand", Build.BRAND)
+                      put("model", Build.MODEL)
+                  }
+              })
+              try {
+                  put("version", instance!!.context.packageManager.getPackageInfo(instance!!.context.packageName, 0).versionName)
+              } catch (e: PackageManager.NameNotFoundException) {
+                  put("version", "unknown")
+              }
+
+              put("language", language())
+              put("screen", object : JSONObject() {
+                  init {
+                      val manager = instance!!.context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+                      val display = manager.defaultDisplay
+                      val size = Point()
+                      display.getSize(size)
+                      put("width", size.x)
+                      put("height", size.y)
+                  }
+              })
+              val pref = instance!!.context.getSharedPreferences("api", Context.MODE_PRIVATE)
+              if (pref.contains("deviceId")) put("id", pref.getString("deviceId", null))
+          }
+
+
+        private fun language(): String {
+            val loc = Locale.getDefault()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                return loc.toLanguageTag()
+            }
+
+            val sep = '-'
+            var language = loc.language
+            var region = loc.country
+            var variant = loc.variant
+
+            if (language == "no" && region == "NO" && variant == "NY") {
+                language = "nn"
+                region = "NO"
+                variant = ""
+            }
+
+            if (language.isEmpty() || !language.matches("\\\\[a-zA-Z]{2,8}".toRegex())) {
+                language = "und"
+            } else if (language == "iw") {
+                language = "he"
+            } else if (language == "in") {
+                language = "id"
+            } else if (language == "ji") {
+                language = "yi"
+            }
+
+            if (!region.matches("\\\\[a-zA-Z]{2}|\\\\[0-9]{3}".toRegex())) {
+                region = ""
+            }
+
+            if (!variant.matches("\\\\[a-zA-Z0-9]{5,8}|\\\\[0-9]\\\\[a-zA-Z0-9]{3}".toRegex())) {
+                variant = ""
+            }
+
+            val bcp47Tag = StringBuilder(language)
+            if (!region.isEmpty()) {
+                bcp47Tag.append(sep).append(region)
+            }
+            if (!variant.isEmpty()) {
+                bcp47Tag.append(sep).append(variant)
+            }
+
+            return bcp47Tag.toString()
+        }
+
+        private fun <T> makeRequest(functionName: String, bodyArgs: JSONObject, callback: (error: Error?, result: T?) -> Unit, timeoutSeconds: Int = 15) {
+            try {
+
+                val body = JSONObject().apply {
+                    put("id", randomBytesHex(8))
+                    put("device", device())
+                    put("name", functionName)
+                    put("args", bodyArgs)
+                    put("staging", API.useStaging)
+                }
+
+                val request = Request.Builder()
+                        .url("https://$BASE_URL${if (useStaging) "-staging" else ""}")
+                        .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), body.toString()))
+                        .build()
+                client.newCall(request)
+            } catch (e: JSONException) {
+                e.printStackTrace()
+                callback(Error(), null)
+            }
+        }
+    }
 }
 END
   end

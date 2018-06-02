@@ -22,8 +22,6 @@ get fooInt(var1: int): int
 
 get fooUInt(var1: uint): uint
 
-get fooLocation(var1: latlng): latlng
-
 get fooBytes(var1: bytes): bytes
 
 get fooDateTime(var1: datetime): datetime
