@@ -12,13 +12,20 @@ import org.json.JSONException
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Point
+import android.os.Handler
+import android.os.HandlerThread
 import android.provider.Settings
+import android.util.Log
+import com.google.gson.Gson
 import okhttp3.*
+import java.io.IOException
+import java.io.Serializable
 
 open class API {
     private lateinit var context: Context
     
     interface Calls {
+       fun getUser(user: User, flag: Int? = null, callback: (error: Error?, user: User?) -> Unit) 
        fun getFooString(var1: String, flag: Int? = null, callback: (error: Error?, value: String?) -> Unit) 
        fun getFooBase64(var1: String, flag: Int? = null, callback: (error: Error?, value: String?) -> Unit) 
        fun getFooCnpj(var1: String, flag: Int? = null, callback: (error: Error?, cnpj: String?) -> Unit) 
@@ -58,12 +65,26 @@ open class API {
             .connectTimeout(15, TimeUnit.SECONDS)
             .build()
       
-      class FooType(
+      class Error(
+          var type: ErrorType? = null,
+          var message: String? = null
+      )
+data class FooType(
     var fooStr: String, 
     var fooInt: Int, 
     var fooFloat: Float, 
     var fooEnum: FooTypeFooEnum 
-)
+): Serializable
+
+data class FooName(
+    var name: String 
+): Serializable
+
+data class User(
+    var password: String?, 
+    var avatar: ByteArray?, 
+    var name: String 
+): Serializable
 
 enum class FooTypeFooEnum {
 eu, 
@@ -76,6 +97,17 @@ Connection
 }
 
 var calls = object: Calls { 
+         override fun getUser(user: User, flag: Int?, callback: (error: Error?, user: User?) -> Unit) {
+              var bodyArgs = JSONObject().apply { 
+                                    put("user", JSONObject().apply {
+        put("password", user.password === null || user.password === undefined ? null : user.password)
+        put("avatar", user.avatar === null || user.avatar === undefined ? null : user.avatar.toString("base64"))
+        put("name", user.name)
+    }
+    )
+                                } 
+                               makeRequest("getUser", bodyArgs, callback) 
+          }
          override fun getFooString(var1: String, flag: Int?, callback: (error: Error?, value: String?) -> Unit) {
               var bodyArgs = JSONObject().apply { 
                                     put("var1", var1)
@@ -188,11 +220,6 @@ var calls = object: Calls {
           }
       } 
 
-      class Error {
-            var type: ErrorType? = null
-            var message: String? = null
-      }
-
       fun randomBytesHex(len: Int): String {
           val bytes = ByteArray(len)
           Random().nextBytes(bytes)
@@ -211,7 +238,7 @@ var calls = object: Calls {
 
       @SuppressLint("HardwareIds")
       @Throws(JSONException::class)
-      fun device(): JSONObject =
+      private fun device(): JSONObject =
           JSONObject().apply {
               put("type", "android")
               put("fingerprint", "" + Settings.Secure.getString(instance!!.context.contentResolver, Settings.Secure.ANDROID_ID))
@@ -291,9 +318,8 @@ var calls = object: Calls {
             return bcp47Tag.toString()
         }
 
-        private fun <T> makeRequest(functionName: String, bodyArgs: JSONObject, callback: (error: Error?, result: T?) -> Unit, timeoutSeconds: Int = 15) {
+        private inline fun <reified T> makeRequest(functionName: String, bodyArgs: JSONObject, crossinline callback: (error: Error?, result: T?) -> Unit, timeoutSeconds: Int = 15) {
             try {
-
                 val body = JSONObject().apply {
                     put("id", randomBytesHex(8))
                     put("device", device())
@@ -306,10 +332,41 @@ var calls = object: Calls {
                         .url("https://$BASE_URL${if (useStaging) "-staging" else ""}")
                         .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), body.toString()))
                         .build()
-                client.newCall(request)
+                 client.newCall(request).enqueue(object: Callback {
+                    override fun onFailure(call: Call?, e: IOException?) {
+                        e?.printStackTrace()
+                        callback(Error(ErrorType.Fatal, e?.message ?: "Chamada falhou sem mensagem de erro!"), null)
+                    }
+
+                    override fun onResponse(call: Call?, response: Response?) {
+                        if (response == null || response.code() == 502) {
+                            callback(Error(ErrorType.Fatal, "Erro Fatal (502) - Tente novamente"), null)
+                        }
+
+                        val stringBody = response?.body()?.string()
+                        //TODO Use kotlin coroutine instead
+                        val handlerThread = HandlerThread("JsonHandleThread")
+                        Handler(handlerThread.looper).post({
+                            val responseBody = JSONObject(stringBody)
+
+                            val pref = instance!!.context.getSharedPreferences("api", Context.MODE_PRIVATE)
+                            pref.edit().putString("deviceId", body.getString("deviceId")).apply()
+
+                            if (!responseBody.getBoolean("ok")) {
+                                val jsonError = responseBody.getJSONObject("error")
+                                //TODO Fetch correct error type
+                                val error = Error(ErrorType.Fatal, jsonError.getString("message"))
+                                Log.e("API Error", jsonError.getString("type") + " - " + error.message);
+                                callback(error, null)
+                            } else {
+                                callback(null, Gson().fromJson(responseBody.toString(), T::class.java))
+                            }
+                        })
+                    }
+                })
             } catch (e: JSONException) {
                 e.printStackTrace()
-                callback(Error(), null)
+                callback(Error(ErrorType.Fatal, e.message ?: "Erro ao parsear json"), null)
             }
         }
     }

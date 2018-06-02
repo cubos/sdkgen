@@ -80,11 +80,11 @@ module AST
 
     def kt_encode(expr)
       String::Builder.build do |io|
-        io << "{\n"
+        io << "JSONObject().apply {\n"
         fields.each do |field|
-          io << ident "#{field.name}: #{field.type.typescript_encode("#{expr}.#{field.name}")},\n"
+          io << ident "put(\"#{field.name}\", #{field.type.typescript_encode("#{expr}.#{field.name}")})\n"
         end
-        io << "}"
+        io << "}\n"
       end
     end
 
@@ -94,7 +94,7 @@ module AST
 
     def kt_definition
       String.build do |io|
-        io << "class #{name}(\n"
+        io << "data class #{name}(\n"
         index = 0
         fields.each do |field|
           io << "    var #{field.name}: #{field.type.kt_native_type}"  
@@ -107,7 +107,7 @@ module AST
           io << "#{suffix} \n"
           index += 1
         end
-        io << ")"
+        io << "): Serializable"
       end
     end
 

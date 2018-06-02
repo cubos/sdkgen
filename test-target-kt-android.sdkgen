@@ -8,6 +8,18 @@ type FooType {
     }
 }
 
+type FooName { 
+    name: string
+}
+
+type User {
+    ...FooName
+    password: string?
+    avatar: bytes?
+}
+
+get user(user: User): User
+
 get fooString(var1: string): string
 
 get fooBase64(var1: base64): base64

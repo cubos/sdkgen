@@ -62,19 +62,25 @@ module AST
 
     # KOTLIN
     def kt_decode(expr)
-      raise "Not implemented"
+      "arrayListOf<#{base.kt_native_type}>(#{expr.join(",")})"
     end 
 
     def kt_encode(expr)
-      raise "Not implemented"
+      raise expr
+      # String.build do |io|
+      #   io << "["
+      #   elements = expr.map { |element| element.kt_encode + "," }   
+      #   io << elements.join(",")
+      #   io << "]"
+      # end 
     end 
 
     def kt_native_type
-      raise "Not implemented"
+      "ArrayList<#{base.kt_native_type}>"
     end
 
     def kt_return_type_name
-      raise "Not implemented"
+      return "#{base.kt_native_type.camelcase}"
     end 
     # KOTLIN
   end
