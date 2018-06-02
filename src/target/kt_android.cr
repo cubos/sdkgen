@@ -52,8 +52,14 @@ import org.json.JSONException
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Point
+import android.os.Handler
+import android.os.HandlerThread
 import android.provider.Settings
+import android.util.Log
+import com.google.gson.Gson
 import okhttp3.*
+import java.io.IOException
+import java.io.Serializable
 
 open class API {
     private lateinit var context: Context
@@ -93,7 +99,11 @@ END
             .connectTimeout(15, TimeUnit.SECONDS)
             .build()
       
-      
+      class Error(
+          var type: ErrorType? = null,
+          var message: String? = null
+      )
+
 END
 
     @ast.struct_types.each do |t| 
@@ -133,11 +143,6 @@ END
     @io << <<-END
       } 
 
-      class Error {
-            var type: ErrorType? = null
-            var message: String? = null
-      }
-
       fun randomBytesHex(len: Int): String {
           val bytes = ByteArray(len)
           Random().nextBytes(bytes)
@@ -156,7 +161,7 @@ END
 
       @SuppressLint("HardwareIds")
       @Throws(JSONException::class)
-      fun device(): JSONObject =
+      private fun device(): JSONObject =
           JSONObject().apply {
               put("type", "android")
               put("fingerprint", "" + Settings.Secure.getString(instance!!.context.contentResolver, Settings.Secure.ANDROID_ID))
@@ -236,9 +241,8 @@ END
             return bcp47Tag.toString()
         }
 
-        private fun <T> makeRequest(functionName: String, bodyArgs: JSONObject, callback: (error: Error?, result: T?) -> Unit, timeoutSeconds: Int = 15) {
+        private inline fun <reified T> makeRequest(functionName: String, bodyArgs: JSONObject, crossinline callback: (error: Error?, result: T?) -> Unit, timeoutSeconds: Int = 15) {
             try {
-
                 val body = JSONObject().apply {
                     put("id", randomBytesHex(8))
                     put("device", device())
@@ -251,10 +255,41 @@ END
                         .url("https://$BASE_URL${if (useStaging) "-staging" else ""}")
                         .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), body.toString()))
                         .build()
-                client.newCall(request)
+                 client.newCall(request).enqueue(object: Callback {
+                    override fun onFailure(call: Call?, e: IOException?) {
+                        e?.printStackTrace()
+                        callback(Error(ErrorType.Fatal, e?.message ?: "Chamada falhou sem mensagem de erro!"), null)
+                    }
+
+                    override fun onResponse(call: Call?, response: Response?) {
+                        if (response == null || response.code() == 502) {
+                            callback(Error(ErrorType.Fatal, "Erro Fatal (502) - Tente novamente"), null)
+                        }
+
+                        val stringBody = response?.body()?.string()
+                        //TODO Use kotlin coroutine instead
+                        val handlerThread = HandlerThread("JsonHandleThread")
+                        Handler(handlerThread.looper).post({
+                            val responseBody = JSONObject(stringBody)
+
+                            val pref = instance!!.context.getSharedPreferences("api", Context.MODE_PRIVATE)
+                            pref.edit().putString("deviceId", body.getString("deviceId")).apply()
+
+                            if (!responseBody.getBoolean("ok")) {
+                                val jsonError = responseBody.getJSONObject("error")
+                                //TODO Fetch correct error type
+                                val error = Error(ErrorType.Fatal, jsonError.getString("message"))
+                                Log.e("API Error", jsonError.getString("type") + " - " + error.message);
+                                callback(error, null)
+                            } else {
+                                callback(null, Gson().fromJson(responseBody.toString(), T::class.java))
+                            }
+                        })
+                    }
+                })
             } catch (e: JSONException) {
                 e.printStackTrace()
-                callback(Error(), null)
+                callback(Error(ErrorType.Fatal, e.message ?: "Erro ao parsear json"), null)
             }
         }
     }

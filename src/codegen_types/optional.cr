@@ -41,14 +41,23 @@ module AST
         io << "}\n"
       end
     end
-
-    def kt_decode(expr) 
+    
+    # KOTLIN
+    def kt_decode(expr)
       "#{base.kt_decode(expr)}? = null"
+    end 
+
+    def kt_encode(expr)
+      "if (#{expr} != null) #{base.kt_encode(expr)} else null"
+    end 
+
+    def kt_native_type
+      "#{base.kt_native_type}?" 
     end
 
     def kt_return_type_name
-      base.kt_return_type_name 
+      "#{base.kt_return_type_name}?"
     end 
-
+    # KOTLIN 
   end
 end
