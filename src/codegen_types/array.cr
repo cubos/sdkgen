@@ -66,13 +66,10 @@ module AST
     end 
 
     def kt_encode(expr)
-      raise expr
-      # String.build do |io|
-      #   io << "["
-      #   elements = expr.map { |element| element.kt_encode + "," }   
-      #   io << elements.join(",")
-      #   io << "]"
-      # end 
+      inner = base.kt_encode("item")
+      "JSONArray().apply { 
+        #{expr}.forEach { item -> put(#{inner}) }
+      }"
     end 
 
     def kt_native_type
@@ -80,7 +77,7 @@ module AST
     end
 
     def kt_return_type_name
-      return "#{base.kt_native_type.camelcase}"
+      "#{base.kt_native_type.camelcase}"
     end 
     # KOTLIN
   end
