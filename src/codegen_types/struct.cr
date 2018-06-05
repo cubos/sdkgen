@@ -82,7 +82,7 @@ module AST
       String::Builder.build do |io|
         io << "JSONObject().apply {\n"
         fields.each do |field|
-          io << ident "put(\"#{field.name}\", #{field.type.typescript_encode("#{expr}.#{field.name}")})\n"
+          io << ident "put(\"#{field.name}\", #{field.type.kt_encode("#{expr}.#{field.name}")})\n"
         end
         io << "}\n"
       end

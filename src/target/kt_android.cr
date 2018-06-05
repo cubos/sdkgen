@@ -60,9 +60,9 @@ import com.google.gson.Gson
 import okhttp3.*
 import java.io.IOException
 import java.io.Serializable
+import org.json.JSONArray
 
 open class API {
-    private lateinit var context: Context
     
     interface Calls {\n
 END
@@ -82,10 +82,10 @@ END
     }
 
 	companion object {
-      var instance: API? = null
-      fun init(context: Context, useStaging: Boolean) {
+      lateinit var context: Context
+      fun init(appContext: Context, useStaging: Boolean) {
             API.useStaging = useStaging
-            instance = API().apply { this.context = context }
+            context = appContext 
       }
       
       const val BASE_URL = #{@ast.options.url.inspect}
@@ -164,7 +164,7 @@ END
       private fun device(): JSONObject =
           JSONObject().apply {
               put("type", "android")
-              put("fingerprint", "" + Settings.Secure.getString(instance!!.context.contentResolver, Settings.Secure.ANDROID_ID))
+              put("fingerprint", "" + Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID))
               put("platform", object : JSONObject() {
                   init {
                       put("version", Build.VERSION.RELEASE)
@@ -174,7 +174,7 @@ END
                   }
               })
               try {
-                  put("version", instance!!.context.packageManager.getPackageInfo(instance!!.context.packageName, 0).versionName)
+                  put("version", context.packageManager.getPackageInfo(context.packageName, 0).versionName)
               } catch (e: PackageManager.NameNotFoundException) {
                   put("version", "unknown")
               }
@@ -182,7 +182,7 @@ END
               put("language", language())
               put("screen", object : JSONObject() {
                   init {
-                      val manager = instance!!.context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+                      val manager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
                       val display = manager.defaultDisplay
                       val size = Point()
                       display.getSize(size)
@@ -190,7 +190,7 @@ END
                       put("height", size.y)
                   }
               })
-              val pref = instance!!.context.getSharedPreferences("api", Context.MODE_PRIVATE)
+              val pref = context.getSharedPreferences("api", Context.MODE_PRIVATE)
               if (pref.contains("deviceId")) put("id", pref.getString("deviceId", null))
           }
 
@@ -252,7 +252,7 @@ END
                 }
 
                 val request = Request.Builder()
-                        .url("https://$BASE_URL${if (useStaging) "-staging" else ""}")
+                        .url("https://$BASE_URL${if (useStaging) "-staging" else ""}/$functionName")
                         .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), body.toString()))
                         .build()
                  client.newCall(request).enqueue(object: Callback {
@@ -272,8 +272,8 @@ END
                         Handler(handlerThread.looper).post({
                             val responseBody = JSONObject(stringBody)
 
-                            val pref = instance!!.context.getSharedPreferences("api", Context.MODE_PRIVATE)
-                            pref.edit().putString("deviceId", body.getString("deviceId")).apply()
+                            val pref = context.getSharedPreferences("api", Context.MODE_PRIVATE)
+                            pref.edit().putString("deviceId", responseBody.getString("deviceId")).apply()
 
                             if (!responseBody.getBoolean("ok")) {
                                 val jsonError = responseBody.getJSONObject("error")

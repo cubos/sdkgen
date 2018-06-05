@@ -52,11 +52,11 @@ module AST
     end 
 
     def kt_native_type
-      "#{base.kt_native_type}?" 
+      "#{base.kt_native_type}" 
     end
 
     def kt_return_type_name
-      "#{base.kt_return_type_name}?"
+      "#{base.kt_return_type_name}"
     end 
     # KOTLIN 
   end
