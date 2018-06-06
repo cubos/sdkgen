@@ -62,7 +62,9 @@ module AST
 
     # KOTLIN
     def kt_decode(expr)
-      "arrayListOf<#{base.kt_native_type}>(#{expr.join(",")})"
+      "ArrayList<#{base.kt_native_type}>().apply {
+        #{expr}.forEach { item -> put(#{base.kt_decode("item")}) }
+      }"
     end 
 
     def kt_encode(expr)
