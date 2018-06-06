@@ -127,12 +127,19 @@ END
               end
       @io << ident(String.build do |io|
         io << "     override fun #{mangle op.pretty_name}(#{args.join(", ")}) {\n"
-        puts = op.args.map { |arg| "put(\"#{arg.name}\", #{arg.type.kt_encode(arg.name)})"}.join("\n")
+        puts = op.args.map { |arg| "put(\"#{arg.name}\", #{arg.type.kt_encode(mangle arg.name)})"}.join("\n")
         io << if op.args.size > 0
-                 "          var bodyArgs = JSONObject().apply { 
+                 "          val bodyArgs = JSONObject().apply { 
                                 #{puts}
                             } 
-                           makeRequest(\"#{mangle op.pretty_name}\", bodyArgs, callback) \n "
+                           makeRequest(\"#{mangle op.pretty_name}\", bodyArgs, { error, json -> 
+                                if (error != null) {
+                                    callback(error, null)
+                                } else {
+                                    val response = #{op.return_type.kt_decode("json")}
+                                    callback(null, response)
+                                }
+                           }) \n "
               else 
                   ""
               end
@@ -241,7 +248,7 @@ END
             return bcp47Tag.toString()
         }
 
-        private inline fun <reified T> makeRequest(functionName: String, bodyArgs: JSONObject, crossinline callback: (error: Error?, result: T?) -> Unit, timeoutSeconds: Int = 15) {
+        private inline fun makeRequest(functionName: String, bodyArgs: JSONObject, crossinline callback: (error: Error?, result: JSONObject?) -> Unit, timeoutSeconds: Int = 15) {
             try {
                 val body = JSONObject().apply {
                     put("id", randomBytesHex(8))
@@ -282,7 +289,7 @@ END
                                 Log.e("API Error", jsonError.getString("type") + " - " + error.message);
                                 callback(error, null)
                             } else {
-                                callback(null, Gson().fromJson(responseBody.toString(), T::class.java))
+                                callback(null, responseBody)
                             }
                         })
                     }

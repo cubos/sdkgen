@@ -70,11 +70,11 @@ module AST
     # KOTLIN
     def kt_decode(expr)
       String::Builder.build do |io|
-      io << "#{name}().apply {\n"
+      io << "#{name}(\n"
         fields.each do |field|
-          io << ident "this.#{field.name} = #{field.type.kt_decode("#{expr}.#{field.name}")},\n"
+          io << ident "#{field.name} = #{field.type.kt_decode("#{expr}.#{field.name}")},\n"
         end
-      io << "}"
+      io << ")"
       end
     end
 

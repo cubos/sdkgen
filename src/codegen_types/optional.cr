@@ -48,11 +48,11 @@ module AST
     end 
 
     def kt_encode(expr)
-      "if (#{expr} != null) #{base.kt_encode(expr)} else null"
+      "#{expr}?.let { #{kt_return_type_name} -> #{base.kt_encode(kt_return_type_name)} }"
     end 
 
     def kt_native_type
-      "#{base.kt_native_type}" 
+      "#{base.kt_native_type}?" 
     end
 
     def kt_return_type_name
