@@ -68,11 +68,13 @@ module AST
     end
 
     # KOTLIN
-    def kt_decode(expr)
+    def kt_decode(expr, desc)
       String::Builder.build do |io|
       io << "#{name}(\n"
         fields.each do |field|
-          io << ident "#{field.name} = #{field.type.kt_decode("#{expr}.#{field.name}")},\n"
+        currentExpression = "#{expr}.getJSONObject(\"#{desc}\")"
+          io << "    #{field.name} = #{field.type.kt_decode("#{currentExpression}", "#{field.name}")},\n"
+          # io << ident "#{field.name} = #{field.type.kt_decode("#{expr}.#{field.name}")},\n"
         end
       io << ")"
       end

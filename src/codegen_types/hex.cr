@@ -38,7 +38,7 @@ module AST
     end
 
         # KOTLIN
-    def kt_decode(expr)
+    def kt_decode(expr, desc)
       raise "Not implemented"
     end 
 

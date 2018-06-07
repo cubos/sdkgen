@@ -38,8 +38,8 @@ module AST
     end
 
 
-    def kt_decode(expr)
-      "#{expr}.replace(Regex(\"/(..)(...)(...)/\"), \"$1.$2-$3\")"
+    def kt_decode(expr, desc)
+      "#{expr}.getString(\"#{desc}\").replace(Regex(\"/(..)(...)(...)/\"), \"$1.$2-$3\")"
     end
 
     def kt_encode(expr)

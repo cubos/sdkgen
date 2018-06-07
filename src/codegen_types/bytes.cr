@@ -37,8 +37,8 @@ module AST
     end
 
         # KOTLIN
-    def kt_decode(expr)
-      "Base64.decode(#{expr}, Base64.DEFAULT)"
+    def kt_decode(expr, desc)
+      "Base64.decode(#{expr}.getString(\"#{desc}\"), Base64.DEFAULT)"
     end 
 
     def kt_encode(expr)
