@@ -33,8 +33,8 @@ module AST
       typescript_check_encoded(expr, descr)
     end
 
-    def kt_decode(expr)
-      "Location(\"\").apply { latitude = #{expr}.  ; longitude = #{expr}.lng }"
+    def kt_decode(expr, desc)
+      "Location(\"\").apply { latitude = #{expr}.getDouble(\"#{desc}\")  ; longitude = #{expr}.getDouble(\"#{desc}\") }"
     end
 
     def kt_encode(expr)

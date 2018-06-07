@@ -43,8 +43,8 @@ module AST
     end
     
     # KOTLIN
-    def kt_decode(expr)
-      "#{base.kt_decode(expr)}? = null"
+    def kt_decode(expr, desc)
+      "try { #{base.kt_decode(expr, desc)} } catch(e: Exception) { null }"
     end 
 
     def kt_encode(expr)

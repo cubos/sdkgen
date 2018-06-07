@@ -39,8 +39,8 @@ module AST
     end
     
     #Kotlin
-    def kt_decode(expr)
-      "#{expr}"
+    def kt_decode(expr, desc)
+      "#{expr}.getInt(\"#{desc}\")"
     end
 
     def kt_encode(expr)

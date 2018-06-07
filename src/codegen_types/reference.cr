@@ -28,8 +28,8 @@ module AST
       type.kt_encode(expr)
     end 
 
-    def kt_decode(expr)
-      type.kt_decode(expr)
+    def kt_decode(expr, desc)
+      type.kt_decode(expr, desc)
     end
 
     def kt_native_type

@@ -136,7 +136,8 @@ END
                                 if (error != null) {
                                     callback(error, null)
                                 } else {
-                                    val response = #{op.return_type.kt_decode("json")}
+                                    val bodyJson = json!!
+                                    val response = #{op.return_type.kt_decode("bodyJson", "result")}
                                     callback(null, response)
                                 }
                            }) \n "
