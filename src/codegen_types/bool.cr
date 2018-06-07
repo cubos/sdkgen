@@ -38,7 +38,7 @@ module AST
 
     # KOTLIN
     def kt_decode(expr, desc)
-      "#{expr}.getBoolean(\"#{desc}\")"
+      "#{expr}.getBoolean(#{desc})"
     end 
 
     def kt_encode(expr)

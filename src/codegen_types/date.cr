@@ -42,7 +42,7 @@ module AST
 
     # KOTLIN
     def kt_decode(expr, desc)      
-      "Calendar.getInstance().apply { time = SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\").parse(#{expr}.getString(\"#{desc}\")) }"
+      "Calendar.getInstance().apply { time = SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\").parse(#{expr}.getString(#{desc})) }"
     end
 
     def kt_encode(expr)

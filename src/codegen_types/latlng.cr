@@ -34,7 +34,7 @@ module AST
     end
 
     def kt_decode(expr, desc)
-      "Location(\"\").apply { latitude = #{expr}.getDouble(\"#{desc}\")  ; longitude = #{expr}.getDouble(\"#{desc}\") }"
+      "Location(\"\").apply { latitude = #{expr}.getDouble(#{desc})  ; longitude = #{expr}.getDouble(#{desc}) }"
     end
 
     def kt_encode(expr)

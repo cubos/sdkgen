@@ -71,10 +71,15 @@ module AST
     def kt_decode(expr, desc)
       String::Builder.build do |io|
       io << "#{name}(\n"
+        currentExpression = "#{expr}.getJSONObject(#{desc})"
+        index = 0
         fields.each do |field|
-        currentExpression = "#{expr}.getJSONObject(\"#{desc}\")"
-          io << "    #{field.name} = #{field.type.kt_decode("#{currentExpression}", "#{field.name}")},\n"
-          # io << ident "#{field.name} = #{field.type.kt_decode("#{expr}.#{field.name}")},\n"
+          index = index + 1
+          io << "    #{field.name} = #{field.type.kt_decode("#{currentExpression}", "\"#{field.name}\"")}"
+          if index < fields.size
+           io << ","
+          end 
+          io << "\n"
         end
       io << ")"
       end
