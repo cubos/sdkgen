@@ -137,7 +137,7 @@ END
                                     callback(error, null)
                                 } else {
                                     val bodyJson = json!!
-                                    val response = #{op.return_type.kt_decode("bodyJson", "result")}
+                                    val response = #{op.return_type.kt_decode("bodyJson", "\"result\"")}
                                     callback(null, response)
                                 }
                            }) \n "
@@ -286,7 +286,7 @@ END
                             if (!responseBody.getBoolean("ok")) {
                                 val jsonError = responseBody.getJSONObject("error")
                                 //TODO Fetch correct error type
-                                val error = Error(ErrorType.Fatal, jsonError.getString("message"))
+                                val error = Error(ErrorType.valueOf(jsonError.getString("type")), jsonError.getString("message"))
                                 Log.e("API Error", jsonError.getString("type") + " - " + error.message);
                                 callback(error, null)
                             } else {

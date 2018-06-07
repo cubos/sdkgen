@@ -50,7 +50,7 @@ module AST
 
     # KOTLIN
     def kt_decode(expr, desc)
-      "#{name}.valueOf( #{expr}.getString(\"#{desc}\") )"
+      "#{name}.valueOf( #{expr}.getString(#{desc}) )"
     end 
 
     def kt_encode(expr)

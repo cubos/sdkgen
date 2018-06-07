@@ -38,7 +38,7 @@ module AST
     end
 
     def kt_decode(expr, desc)
-      "#{expr}.getInt(\"#{desc}\")"
+      "#{expr}.getInt(#{desc})"
     end
 
     def kt_encode(expr)

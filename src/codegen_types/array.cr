@@ -63,7 +63,7 @@ module AST
     # KOTLIN
     def kt_decode(expr, desc)
       "ArrayList<#{base.kt_native_type}>().apply {
-          val array = #{expr}.getJSONArray(\"#{desc}\")
+          val array = #{expr}.getJSONArray(#{desc})
           for (i in 0 until array.length()) {
             add(#{base.kt_decode("array", "i")})
           }
