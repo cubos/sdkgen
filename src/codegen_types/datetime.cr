@@ -5,7 +5,7 @@ module AST
     end
 
     def typescript_encode(expr)
-      "(typeof #{expr} === \"string\" && (#{expr} as any).match(/^[0-9]{4}-[01][0-9]-[0123][0-9]T[012][0-9]:[0123456][0-9]:[0123456][0-9].[0-9]{3}$/) ? #{expr} : #{expr}.toISOString().replace(\"Z\", \"\"))"
+      "(typeof #{expr} === \"string\" && (#{expr} as any).match(/^[0-9]{4}-[01][0-9]-[0123][0-9]T[012][0-9]:[0123456][0-9]:[0123456][0-9].[0-9]{3}Z?$/) ? #{expr}.replace(\"Z\", \"\") : #{expr}.toISOString().replace(\"Z\", \"\"))"
     end
 
     def typescript_native_type
@@ -29,7 +29,7 @@ module AST
 
     def typescript_check_decoded(expr, descr)
       String.build do |io|
-        io << "if (#{expr} === null || #{expr} === undefined || !(#{expr} instanceof Date || ((#{expr} as any).match && (#{expr} as any).match(/^[0-9]{4}-[01][0-9]-[0123][0-9]T[012][0-9]:[0123456][0-9]:[0123456][0-9].[0-9]{3}$/)))) {\n"
+        io << "if (#{expr} === null || #{expr} === undefined || !(#{expr} instanceof Date || ((#{expr} as any).match && (#{expr} as any).match(/^[0-9]{4}-[01][0-9]-[0123][0-9]T[012][0-9]:[0123456][0-9]:[0123456][0-9].[0-9]{3}Z?$/)))) {\n"
         io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"', expected #{self.class.name}, got '\" + #{expr} + \"'\");\n"
         io << "    typeCheckerError(err, ctx);\n"
         io << "}\n"
