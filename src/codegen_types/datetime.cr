@@ -24,7 +24,7 @@ module AST
         io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"', expected #{self.class.name}, got '\" + #{expr} + \"'\");\n"
         io << "    typeCheckerError(err, ctx);\n"
         io << "}\n"
-      endtalvez
+      end
     end
 
     def typescript_check_decoded(expr, descr)
