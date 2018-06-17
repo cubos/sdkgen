@@ -3,30 +3,28 @@ require "./target"
 
 class TypeScriptServerTarget < Target
   def gen
-    @io << <<-END
-#{String.build do |io|
     if @ast.options.syntheticDefaultImports
-      io << <<-END
+      @io << <<-END
 import http from "http";
 import crypto from "crypto";
 import os from "os";
 import url from "url";
 import Raven from "raven";
+
 END
     else
-      io << <<-END
+      @io << <<-END
 import * as http from "http";
 import * as crypto from "crypto";
 import * as os from "os";
 import * as url from "url";
 const Raven = require("raven");
+
 END
     end
-  end}
-#{String.build do |io|
-    if @ast.options.useRethink
-    else
-      io << <<-END
+
+    unless @ast.options.useRethink
+      @io << <<-END
 
 interface DBDevice {
     id: string
@@ -58,7 +56,8 @@ interface DBApiCall {
 
 END
     end
-  end}
+
+    @io << <<-END
 
 let captureError: (e: Error, req?: http.IncomingMessage, extra?: any) => void = () => {};
 export function setCaptureErrorFn(fn: (e: Error, req?: http.IncomingMessage, extra?: any) => void) {
@@ -432,20 +431,20 @@ export function start(port: number = 8000) {
 }
 
 fn.ping = async (ctx: Context) => "pong";
+END
 
-#{String.build do |io|
     if @ast.options.useRethink
-      io << <<-END
+      @io << <<-END
 fn.setPushToken = async (ctx: Context, token: string) => {
     await r.table("devices").get(ctx.device.id).update({push: token});
 };
 END
     end
-  end}
 
-#{String.build do |io|
     if @ast.options.useRethink
-      io << <<-END
+      @io << <<-END
+
+
 import r from "../rethinkdb";
 
 hook.onHealthCheck = async () => {
@@ -493,8 +492,7 @@ hook.afterProcessCall = async (call) => {
 
 END
     end
-  end}
-END
+
   end
 
   @i = 0
