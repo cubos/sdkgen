@@ -492,7 +492,6 @@ hook.afterProcessCall = async (call) => {
 
 END
     end
-
   end
 
   @i = 0
