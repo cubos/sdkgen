@@ -729,9 +729,7 @@ END
                 public void run() {
 #{String.build do |io|
     unless @ast.options.useRethink
-      io << <<-END
-                    timer.cancel();
-END
+      io << "\n                    timer.cancel();"
     end
   end}
                     sentCount[0] += 1;
