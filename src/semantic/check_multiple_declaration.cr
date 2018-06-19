@@ -12,7 +12,7 @@ module Semantic
       @names << definition.name
       super
     end
-    
+
     def visit(op : AST::Operation)
       if @op_names.includes? op.name
         raise SemanticException.new("Function '#{op.name}' is declared multiples times")
