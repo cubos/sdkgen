@@ -44,7 +44,15 @@ module AST
     
     # KOTLIN
     def kt_decode(expr, desc)
-      "try { #{base.kt_decode(expr, desc)} } catch(e: Exception) { null }"
+      decodeExpr = ""
+      if base.is_a? AST::ArrayType
+          decodeExpr = "try { #{base.kt_native_type}.fromJsonArray(#{expr}) } catch(e: Exception) { null } "
+      elsif base.is_a? AST::StructType
+          decodeExpr = "try { #{base.kt_native_type}.fromJson(#{expr}) } catch(e: Exception) { null } "
+      else
+          decodeExpr = "try { #{base.kt_decode(expr, desc)} } catch(e: Exception) { null }"
+      end
+      "#{decodeExpr}"
     end 
 
     def kt_encode(expr)
