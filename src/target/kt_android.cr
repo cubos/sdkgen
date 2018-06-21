@@ -128,22 +128,41 @@ END
       @io << ident(String.build do |io|
         io << "     override fun #{mangle op.pretty_name}(#{args.join(", ")}) {\n"
         puts = op.args.map { |arg| "put(\"#{arg.name}\", #{arg.type.kt_encode(mangle arg.name)})"}.join("\n")
-        io << if op.args.size > 0
-                 "          val bodyArgs = JSONObject().apply { 
-                                #{puts}
-                            } 
-                           makeRequest(\"#{mangle op.pretty_name}\", bodyArgs, { error, json -> 
-                                if (error != null) {
-                                    callback(error, null)
-                                } else {
-                                    val bodyJson = json!!
-                                    val response = #{op.return_type.kt_decode("bodyJson", "\"result\"")}
-                                    callback(null, response)
-                                }
-                           }) \n "
-              else 
-                  ""
-              end
+        if op.args.size > 0
+            io << "          val bodyArgs = JSONObject().apply {\n"  
+            io << "              #{puts}\n"
+            io << "          }\n"
+            io << "          makeRequest(\"#{mangle op.pretty_name}\", bodyArgs, { error, json -> \n"
+            io << "              if (error != null) {\n"
+            io << "                  callback(error, null)\n"
+            io << "              } else {\n"
+
+            resultJsonExpression = ""
+            if op.return_type.is_a? AST::ArrayType
+                resultJsonExpression = "json.getJSONArray(\"result\")!!"
+            elsif op.return_type.is_a? AST::StructType
+                resultJsonExpression = "json.getJSONObject(\"result\")!!"
+            else
+                resultJsonExpression = "#{op.return_type.kt_decode("json", "result")}"
+            end
+            io << "               val result = #{resultJsonExpression}\n"
+
+            responseExpression = ""
+            if op.return_type.is_a? AST::ArrayType
+                responseExpression = "#{op.return_type.kt_return_type_name[0].upcase + op.return_type.kt_return_type_name[1..-1]}.fromJsonArray(result)"
+            elsif op.return_type.is_a? AST::StructType
+                responseExpression = "#{op.return_type.kt_native_type}.fromJson(result)"
+            else
+                responseExpression = "#{op.return_type.kt_decode("json", "result")}"
+            end
+            io << "               val response = #{responseExpression}\n"
+            
+            io << "               callback(null, response)"
+            io << "              }\n"
+            io << "          })\n"
+        else 
+            ""
+        end
         io << "     }\n"
       end)
     end

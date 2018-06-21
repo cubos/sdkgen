@@ -61,13 +61,21 @@ module AST
     end
 
     # KOTLIN
+    # TODO make this itearion call the fromJson method of the type if its a struct or fromJsonArray if its another array
     def kt_decode(expr, desc)
-      "ArrayList<#{base.kt_native_type}>().apply {
-          val array = #{expr}.getJSONArray(#{desc})
-          for (i in 0 until array.length()) {
-            add(#{base.kt_decode("array", "i")})
-          }
-      }"
+        String.build do |io|
+          io << "ArrayList<#{base.kt_native_type}>().apply {\n" 
+          io << "    for (i in 0 until #{expr}.length()) {\n"
+          if base.is_a? AST::ArrayType
+            io << "        add(#{base.kt_native_type}.fromJsonArray(#{expr}.getJSONArray(i)))\n"
+          elsif base.is_a? AST::StructType
+            io << "        add(#{base.kt_native_type}.fromJson(#{expr}.getJSONObject(i)))\n"
+          else 
+            io << "        add(#{base.kt_decode(expr, "i")})"
+          end
+          io << "    }\n" 
+          io << ""
+        end
     end 
 
     def kt_encode(expr)
@@ -82,7 +90,9 @@ module AST
     end
 
     def kt_return_type_name
-      "#{base.kt_native_type.camelcase}"
+      ktType = base.kt_native_type
+      ktType = ktType[0].upcase + ktType[1..-1]
+      "#{ktType}"
     end 
     # KOTLIN
   end

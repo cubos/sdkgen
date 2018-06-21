@@ -71,11 +71,10 @@ module AST
     def kt_decode(expr, desc)
       String::Builder.build do |io|
       io << "#{name}(\n"
-        currentExpression = "#{expr}.getJSONObject(#{desc})"
         index = 0
         fields.each do |field|
           index = index + 1
-          io << "    #{field.name} = #{field.type.kt_decode("#{currentExpression}", "\"#{field.name}\"")}"
+          io << "    #{field.name} = #{expr}.let { #{field.type.kt_decode("it", "\"#{field.name}\"")} }"
           if index < fields.size
            io << ","
           end 
@@ -114,7 +113,26 @@ module AST
           io << "#{suffix} \n"
           index += 1
         end
-        io << "): Serializable"
+        io << "): Serializable {\n\n"
+        io << "    companion object {\n"
+        io << "        fun fromJson(jsonToParse : JSONObject): #{kt_native_type} {\n"
+        io << "            return #{kt_decode("jsonToParse", "")}"
+        io << "        }\n"   
+        io << "\n"
+        io << "        fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<#{kt_native_type}> {\n"
+        io << "            val array = arrayListOf<#{kt_native_type}>()\n"
+        io << "            for (i in 0 until jsonArrayToParse.length()) {\n"
+        io << "                array.add(fromJson(jsonArrayToParse.getJSONObject(i)))\n"
+        io << "            }\n"
+        io << "            return array\n"
+        io << "        }\n"
+        io << "    }\n"
+        
+        toJsonExpr = "this@#{name}"
+        io << "    fun toJson(): JSONObject {\n"
+        io << "        return #{kt_encode(toJsonExpr)}" 
+        io << "    }"
+        io << "}"
       end
     end
 
