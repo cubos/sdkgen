@@ -147,7 +147,7 @@ END
       @io << ident ident ident "try {\n"
       @io << ident ident ident ident "const {key, expirationSeconds, version} = await cacheConfig.#{op.pretty_name}(#{(["ctx"] + op.args.map(&.name)).join(", ")});\n"
       @io << ident ident ident ident "if (!key) throw \"\";\n"
-      @io << ident ident ident ident "cacheKey = JSON.stringfy(key) + \"-#{op.pretty_name}\"; cacheExpirationSeconds = expiresSeconds; cacheVersion = version;"
+      @io << ident ident ident ident "cacheKey = JSON.stringfy(key) + \"-#{op.pretty_name}\"; cacheExpirationSeconds = expirationSeconds; cacheVersion = version;"
       @io << ident ident ident ident "const cache = await hook.getCache(cacheKey, version);\n"
       @io << ident ident ident ident "if (cache && cache.expirationDate > new Date()) return cache.ret;\n"
       @io << ident ident ident "} catch(e) {}\n"
@@ -155,7 +155,7 @@ END
       @io << ident ident "const ret = await fn.#{op.pretty_name}(#{(["ctx"] + op.args.map(&.name)).join(", ")});\n"
       @io << ident ident op.return_type.typescript_check_decoded("ret", "\"#{op.pretty_name}.ret\"")
       @io << ident ident "const encodedRet = " + op.return_type.typescript_encode("ret") + ";\n"
-      @io << ident ident "if (cacheKey !== null && cacheVersion !== null) hook.setCache(cacheKey, new Date(new Date().getTime() + cacheExpirationSeconds), cacheVersion, encodedRet)"
+      @io << ident ident "if (cacheKey !== null && cacheVersion !== null && cacheExpirationSeconds !== null) hook.setCache(cacheKey, new Date(new Date().getTime() + cacheExpirationSeconds), cacheVersion, encodedRet)"
       @io << ident ident "return encodedRet"
       @io << ident "},\n"
     end
