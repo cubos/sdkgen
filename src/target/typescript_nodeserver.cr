@@ -146,7 +146,7 @@ END
       @io << ident ident "if (cacheConfig.#{op.pretty_name}) {"
       @io << ident ident ident "try {\n"
       @io << ident ident ident ident "const {key, expirationSeconds, version} = await cacheConfig.#{op.pretty_name}(#{(["ctx"] + op.args.map(&.name)).join(", ")});\n"
-      @io << ident ident ident ident "if (!key) throw "";\n"
+      @io << ident ident ident ident "if (!key) throw \"\";\n"
       @io << ident ident ident ident "cacheKey = JSON.stringfy(key) + \"-#{op.pretty_name}\"; cacheExpirationSeconds = expiresSeconds; cacheVersion = version;"
       @io << ident ident ident ident "const cache = await hook.getCache(cacheKey, version);\n"
       @io << ident ident ident ident "if (cache && cache.expirationDate > new Date()) return cache.ret;\n"
