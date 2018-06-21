@@ -14,10 +14,10 @@ module Semantic
     end
 
     def visit(op : AST::Operation)
-      if @op_names.includes? op.name
-        raise SemanticException.new("Function '#{op.name}' is declared multiples times")
+      if @op_names.includes? op.pretty_name
+        raise SemanticException.new("Function '#{op.pretty_name}' is declared multiples times")
       end
-      @op_names << op.name
+      @op_names << op.pretty_name
       super
     end
   end
