@@ -359,8 +359,14 @@ END
     }
 
     private static class DateHelpers {
-        static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US);
-        static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        static SimpleDateFormat dateTimeFormat;
+        static SimpleDateFormat dateFormat;
+
+        static {
+            dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US);
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            dateTimeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        }
 
         static String encodeDateTime(Calendar cal) {
             return dateTimeFormat.format(cal.getTime());
