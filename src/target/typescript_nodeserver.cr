@@ -95,16 +95,12 @@ function toDateTimeString(date: Date) {
 
 END
 
-    @io << "export const fn: {\n"
+    @io << "export const cacheConfig: {\n"
     @ast.operations.each do |op|
       args = ["ctx: Context"] + op.args.map { |arg| "#{arg.name}: #{arg.type.typescript_native_type}" }
-      @io << "    " << op.pretty_name << ": (#{args.join(", ")}) => Promise<#{op.return_type.typescript_native_type}>;\n"
+      @io << "    " << op.pretty_name << "?: (#{args.join(", ")}) => Promise<{key: any, expirationSeconds: number, version: number}>;\n"
     end
-    @io << "} = {\n"
-    @ast.operations.each do |op|
-      @io << "    " << op.pretty_name << ": () => { throw \"not implemented\"; },\n"
-    end
-    @io << "};\n\n"
+    @io << "} = {};\n\n"
 
     @ast.struct_types.each do |t|
       @io << t.typescript_definition
@@ -116,6 +112,17 @@ END
       @io << "\n\n"
     end
 
+    @io << "export const fn: {\n"
+    @ast.operations.each do |op|
+      args = ["ctx: Context"] + op.args.map { |arg| "#{arg.name}: #{arg.type.typescript_native_type}" }
+      @io << "    " << op.pretty_name << ": (#{args.join(", ")}) => Promise<#{op.return_type.typescript_native_type}>;\n"
+    end
+    @io << "} = {\n"
+    @ast.operations.each do |op|
+      @io << "    " << op.pretty_name << ": () => { throw \"not implemented\"; },\n"
+    end
+    @io << "};\n\n"
+
     @io << "const fnExec: {[name: string]: (ctx: Context, args: any) => Promise<any>} = {\n"
     @ast.operations.each do |op|
       @io << "    " << op.pretty_name << ": async (ctx: Context, args: any) => {\n"
@@ -124,9 +131,22 @@ END
         @io << ident ident "const #{arg.name} = #{arg.type.typescript_decode("args.#{arg.name}")};"
         @io << "\n"
       end
+      @io << "\n"
+      @io << ident ident "let cacheKey: string | null = null, cacheExpirationSeconds: number | null = null, cacheVersion: number | null = null;"
+      @io << ident ident "if (cacheConfig.#{op.pretty_name}) {"
+      @io << ident ident ident "try {\n"
+      @io << ident ident ident ident "const {key, expirationSeconds, version} = await cacheConfig.#{op.pretty_name}(#{(["ctx"] + op.args.map(&.name)).join(", ")});\n"
+      @io << ident ident ident ident "if (!key) throw \"\";\n"
+      @io << ident ident ident ident "cacheKey = JSON.stringify(key) + \"-#{op.pretty_name}\"; cacheExpirationSeconds = expirationSeconds; cacheVersion = version;"
+      @io << ident ident ident ident "const cache = await hook.getCache(cacheKey, version);\n"
+      @io << ident ident ident ident "if (cache && cache.expirationDate > new Date()) return cache.ret;\n"
+      @io << ident ident ident "} catch(e) {}\n"
+      @io << ident ident "}\n"
       @io << ident ident "const ret = await fn.#{op.pretty_name}(#{(["ctx"] + op.args.map(&.name)).join(", ")});\n"
       @io << ident ident op.return_type.typescript_check_decoded("ret", "\"#{op.pretty_name}.ret\"")
-      @io << ident ident "return " + op.return_type.typescript_encode("ret") + ";\n"
+      @io << ident ident "const encodedRet = " + op.return_type.typescript_encode("ret") + ";\n"
+      @io << ident ident "if (cacheKey !== null && cacheVersion !== null && cacheExpirationSeconds !== null) hook.setCache(cacheKey, new Date(new Date().getTime() + cacheExpirationSeconds), cacheVersion, encodedRet);\n"
+      @io << ident ident "return encodedRet"
       @io << ident "},\n"
     end
     @io << "};\n\n"
@@ -205,11 +225,15 @@ export const hook: {
     onDevice: (id: string, deviceInfo: any) => Promise<void>
     onReceiveCall: (call: DBApiCall) => Promise<DBApiCall | void>
     afterProcessCall: (call: DBApiCall) => Promise<void>
+    setCache: (cacheKey: string, expirationDate: Date, version: number, ret: any) => Promise<void>
+    getCache: (cacheKey: string, version: number) => Promise<{expirationDate: Date, ret: any} | null>
 } = {
     onHealthCheck: async () => true,
     onDevice: async () => {},
     onReceiveCall: async () => {},
-    afterProcessCall: async () => {}
+    afterProcessCall: async () => {},
+    setCache: async () => {},
+    getCache: async () => null
 };
 
 export function start(port: number = 8000) {
