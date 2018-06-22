@@ -145,7 +145,7 @@ END
       @io << ident ident "const ret = await fn.#{op.pretty_name}(#{(["ctx"] + op.args.map(&.name)).join(", ")});\n"
       @io << ident ident op.return_type.typescript_check_decoded("ret", "\"#{op.pretty_name}.ret\"")
       @io << ident ident "const encodedRet = " + op.return_type.typescript_encode("ret") + ";\n"
-      @io << ident ident "if (cacheKey !== null && cacheVersion !== null) hook.setCache(cacheKey, cacheExpirationSeconds ? new Date(new Date().getTime() + (cacheExpirationSeconds * 1000)) : null, cacheVersion, JSON.stringify(key), #{op.pretty_name}, encodedRet);\n"
+      @io << ident ident "if (cacheKey !== null && cacheVersion !== null) hook.setCache(cacheKey, cacheExpirationSeconds ? new Date(new Date().getTime() + (cacheExpirationSeconds * 1000)) : null, cacheVersion, decodedKey!, #{op.pretty_name}, encodedRet);\n"
       @io << ident ident "return encodedRet"
       @io << ident "},\n"
     end
