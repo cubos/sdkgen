@@ -145,7 +145,7 @@ END
       @io << ident ident "const ret = await fn.#{op.pretty_name}(#{(["ctx"] + op.args.map(&.name)).join(", ")});\n"
       @io << ident ident op.return_type.typescript_check_decoded("ret", "\"#{op.pretty_name}.ret\"")
       @io << ident ident "const encodedRet = " + op.return_type.typescript_encode("ret") + ";\n"
-      @io << ident ident "if (cacheKey !== null && cacheVersion !== null) hook.setCache(cacheKey, cacheExpirationSeconds ? new Date(new Date().getTime() + (cacheExpirationSeconds * 1000)) : null, cacheVersion, encodedRet);\n"
+      @io << ident ident "if (cacheKey !== null && cacheVersion !== null) hook.setCache(cacheKey, cacheExpirationSeconds ? new Date(new Date().getTime() + (cacheExpirationSeconds * 1000)) : null, cacheVersion, JSON.stringify(key), #{op.pretty_name}, encodedRet);\n"
       @io << ident ident "return encodedRet"
       @io << ident "},\n"
     end
@@ -225,7 +225,7 @@ export const hook: {
     onDevice: (id: string, deviceInfo: any) => Promise<void>
     onReceiveCall: (call: DBApiCall) => Promise<DBApiCall | void>
     afterProcessCall: (call: DBApiCall) => Promise<void>
-    setCache: (cacheKey: string, expirationDate: Date | null, version: number, ret: any) => Promise<void>
+    setCache: (cacheKey: string, expirationDate: Date | null, version: number, decodedKey: string, fnName: string, ret: any) => Promise<void>
     getCache: (cacheKey: string, version: number) => Promise<{expirationDate: Date | null, ret: any} | null>
 } = {
     onHealthCheck: async () => true,
