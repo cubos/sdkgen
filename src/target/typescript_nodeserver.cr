@@ -98,7 +98,7 @@ END
     @io << "export const cacheConfig: {\n"
     @ast.operations.each do |op|
       args = ["ctx: Context"] + op.args.map { |arg| "#{arg.name}: #{arg.type.typescript_native_type}" }
-      @io << "    " << op.pretty_name << "?: (#{args.join(", ")}) => Promise<{key: any, expirationSeconds: number, version: number}>;\n"
+      @io << "    " << op.pretty_name << "?: (#{args.join(", ")}) => Promise<{key: any, expirationSeconds: number | null, version: number}>;\n"
     end
     @io << "} = {};\n\n"
 
