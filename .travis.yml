@@ -4,7 +4,7 @@ services:
   - docker
 
 script:
-  - docker build -t cubos/sdkgen .
+  - docker build -t cubos/sdkgen -t whenry/fedora-jboss:${TRAVIS_TAG} .
 
 deploy:
   provider: script
@@ -12,3 +12,4 @@ deploy:
   script: docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" && docker push cubos/sdkgen
   on:
     branch: master
+    tags: true
