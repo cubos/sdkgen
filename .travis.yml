@@ -4,7 +4,9 @@ services:
   - docker
 
 script:
-  - docker build -t cubos/sdkgen -t cubos/sdkgen:"$TRAVIS_TAG" .
+  - if [[ "$TRAVIS_TAG" ]] ; then
+      docker build -t cubos/sdkgen -t cubos/sdkgen:$TRAVIS_TAG . ;      
+    fi
 
 deploy:
   provider: script
