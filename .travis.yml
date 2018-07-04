@@ -4,7 +4,7 @@ services:
   - docker
 
 script:
-  - docker build -t cubos/sdkgen -t whenry/fedora-jboss:${TRAVIS_TAG} .
+  - docker build -t cubos/sdkgen -t cubos/sdkgen:$TRAVIS_TAG .
 
 deploy:
   provider: script
