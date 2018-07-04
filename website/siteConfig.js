@@ -21,8 +21,8 @@ const users = [
 ];
 
 const siteConfig = {
-  title: 'Test Site 3' /* title for your website */,
-  tagline: 'A website for testing',
+  title: 'sdkgen' /* title for your website */,
+  tagline: 'Integrate all plataforms in a blink',
   url: 'https://cubos.github.io' /* your website url */,
   baseUrl: '/sdkgen/' /* base url for your project */,
   // For github.io type URLs, you would set the url and baseUrl like:
