@@ -19,7 +19,7 @@ script:
 deploy:
   provider: script
   skip_cleanup: true
-  script: docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" && docker push cubos/sdkgen
+  script: docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" && docker push cubos/sdkgen:$TRAVIS_TAG
   on:
     branch: master
     tags: true
