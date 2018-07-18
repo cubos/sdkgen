@@ -33,7 +33,7 @@ module AST
 
     def typescript_check_decoded(expr, descr)
       String.build do |io|
-        io << "if (#{expr} === null || #{expr} === undefined || !(#{expr} instanceof Date)) {\n"
+        io << "if (#{expr} === null || #{expr} === undefined || !(#{expr} instanceof Date || ((#{expr} as any).match && (#{expr} as any).match(/^[0-9]{4}-[01][0-9]-[0123][0-9]/)))) {\n"
         io << "    const err = new Error(\"Invalid Type at '\" + #{descr} + \"', expected #{self.class.name}, got '\" + #{expr} + \"'\");\n"
         io << "    typeCheckerError(err, ctx);\n"
         io << "}\n"
