@@ -51,6 +51,10 @@ END
   private device() {
     const device: any = {
       type: "node",
+      language: null,
+      screen: null,
+      platform: null,
+      version: null
     };
     if (this.deviceId)
       device.id = this.deviceId;
