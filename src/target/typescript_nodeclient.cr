@@ -5,6 +5,7 @@ class TypeScriptNodeClient < Target
     @io << <<-END
 import * as https from "https";
 import * as http from "http";
+import { randomBytes } from "crypto";
 import { URL } from "url";
 
 END
@@ -22,6 +23,7 @@ END
     @io << <<-END
 export class ApiClient {
   deviceId: string | null = null;
+  fingerprint = randomBytes(8).toString("hex");
 
   constructor(private baseUrl = #{("https://" + @ast.options.url).inspect}, private useStaging = false) {}
 
@@ -51,6 +53,7 @@ END
   private device() {
     const device: any = {
       type: "node",
+      fingerprint: this.fingerprint,
       language: null,
       screen: null,
       platform: null,
@@ -60,18 +63,11 @@ END
       device.id = this.deviceId;
     return device;
   }
-
-  private randomBytesHex(len: number) {
-    let hex = "";
-    for (let i = 0; i < 2 * len; ++i)
-      hex += "0123456789abcdef"[Math.floor(Math.random() * 16)];
-    return hex;
-  }
-
+  
   private async makeRequest({name, args}: {name: string, args: any}) {
     const deviceData = this.device();
     const body = {
-      id: this.randomBytesHex(8),
+      id: randomBytes(8).toString("hex"),
       device: deviceData,
       name: name,
       args: args
