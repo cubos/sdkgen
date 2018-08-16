@@ -5,7 +5,7 @@ module AST
     end
 
     def typescript_encode(expr)
-      "#{expr}.toISOString().split(\"T\")[0]"
+      "new Date(#{expr} - #{expr}.getTimezoneOffset() * 60000).toISOString().split(\"T\")[0]"
     end
 
     def typescript_native_type
