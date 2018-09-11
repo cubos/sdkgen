@@ -39,6 +39,7 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.net.SocketTimeoutException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -760,7 +761,7 @@ END
                     http.newCall(request).enqueue(new okhttp3.Callback() {
                         @Override
                         public void onFailure(Call call, final IOException e) {
-                            if (!shouldReceiveResponse[0]) return;
+                            if (!shouldReceiveResponse[0] || e instanceof SocketTimeoutException) return;
                             shouldReceiveResponse[0] = false;
                             timer.cancel();
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
