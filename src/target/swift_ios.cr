@@ -128,8 +128,8 @@ class APIInternal {
         var error: Error?
 
         init(json: [String: Any]) {
-            self.ok = json["ok"] as! Bool
-            self.deviceId = json["deviceId"] as! String
+            self.ok = (json["ok"] as! Bool)
+            self.deviceId = (json["deviceId"] as! String)
             self.result = json["result"] is NSNull ? nil : json["result"]!
             self.error = json["error"] is NSNull ? nil: (Error(json: json["error"] as! [String: Any]))
         }
