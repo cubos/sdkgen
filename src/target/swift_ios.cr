@@ -236,40 +236,13 @@ class APIInternal {
     }
 }
 
-protocol EnumCollection: Hashable, EnumDisplayableValue {
-    static var allValues: [Self] { get }
-}
-
-protocol EnumDisplayableValue: RawRepresentable {
+protocol DisplayableValue: RawRepresentable {
     var displayableValue: String { get }
 }
 
-extension EnumDisplayableValue where RawValue == String {
+extension DisplayableValue where RawValue == String {
     var displayableValue: String {
         return self.rawValue
-    }
-}
-
-extension EnumCollection {
-
-    static func cases() -> AnySequence<Self> {
-        typealias S = Self
-        return AnySequence { () -> AnyIterator<S> in
-            var raw = 0
-            return AnyIterator {
-                let current: Self = withUnsafePointer(to: &raw) {
-                    $0.withMemoryRebound(to: S.self, capacity: 1) { $0.pointee }
-                }
-
-                guard current.hashValue == raw else { return nil }
-                raw += 1
-                return current
-            }
-        }
-    }
-
-    static var allValues: [Self] {
-        return Array(self.cases())
     }
 }
 
