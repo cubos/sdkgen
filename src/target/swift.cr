@@ -122,7 +122,7 @@ END
       if t.name == "ErrorType"
         io << "enum #{t.name}: String, Error {\n"
       else
-        io << "enum #{t.name}: String, EnumCollection {\n"
+        io << "enum #{t.name}: String, CaseIterable, DisplayableValue {\n"
       end
 
       t.values.each do |value|
@@ -134,7 +134,7 @@ END
         io << ident "}\n"
         io << ident "\nstatic func valuesDictionary() -> [String: #{t.name}] {\n"
         io << ident ident "var dictionary: [String: #{t.name}] = [:]\n"
-        io << ident ident "for enumCase in self.allValues {\n"
+        io << ident ident "for enumCase in self.allCases {\n"
         io << ident ident ident "dictionary[enumCase.displayableValue] = enumCase\n"
         io << ident ident "}\n"
         io << ident ident "return dictionary\n"
@@ -142,7 +142,7 @@ END
 
         io << ident "\nstatic func allDisplayableValues() -> [String] {\n"
         io << ident ident "var displayableValues: [String] = []\n"
-        io << ident ident "for enumCase in self.allValues {\n"
+        io << ident ident "for enumCase in self.allCases {\n"
         io << ident ident ident "displayableValues.append(enumCase.displayableValue)\n"
         io << ident ident "}\n"
         io << ident ident "return displayableValues.sorted()\n"
