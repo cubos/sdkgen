@@ -2,9 +2,19 @@ require "./target"
 
 class TypeScriptServerTestTarget < Target
   def gen
-    @io << <<-END
+    if @ast.options.syntheticDefaultImports
+      @io << <<-END
 import http from "http";
 
+END
+    else
+      @io << <<-END
+import * as http from "http";
+
+END
+    end
+
+    @io << <<-END
 export interface Context {
     call: DBApiCall;
     device: DBDevice;
