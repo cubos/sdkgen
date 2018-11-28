@@ -5,7 +5,7 @@ module AST
     end
 
     def typescript_encode(expr)
-      "new Date(#{expr}.getTime() - #{expr}.getTimezoneOffset() * 60000).toISOString().split(\"T\")[0]"
+      "typeof(#{expr}) === \"string\" ? new Date(new Date(#{expr}).getTime() - new Date(#{expr}).getTimezoneOffset() * 60000).toISOString().split(\"T\")[0] :new Date(#{expr}.getTime() - #{expr}.getTimezoneOffset() * 60000).toISOString().split(\"T\")[0]"
     end
 
     def typescript_native_type
