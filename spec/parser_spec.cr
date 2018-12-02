@@ -75,28 +75,28 @@ describe Parser do
   end
 
   it "fails when field happens twice" do
-    check_doesnt_parse(<<-END
+    check_doesnt_parse(<<-END, "redeclare"
     type Baz {
       a: int
       b: bool
       a: int
     }
     END
-    , "redeclare")
+    )
 
-    check_doesnt_parse(<<-END
+    check_doesnt_parse(<<-END, "redeclare"
     type Baz {
       b: int
       xx: bool
       xx: int
     }
     END
-    , "redeclare")
+    )
 
-    check_doesnt_parse(<<-END
+    check_doesnt_parse(<<-END, "redeclare"
     function foo(a: string, a: int)
     END
-    , "redeclare")
+    )
   end
 
   it "handles spreads in structs" do
