@@ -162,6 +162,12 @@ module AST
         io << "\n"
         anyop = true
       end
+      if options.retryRequest != true
+        io << "$retryRequest = "
+        options.retryRequest.inspect(io)
+        io << "\n"
+        anyop = true
+      end
       if options.strict != false
         io << "$strict = "
         options.strict.inspect(io)
