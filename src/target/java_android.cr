@@ -740,7 +740,7 @@ END
     end
   end}
                     sentCount[0] += 1;
-                    if (sentCount[0] >= 22) {
+                    if (sentCount[0] >= #{@ast.options.retryRequest ? "22" : "2"}) {
                         return;
                     }
                     if (sentCount[0] >= 25) {

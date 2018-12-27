@@ -118,6 +118,7 @@ module AST
     property useRethink = true
     property strict = false
     property syntheticDefaultImports = true
+    property retryRequest = true
   end
 
   class Field
