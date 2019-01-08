@@ -20,9 +20,9 @@ script:
         docker build ./target-web -t cubos/sdkgen/target-web -t cubos/sdkgen/target-web:$TRAVIS_TAG &
         docker build ./target-android -t cubos/sdkgen/target-android -t cubos/sdkgen/target-android:$TRAVIS_TAG &
         docker build ./target-node -t cubos/sdkgen/target-node -t cubos/sdkgen/target-node:$TRAVIS_TAG
-    else
+      else
         docker build .;
-    fi
+      fi
 
 deploy:
     provider: script
