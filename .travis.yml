@@ -15,11 +15,11 @@ script:
     - yarn install && GIT_USER="${GH_NAME}" yarn run publish-gh-pages
     - cd ..
     - if [[ "$TRAVIS_TAG" ]] ; then
-        docker build . -t cubos/sdkgen -t cubos/sdkgen:$TRAVIS_TAG &;
-        docker build ./target-node -t cubos/sdkgen/target-node -t cubos/sdkgen/target-node:$TRAVIS_TAG &;
-        docker build ./target-web -t cubos/sdkgen/target-web -t cubos/sdkgen/target-web:$TRAVIS_TAG &;
-        docker build ./target-android -t cubos/sdkgen/target-android -t cubos/sdkgen/target-android:$TRAVIS_TAG &;
-        docker build ./target-node -t cubos/sdkgen/target-node -t cubos/sdkgen/target-node:$TRAVIS_TAG;
+        docker build . -t cubos/sdkgen -t cubos/sdkgen:$TRAVIS_TAG
+        docker build ./target-node -t cubos/sdkgen/target-node -t cubos/sdkgen/target-node:$TRAVIS_TAG
+        docker build ./target-web -t cubos/sdkgen/target-web -t cubos/sdkgen/target-web:$TRAVIS_TAG
+        docker build ./target-android -t cubos/sdkgen/target-android -t cubos/sdkgen/target-android:$TRAVIS_TAG
+        docker build ./target-node -t cubos/sdkgen/target-node -t cubos/sdkgen/target-node:$TRAVIS_TAG
       else
         docker build .;
       fi
