@@ -16,3 +16,4 @@ The sdkgen is a tool that aims on solving client-server communication and data l
 - [ ] Improve README
 - [ ] Create and host documentation page
 - [ ] Make it database neutral
+- [x] Move associated tooling related to package publishing to travis
