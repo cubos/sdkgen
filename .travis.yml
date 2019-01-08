@@ -21,7 +21,7 @@ script:
         docker image build ./target-android -t cubos/sdkgen/target-android -t cubos/sdkgen/target-android:$TRAVIS_TAG;
         docker image build ./target-node -t cubos/sdkgen/target-node -t cubos/sdkgen/target-node:$TRAVIS_TAG;
       else
-        docker image build . -t;
+        docker image build .;
       fi
 
 deploy:
