@@ -261,7 +261,7 @@ export function start(port: number = 8000) {
                 res.end();
                 return;
             }
-            const ip = req.headers["x-real-ip"] as string || "";
+            const ip = req.headers["x-real-ip"] as string || (req.headers["x-fowarded-for"] as string || "");
             const signature = req.method! + url.parse(req.url || "").pathname;
             if (httpHandlers[signature]) {
                 console.log(`${toDateTimeString(new Date())} http ${signature}`);
