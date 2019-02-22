@@ -22,6 +22,7 @@ module AST
     def semantic
       errors << "Fatal"
       errors << "Connection"
+      errors << "Serialization"
       error_types_enum = AST::EnumType.new
       error_types_enum.values = errors
       error_types_enum_def = AST::TypeDefinition.new
