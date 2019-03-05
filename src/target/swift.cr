@@ -65,7 +65,7 @@ abstract class SwiftTarget < Target
       io << ident ident "\n)\n"
       io << ident "}\n"
       t.spreads.map(&.type.as(AST::StructType)).map { |spread|
-        io << ident "\nvar #{spread.name.split("").map_with_index { |char, i| i == 0 ? char.downcase : char }.join("")}: #{spread.name} {\n"
+        io << ident "\nvar as#{spread.name.split("").map_with_index { |char, i| i == 0 ? char.downcase : char }.join("")}: #{spread.name} {\n"
         io << ident ident "return #{spread.name}(\n"
         io << ident ident ident spread.fields.map { |field| "#{field.name}: #{field.name}" }.join(",\n")
         io << ident ident "\n)\n"
@@ -93,8 +93,8 @@ END
 }
 
 init(json: [String: Any]) throws {
-    let data = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
-    let decodedSelf = try decoder.decode(#{t.name}.self, from: data)\n
+    let jsonData = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
+    let decodedSelf = try decoder.decode(#{t.name}.self, from: jsonData)\n
 
 END
       t.fields.each do |field|
