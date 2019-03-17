@@ -351,6 +351,10 @@ END
         return Internal.getHttpClient();
     }
 
+    static public void setHttpClient(OkHttpClient newClient) {
+        Internal.setHttpClient(newClient);
+    }
+
     static public void setApiUrl(String url) {
         Internal.forcedUrl = url;
     }
@@ -426,6 +430,10 @@ END
             }
 
             return http;
+        }
+
+        static void setHttpClient(OkHttpClient newClient) {
+            http = newClient;
         }
 
         static void createHttpClient() {
