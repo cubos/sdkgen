@@ -37,7 +37,7 @@ interface DBDevice {
     language: string
     lastActiveAt?: Date
     push?: string
-    timezone?: string
+    timezone?: string | null
 }
 
 interface DBApiCall {
