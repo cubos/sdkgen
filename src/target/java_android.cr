@@ -629,6 +629,7 @@ END
                 put("width", size.x);
                 put("height", size.y);
             }});
+            device.put("timezone", Calendar.getInstance().getTimeZone().getID());
             SharedPreferences pref = context().getSharedPreferences("api", Context.MODE_PRIVATE);
             if (pref.contains("deviceId"))
                 device.put("id", pref.getString("deviceId", null));
