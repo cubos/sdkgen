@@ -838,8 +838,7 @@ END
                     });
                 }
             };
-
-            timer.schedule(task, 0, 2000);
+            timer.scheduleAtFixedRate(task, 0, 2000);
         }
 
         static Calendar toCalendar(Date date){
