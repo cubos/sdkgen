@@ -437,6 +437,15 @@ END
         }
 
         static void createHttpClient() {
+            if (http != null) {
+                OkHttpClient.Builder builder = http.newBuilder();
+                if (interceptor != null)
+                    builder.addNetworkInterceptor(interceptor);
+                
+                http = builder.build();
+                return;
+            }
+
             connectionPool = new ConnectionPool(100, 45, TimeUnit.SECONDS);
 
             TrustManagerFactory trustManagerFactory;
@@ -748,10 +757,7 @@ END
     end
   end}
                     sentCount[0] += 1;
-                    if (sentCount[0] >= #{@ast.options.retryRequest ? "22" : "2"}) {
-                        return;
-                    }
-                    if (sentCount[0] >= 25) {
+                    if (sentCount[0] >= 22) {
                         if (!shouldReceiveResponse[0]) return;
                         shouldReceiveResponse[0] = false;
                         timer.cancel();
@@ -763,9 +769,15 @@ END
                         });
                         return;
                     }
+
+                    if (sentCount[0] >= #{@ast.options.retryRequest ? "22" : "2"}) {
+                        return;
+                    }
+
                     if (sentCount[0] % 4 == 0) {
                         createHttpClient();
                     }
+
                     http.newCall(request).enqueue(new okhttp3.Callback() {
                         @Override
                         public void onFailure(Call call, final IOException e) {
