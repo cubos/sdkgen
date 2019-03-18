@@ -757,7 +757,7 @@ END
     end
   end}
                     sentCount[0] += 1;
-                    if (sentCount[0] >= 22 || (setCount[0] * 2000) >= http.connectTimeoutMillis()) {
+                    if (sentCount[0] >= 22 || (senCount[0] * 2000) >= http.connectTimeoutMillis()) {
                         if (!shouldReceiveResponse[0]) return;
                         shouldReceiveResponse[0] = false;
                         timer.cancel();
