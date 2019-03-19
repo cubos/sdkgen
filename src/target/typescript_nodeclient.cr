@@ -57,13 +57,14 @@ END
       language: null,
       screen: null,
       platform: null,
-      version: null
+      version: null,
+      timezone: null
     };
     if (this.deviceId)
       device.id = this.deviceId;
     return device;
   }
-  
+
   private async makeRequest({name, args}: {name: string, args: any}) {
     const deviceData = this.device();
     const body = {
