@@ -10,18 +10,18 @@ protocol ApiCallsLogic: class {\n
 END
 
     @ast.operations.each do |op|
-        args = op.args.map { |arg| "#{arg.name}: #{native_type arg.type}" }
-        if op.return_type.is_a? AST::VoidPrimitiveType
-            args << "callback: ((_ result: API.ApiInternal.Result<API.NoReply>) -> Void)?"
-        else
-            ret = op.return_type
-            args << "callback: ((_ result: API.ApiInternal.Result<#{native_type ret}>) -> Void)?"
-        end
+      args = op.args.map { |arg| "#{arg.name}: #{native_type arg.type}" }
+      if op.return_type.is_a? AST::VoidPrimitiveType
+        args << "callback: ((_ result: API.ApiInternal.Result<API.NoReply>) -> Void)?"
+      else
+        ret = op.return_type
+        args << "callback: ((_ result: API.ApiInternal.Result<#{native_type ret}>) -> Void)?"
+      end
 
-        @io << ident "@discardableResult func #{op.pretty_name}(#{args.join(", ")}) -> DataRequest\n"
+      @io << ident "@discardableResult func #{op.pretty_name}(#{args.join(", ")}) -> DataRequest\n"
     end
 
-    @io << "}\n\n" #CloseAPICallsProtocol
+    @io << "}\n\n" # CloseAPICallsProtocol
     @io << <<-END
 
 class API {
@@ -56,37 +56,37 @@ class API {
      // MARK: Struct and Enums
      struct NoReply: Codable {}\n\n
 END
-    #ApiCalls
+    # ApiCalls
     @io << ident(String.build do |io|
-        io << "public class Calls: ApiCallsLogic {\n"
-        @ast.operations.each do |op|
-            args = op.args.map { |arg| "#{arg.name}: #{native_type arg.type}" }
+      io << "public class Calls: ApiCallsLogic {\n"
+      @ast.operations.each do |op|
+        args = op.args.map { |arg| "#{arg.name}: #{native_type arg.type}" }
 
-            if op.return_type.is_a? AST::VoidPrimitiveType
-              args << "callback: ((_ result: ApiInternal.Result<NoReply>) -> Void)?"
-            else
-              ret = op.return_type
-              args << "callback: ((_ result: ApiInternal.Result<#{native_type ret}>) -> Void)?"
-            end
-            io << ident(String.build do |io|
-                io << "@discardableResult public func #{op.pretty_name}(#{args.join(", ")}) -> DataRequest {\n"
-                io << ident(String.build do |io|
-                    if op.args.size != 0
-                      io << "var args = [String: Any]()\n"
-                    else
-                      io << "let args = [String: Any]()\n"
-                    end
-                    op.args.each do |arg|
-                      io << "args[\"#{arg.name}\"] = #{type_to_json arg.type, arg.name}\n"
-                    end
-                    io << "\n"
-                    io << "return API.apiInternal.makeRequest(#{op.pretty_name.inspect}, args, callback: callback)\n"
-                end) # end of function body indentation.
-                  io << "}"
-            end) # end of function indentation.
-            io << "\n\n"
+        if op.return_type.is_a? AST::VoidPrimitiveType
+          args << "callback: ((_ result: ApiInternal.Result<NoReply>) -> Void)?"
+        else
+          ret = op.return_type
+          args << "callback: ((_ result: ApiInternal.Result<#{native_type ret}>) -> Void)?"
         end
-        io << "}\n"
+        io << ident(String.build do |io|
+          io << "@discardableResult public func #{op.pretty_name}(#{args.join(", ")}) -> DataRequest {\n"
+          io << ident(String.build do |io|
+            if op.args.size != 0
+              io << "var args = [String: Any]()\n"
+            else
+              io << "let args = [String: Any]()\n"
+            end
+            op.args.each do |arg|
+              io << "args[\"#{arg.name}\"] = #{type_to_json arg.type, arg.name}\n"
+            end
+            io << "\n"
+            io << "return API.apiInternal.makeRequest(#{op.pretty_name.inspect}, args, callback: callback)\n"
+          end) # end of function body indentation.
+          io << "}"
+        end) # end of function indentation.
+        io << "\n\n"
+      end
+      io << "}\n"
     end) # end of Calls indentation.
     @io << "\n"
 
