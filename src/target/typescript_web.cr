@@ -85,7 +85,8 @@ async function device() {
       height: screen.height
     },
     version: me ? me.src : "",
-    language: navigator.language
+    language: navigator.language,
+    timezone: typeof Intl === "object" ? Intl.DateTimeFormat().resolvedOptions().timeZone : null
   };
   const deviceId = getDeviceId();
   if (deviceId)
