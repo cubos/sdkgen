@@ -26,7 +26,7 @@ abstract class SwiftTarget < Target
   end
 
   def native_type(t : AST::StructType | AST::EnumType)
-    t.name
+    "API." + t.name
   end
 
   def native_type(ref : AST::TypeReference)
