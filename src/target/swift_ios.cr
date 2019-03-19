@@ -183,6 +183,7 @@ END
             }
 
             device["language"] = Locale.preferredLanguages[0]
+            device["timezone"] = TimeZone.current.identifier
             if let currentId = deviceId {
                 device["id"] = currentId
             }

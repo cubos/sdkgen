@@ -351,6 +351,10 @@ END
         return Internal.getHttpClient();
     }
 
+    static public void setHttpClient(OkHttpClient newClient) {
+        Internal.setHttpClient(newClient);
+    }
+
     static public void setApiUrl(String url) {
         Internal.forcedUrl = url;
     }
@@ -428,7 +432,20 @@ END
             return http;
         }
 
+        static void setHttpClient(OkHttpClient newClient) {
+            http = newClient;
+        }
+
         static void createHttpClient() {
+            if (http != null) {
+                OkHttpClient.Builder builder = http.newBuilder();
+                if (interceptor != null)
+                    builder.addNetworkInterceptor(interceptor);
+                
+                http = builder.build();
+                return;
+            }
+
             connectionPool = new ConnectionPool(100, 45, TimeUnit.SECONDS);
 
             TrustManagerFactory trustManagerFactory;
@@ -612,6 +629,7 @@ END
                 put("width", size.x);
                 put("height", size.y);
             }});
+            device.put("timezone", Calendar.getInstance().getTimeZone().getID());
             SharedPreferences pref = context().getSharedPreferences("api", Context.MODE_PRIVATE);
             if (pref.contains("deviceId"))
                 device.put("id", pref.getString("deviceId", null));
@@ -734,16 +752,8 @@ END
             final TimerTask task = new TimerTask() {
                 @Override
                 public void run() {
-#{String.build do |io|
-    unless @ast.options.useRethink
-      io << "\n                    timer.cancel();"
-    end
-  end}
                     sentCount[0] += 1;
-                    if (sentCount[0] >= #{@ast.options.retryRequest ? "22" : "2"}) {
-                        return;
-                    }
-                    if (sentCount[0] >= 25) {
+                    if (sentCount[0] >= 22 || (sentCount[0] * 2000) >= http.connectTimeoutMillis()) {
                         if (!shouldReceiveResponse[0]) return;
                         shouldReceiveResponse[0] = false;
                         timer.cancel();
@@ -755,9 +765,15 @@ END
                         });
                         return;
                     }
+
+                    if (sentCount[0] >= #{@ast.options.retryRequest ? "22" : "2"}) {
+                        return;
+                    }
+
                     if (sentCount[0] % 4 == 0) {
                         createHttpClient();
                     }
+
                     http.newCall(request).enqueue(new okhttp3.Callback() {
                         @Override
                         public void onFailure(Call call, final IOException e) {
@@ -818,8 +834,7 @@ END
                     });
                 }
             };
-
-            timer.schedule(task, 0, 2000);
+            timer.scheduleAtFixedRate(task, 0, 2000);
         }
 
         static Calendar toCalendar(Date date){
