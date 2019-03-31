@@ -7,7 +7,7 @@ abstract class JavaTarget < Target
          boolean class if int byte do for while void float double long char synchronized
          instanceof extends implements interface abstract static public private protected
          final import package throw throws catch finally try new null else return continue
-         break goto switch default case
+         break goto switch default case in
          Object Class
        ].includes? ident
       "_" + ident
