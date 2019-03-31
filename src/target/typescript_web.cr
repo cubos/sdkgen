@@ -85,7 +85,8 @@ async function device() {
       height: screen.height
     },
     version: me ? me.src : "",
-    language: navigator.language
+    language: navigator.language,
+    timezone: typeof Intl === "object" ? Intl.DateTimeFormat().resolvedOptions().timeZone : null
   };
   const deviceId = getDeviceId();
   if (deviceId)
@@ -130,7 +131,7 @@ async function makeRequest({name, args}: {name: string, args: any}) {
   const deviceData = await device();
   return new Promise<any>((resolve, reject) => {
     const req = new XMLHttpRequest();
-    req.open("POST", "https://" + baseUrl + (useStaging ? "-staging" : "") + "/" + name);
+    req.open("POST", (baseUrl.startsWith("http") ? "" : "https://") + baseUrl + (useStaging ? "-staging" : "") + "/" + name);
     const body = {
       id: randomBytesHex(8),
       device: deviceData,

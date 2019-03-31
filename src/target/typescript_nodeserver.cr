@@ -3,33 +3,28 @@ require "./target"
 
 class TypeScriptServerTarget < Target
   def gen
-    @io << <<-END
-#{String.build do |io|
     if @ast.options.syntheticDefaultImports
-      io << <<-END
+      @io << <<-END
 import http from "http";
 import crypto from "crypto";
 import os from "os";
 import url from "url";
 import Raven from "raven";
+
 END
     else
-      io << <<-END
+      @io << <<-END
 import * as http from "http";
 import * as crypto from "crypto";
 import * as os from "os";
 import * as url from "url";
 const Raven = require("raven");
+
 END
     end
-  end}
-#{String.build do |io|
-    if @ast.options.useRethink
-      io << <<-END
-import r from "../rethinkdb";
-END
-    else
-      io << <<-END
+
+    unless @ast.options.useRethink
+      @io << <<-END
 
 interface DBDevice {
     id: string
@@ -42,6 +37,7 @@ interface DBDevice {
     language: string
     lastActiveAt?: Date
     push?: string
+    timezone?: string | null
 }
 
 interface DBApiCall {
@@ -61,7 +57,8 @@ interface DBApiCall {
 
 END
     end
-  end}
+
+    @io << <<-END
 
 let captureError: (e: Error, req?: http.IncomingMessage, extra?: any) => void = () => {};
 export function setCaptureErrorFn(fn: (e: Error, req?: http.IncomingMessage, extra?: any) => void) {
@@ -99,16 +96,12 @@ function toDateTimeString(date: Date) {
 
 END
 
-    @io << "export const fn: {\n"
+    @io << "export const cacheConfig: {\n"
     @ast.operations.each do |op|
       args = ["ctx: Context"] + op.args.map { |arg| "#{arg.name}: #{arg.type.typescript_native_type}" }
-      @io << "    " << op.pretty_name << ": (#{args.join(", ")}) => Promise<#{op.return_type.typescript_native_type}>;\n"
+      @io << "    " << op.pretty_name << "?: (#{args.join(", ")}) => Promise<{key: any, expirationSeconds: number | null, version: number}>;\n"
     end
-    @io << "} = {\n"
-    @ast.operations.each do |op|
-      @io << "    " << op.pretty_name << ": () => { throw \"not implemented\"; },\n"
-    end
-    @io << "};\n\n"
+    @io << "} = {};\n\n"
 
     @ast.struct_types.each do |t|
       @io << t.typescript_definition
@@ -120,6 +113,17 @@ END
       @io << "\n\n"
     end
 
+    @io << "export const fn: {\n"
+    @ast.operations.each do |op|
+      args = ["ctx: Context"] + op.args.map { |arg| "#{arg.name}: #{arg.type.typescript_native_type}" }
+      @io << "    " << op.pretty_name << ": (#{args.join(", ")}) => Promise<#{op.return_type.typescript_native_type}>;\n"
+    end
+    @io << "} = {\n"
+    @ast.operations.each do |op|
+      @io << "    " << op.pretty_name << ": () => { throw \"not implemented\"; },\n"
+    end
+    @io << "};\n\n"
+
     @io << "const fnExec: {[name: string]: (ctx: Context, args: any) => Promise<any>} = {\n"
     @ast.operations.each do |op|
       @io << "    " << op.pretty_name << ": async (ctx: Context, args: any) => {\n"
@@ -128,9 +132,22 @@ END
         @io << ident ident "const #{arg.name} = #{arg.type.typescript_decode("args.#{arg.name}")};"
         @io << "\n"
       end
+      @io << "\n"
+      @io << ident ident "let cacheKey: string | null = null, decodedKey: string | null = null, cacheExpirationSeconds: number | null = null, cacheVersion: number | null = null;\n"
+      @io << ident ident "if (cacheConfig.#{op.pretty_name}) {\n"
+      @io << ident ident ident "try {\n"
+      @io << ident ident ident ident "const {key, expirationSeconds, version} = await cacheConfig.#{op.pretty_name}(#{(["ctx"] + op.args.map(&.name)).join(", ")});\n"
+      @io << ident ident ident ident "if (!key) throw \"\";\n"
+      @io << ident ident ident ident "cacheKey = crypto.createHash(\"sha256\").update(JSON.stringify(key)+ \"-#{op.pretty_name}\").digest(\"hex\").substr(0, 100); decodedKey = JSON.stringify(key); cacheExpirationSeconds = expirationSeconds; cacheVersion = version;\n"
+      @io << ident ident ident ident "const cache = await hook.getCache(cacheKey, version);console.log(JSON.stringify(cache));\n"
+      @io << ident ident ident ident "if (cache && (!cache.expirationDate || cache.expirationDate > new Date())) return cache.ret;\n"
+      @io << ident ident ident "} catch(e) {console.log(JSON.stringify(e));}\n"
+      @io << ident ident "}\n"
       @io << ident ident "const ret = await fn.#{op.pretty_name}(#{(["ctx"] + op.args.map(&.name)).join(", ")});\n"
       @io << ident ident op.return_type.typescript_check_decoded("ret", "\"#{op.pretty_name}.ret\"")
-      @io << ident ident "return " + op.return_type.typescript_encode("ret") + ";\n"
+      @io << ident ident "const encodedRet = " + op.return_type.typescript_encode("ret") + ";\n"
+      @io << ident ident "if (cacheKey !== null && cacheVersion !== null) hook.setCache(cacheKey, cacheExpirationSeconds ? new Date(new Date().getTime() + (cacheExpirationSeconds * 1000)) : null, cacheVersion, decodedKey!, \"#{op.pretty_name}\", encodedRet);\n"
+      @io << ident ident "return encodedRet"
       @io << ident "},\n"
     end
     @io << "};\n\n"
@@ -209,11 +226,15 @@ export const hook: {
     onDevice: (id: string, deviceInfo: any) => Promise<void>
     onReceiveCall: (call: DBApiCall) => Promise<DBApiCall | void>
     afterProcessCall: (call: DBApiCall) => Promise<void>
+    setCache: (cacheKey: string, expirationDate: Date | null, version: number, decodedKey: string, fnName: string, ret: any) => Promise<void>
+    getCache: (cacheKey: string, version: number) => Promise<{expirationDate: Date | null, ret: any} | null>
 } = {
     onHealthCheck: async () => true,
     onDevice: async () => {},
     onReceiveCall: async () => {},
-    afterProcessCall: async () => {}
+    afterProcessCall: async () => {},
+    setCache: async () => {},
+    getCache: async () => null
 };
 
 export function start(port: number = 8000) {
@@ -241,7 +262,7 @@ export function start(port: number = 8000) {
                 res.end();
                 return;
             }
-            const ip = req.headers["x-real-ip"] as string || "";
+            const ip = req.headers["x-real-ip"] as string || (req.headers["x-fowarded-for"] as string || "");
             const signature = req.method! + url.parse(req.url || "").pathname;
             if (httpHandlers[signature]) {
                 console.log(`${toDateTimeString(new Date())} http ${signature}`);
@@ -413,7 +434,7 @@ export function start(port: number = 8000) {
         });
     }
 
-    if (process.env.DEBUGGING) {
+    if (process.env.DEBUGGING && !process.env.NOLOCALTUNNEL) {
         port = (Math.random() * 50000 + 10000) | 0;
     }
 
@@ -425,8 +446,8 @@ export function start(port: number = 8000) {
         });
     }
 
-    if (process.env.DEBUGGING) {
-        const subdomain = require("crypto").createHash("md5").update(process.argv[1]).digest("hex").substr(0, 8);
+    if (process.env.DEBUGGING && !process.env.NOLOCALTUNNEL) {
+        const subdomain = require("crypto").createHash("sha256").update(process.argv[1]).digest("hex").substr(0, 8);
         require("localtunnel")(port, {subdomain}, (err: Error | null, tunnel: any) => {
             if (err) throw err;
             console.log("Tunnel URL:", tunnel.url);
@@ -435,20 +456,20 @@ export function start(port: number = 8000) {
 }
 
 fn.ping = async (ctx: Context) => "pong";
+END
 
-#{String.build do |io|
     if @ast.options.useRethink
-      io << <<-END
+      @io << <<-END
 fn.setPushToken = async (ctx: Context, token: string) => {
     await r.table("devices").get(ctx.device.id).update({push: token});
 };
 END
     end
-  end}
 
-#{String.build do |io|
     if @ast.options.useRethink
-      io << <<-END
+      @io << <<-END
+
+
 import r from "../rethinkdb";
 
 hook.onHealthCheck = async () => {
@@ -496,8 +517,6 @@ hook.afterProcessCall = async (call) => {
 
 END
     end
-  end}
-END
   end
 
   @i = 0

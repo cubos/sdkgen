@@ -235,6 +235,14 @@ class Parser
         options.useRethink = false
       end
       read_next_token
+    when "retryRequest"
+      case token = multi_expect(TrueKeywordToken, FalseKeywordToken)
+      when TrueKeywordToken
+        options.retryRequest = true
+      when FalseKeywordToken
+        options.retryRequest = false
+      end
+      read_next_token
     when "strict"
       case token = multi_expect(TrueKeywordToken, FalseKeywordToken)
       when TrueKeywordToken
