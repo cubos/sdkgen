@@ -1,14 +1,35 @@
 sudo: required
 
+language: node_js
+node_js:
+  - '8'
+
 services:
   - docker
 
 script:
-  - docker build -t cubos/sdkgen .
+    - git config --global user.name "${GH_NAME}"
+    - git config --global user.email "${GH_EMAIL}"
+    - echo "machine github.com login ${GH_NAME} password ${GH_TOKEN}" > ~/.netrc
+    - cd website
+    - yarn install && GIT_USER="${GH_NAME}" yarn run publish-gh-pages
+    - cd ..
+    - if [[ "$TRAVIS_TAG" ]] ; then
+        docker image build . -t cubos/sdkgen -t cubos/sdkgen:$TRAVIS_TAG;
+        docker image build ./target-node -t cubos/sdkgen/target-node -t cubos/sdkgen/target-node:$TRAVIS_TAG;
+        docker image build ./target-web -t cubos/sdkgen/target-web -t cubos/sdkgen/target-web:$TRAVIS_TAG;
+        docker image build ./target-android -t cubos/sdkgen/target-android -t cubos/sdkgen/target-android:$TRAVIS_TAG;
+        docker image build ./target-node -t cubos/sdkgen/target-node -t cubos/sdkgen/target-node:$TRAVIS_TAG;
+      else
+        docker image build .;
+      fi
 
 deploy:
-  provider: script
-  skip_cleanup: true
-  script: docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" && docker push cubos/sdkgen
-  on:
-    branch: master
+    provider: script
+    skip_cleanup: true
+    script: 
+        - docker login -u "$DOCKER_USERNAME" -p "$DOCKER_PASSWORD" && docker push cubos/sdkgen:$TRAVIS_TAG
+    on:
+        branch: master
+        tags: true
+        

@@ -39,6 +39,7 @@ import java.math.BigInteger;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.net.SocketTimeoutException;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -350,6 +351,10 @@ END
         return Internal.getHttpClient();
     }
 
+    static public void setHttpClient(OkHttpClient newClient) {
+        Internal.setHttpClient(newClient);
+    }
+
     static public void setApiUrl(String url) {
         Internal.forcedUrl = url;
     }
@@ -359,8 +364,14 @@ END
     }
 
     private static class DateHelpers {
-        static SimpleDateFormat dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US);
-        static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        static SimpleDateFormat dateTimeFormat;
+        static SimpleDateFormat dateFormat;
+
+        static {
+            dateTimeFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS", Locale.US);
+            dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+            dateTimeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
+        }
 
         static String encodeDateTime(Calendar cal) {
             return dateTimeFormat.format(cal.getTime());
@@ -370,7 +381,7 @@ END
             return dateFormat.format(cal.getTime());
         }
 
-        static Calendar toCalendar(Date date) {
+        static Calendar toCalendar(Date date){
             Calendar cal = Calendar.getInstance();
             cal.setTime(date);
             return cal;
@@ -421,7 +432,20 @@ END
             return http;
         }
 
+        static void setHttpClient(OkHttpClient newClient) {
+            http = newClient;
+        }
+
         static void createHttpClient() {
+            if (http != null) {
+                OkHttpClient.Builder builder = http.newBuilder();
+                if (interceptor != null)
+                    builder.addNetworkInterceptor(interceptor);
+                
+                http = builder.build();
+                return;
+            }
+
             connectionPool = new ConnectionPool(100, 45, TimeUnit.SECONDS);
 
             TrustManagerFactory trustManagerFactory;
@@ -605,6 +629,7 @@ END
                 put("width", size.x);
                 put("height", size.y);
             }});
+            device.put("timezone", Calendar.getInstance().getTimeZone().getID());
             SharedPreferences pref = context().getSharedPreferences("api", Context.MODE_PRIVATE);
             if (pref.contains("deviceId"))
                 device.put("id", pref.getString("deviceId", null));
@@ -727,18 +752,8 @@ END
             final TimerTask task = new TimerTask() {
                 @Override
                 public void run() {
-#{String.build do |io|
-    unless @ast.options.useRethink
-      io << <<-END
-                    timer.cancel();
-END
-    end
-  end}
                     sentCount[0] += 1;
-                    if (sentCount[0] >= 22) {
-                        return;
-                    }
-                    if (sentCount[0] >= 25) {
+                    if (sentCount[0] >= 22 || (sentCount[0] * 2000) >= http.connectTimeoutMillis()) {
                         if (!shouldReceiveResponse[0]) return;
                         shouldReceiveResponse[0] = false;
                         timer.cancel();
@@ -750,13 +765,19 @@ END
                         });
                         return;
                     }
+
+                    if (sentCount[0] >= #{@ast.options.retryRequest ? "22" : "2"}) {
+                        return;
+                    }
+
                     if (sentCount[0] % 4 == 0) {
                         createHttpClient();
                     }
+
                     http.newCall(request).enqueue(new okhttp3.Callback() {
                         @Override
                         public void onFailure(Call call, final IOException e) {
-                            if (!shouldReceiveResponse[0]) return;
+                            if (!shouldReceiveResponse[0] || e instanceof SocketTimeoutException) return;
                             shouldReceiveResponse[0] = false;
                             timer.cancel();
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -771,6 +792,8 @@ END
                         @Override
                         public void onResponse(Call call, final Response response) throws IOException {
                             if (!shouldReceiveResponse[0]) return;
+                            shouldReceiveResponse[0] = false;
+                            timer.cancel();
                             if (response.code() == 502) {
                                 Log.e("API", "HTTP " + response.code());
                                 new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -781,8 +804,6 @@ END
                                 });
                                 return;
                             }
-                            shouldReceiveResponse[0] = false;
-                            timer.cancel();
                             final String stringBody = response.body().string();
                             new Handler(Looper.getMainLooper()).post(new Runnable() {
                                 @Override
@@ -813,8 +834,7 @@ END
                     });
                 }
             };
-
-            timer.schedule(task, 0, 2000);
+            timer.scheduleAtFixedRate(task, 0, 2000);
         }
 
         static Calendar toCalendar(Date date){

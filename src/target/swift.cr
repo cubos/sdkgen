@@ -11,7 +11,7 @@ abstract class SwiftTarget < Target
     when AST::DateTimePrimitiveType; "Date"
     when AST::BoolPrimitiveType    ; "Bool"
     when AST::BytesPrimitiveType   ; "Data"
-    when AST::VoidPrimitiveType    ; "void"
+    when AST::VoidPrimitiveType    ; "NoReply"
     else
       raise "BUG! Should handle primitive #{t.class}"
     end
@@ -26,7 +26,7 @@ abstract class SwiftTarget < Target
   end
 
   def native_type(t : AST::StructType | AST::EnumType)
-    t.name
+    "API." + t.name
   end
 
   def native_type(ref : AST::TypeReference)
@@ -55,7 +55,7 @@ abstract class SwiftTarget < Target
 
   def generate_struct_type(t)
     String.build do |io|
-      io << "class #{t.name} {\n"
+      io << "class #{t.name}: Codable {\n"
       t.fields.each do |field|
         io << ident "var #{field.name}: #{native_type field.type}\n"
       end
@@ -65,7 +65,7 @@ abstract class SwiftTarget < Target
       io << ident ident "\n)\n"
       io << ident "}\n"
       t.spreads.map(&.type.as(AST::StructType)).map { |spread|
-        io << ident "\nvar #{spread.name.split("").map_with_index { |char, i| i == 0 ? char.downcase : char }.join("")}: #{spread.name} {\n"
+        io << ident "\nvar as#{spread.name}: #{spread.name} {\n"
         io << ident ident "return #{spread.name}(\n"
         io << ident ident ident spread.fields.map { |field| "#{field.name}: #{field.name}" }.join(",\n")
         io << ident ident "\n)\n"
@@ -92,11 +92,13 @@ END
       io << ident <<-END
 }
 
-init(json: [String: Any]) {
+init(json: [String: Any]) throws {
+    let jsonData = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
+    let decodedSelf = try decoder.decode(#{t.name}.self, from: jsonData)\n
 
 END
       t.fields.each do |field|
-        io << ident ident "#{field.name} = #{type_from_json field.type, "json[#{field.name.inspect}]"}\n"
+        io << ident ident "#{field.name} = decodedSelf.#{field.name}\n"
       end
       io << ident <<-END
 }
@@ -120,9 +122,9 @@ END
   def generate_enum_type(t)
     String.build do |io|
       if t.name == "ErrorType"
-        io << "enum #{t.name}: String, Error {\n"
+        io << "enum #{t.name}: String, Error, Codable {\n"
       else
-        io << "enum #{t.name}: String, EnumCollection {\n"
+        io << "enum #{t.name}: String, CaseIterable, DisplayableValue, Codable {\n"
       end
 
       t.values.each do |value|
@@ -134,7 +136,7 @@ END
         io << ident "}\n"
         io << ident "\nstatic func valuesDictionary() -> [String: #{t.name}] {\n"
         io << ident ident "var dictionary: [String: #{t.name}] = [:]\n"
-        io << ident ident "for enumCase in self.allValues {\n"
+        io << ident ident "for enumCase in self.allCases {\n"
         io << ident ident ident "dictionary[enumCase.displayableValue] = enumCase\n"
         io << ident ident "}\n"
         io << ident ident "return dictionary\n"
@@ -142,7 +144,7 @@ END
 
         io << ident "\nstatic func allDisplayableValues() -> [String] {\n"
         io << ident ident "var displayableValues: [String] = []\n"
-        io << ident ident "for enumCase in self.allValues {\n"
+        io << ident ident "for enumCase in self.allCases {\n"
         io << ident ident ident "displayableValues.append(enumCase.displayableValue)\n"
         io << ident ident "}\n"
         io << ident ident "return displayableValues.sorted()\n"
@@ -173,49 +175,9 @@ END
     when AST::StructType
       "#{t.name}()"
     when AST::EnumType
-      "#{t.name}.#{t.values[0]}" # (rawValue: \"\")"
+      "#{t.name}.#{t.values[0]}"
     when AST::TypeReference
       default_value(t.type)
-    else
-      raise "Unknown type"
-    end
-  end
-
-  def type_from_json(t : AST::Type, src : String)
-    case t
-    when AST::StringPrimitiveType
-      "#{src} as! String"
-    when AST::IntPrimitiveType
-      "#{src} as! Int"
-    when AST::UIntPrimitiveType
-      "#{src} as! UInt"
-    when AST::FloatPrimitiveType
-      "#{src} as! Double"
-    when AST::BoolPrimitiveType
-      "#{src} as! Bool"
-    when AST::DatePrimitiveType
-      "APIInternal.decodeDate(str: #{src} as! String)"
-    when AST::DateTimePrimitiveType
-      "APIInternal.decodeDateTime(str: #{src} as! String)"
-    when AST::BytesPrimitiveType
-      "Data(base64Encoded: #{src} as! String)!"
-    when AST::VoidPrimitiveType
-      "nil"
-    when AST::OptionalType
-      base = t.base
-      if base.is_a? AST::EnumType
-        "APIInternal.isNull(value: #{src}) ? nil : #{base.name}(rawValue: #{src} as! String)"
-      else
-        "APIInternal.isNull(value: #{src}) ? nil : (#{type_from_json(t.base, src)})"
-      end
-    when AST::ArrayType
-      "(#{src} as! [AnyObject]).map({ #{type_from_json t.base, "$0"} })"
-    when AST::StructType
-      "#{t.name}(json: #{src} as! [String: Any])"
-    when AST::EnumType
-      "#{t.name}(rawValue: #{src} as! String)!"
-    when AST::TypeReference
-      type_from_json(t.type, src)
     else
       raise "Unknown type"
     end
@@ -226,15 +188,15 @@ END
     when AST::StringPrimitiveType, AST::IntPrimitiveType, AST::UIntPrimitiveType, AST::FloatPrimitiveType, AST::BoolPrimitiveType
       "#{src}"
     when AST::DatePrimitiveType
-      "APIInternal.encodeDate(date: #{src})"
+      "apiInternal.encodeDate(date: #{src})"
     when AST::DateTimePrimitiveType
-      "APIInternal.encodeDateTime(date: #{src})"
+      "apiInternal.encodeDateTime(date: #{src})"
     when AST::BytesPrimitiveType
       "#{src}.base64EncodedString()"
     when AST::VoidPrimitiveType
       "nil"
     when AST::OptionalType
-      "#{src} == nil ? nil : #{type_to_json(t.base, src + "!")}"
+      "#{src} != nil ? #{type_to_json(t.base, src + "!")} : nil"
     when AST::ArrayType
       "#{src}.map({ return #{type_to_json t.base, "$0"} })"
     when AST::StructType

@@ -13,7 +13,7 @@ require "colorize"
 
 is_server = false
 destination = ""
-target_name = "" 
+target_name = ""
 sources = [] of String
 
 OptionParser.parse! do |parser|
