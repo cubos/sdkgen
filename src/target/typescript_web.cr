@@ -7,6 +7,11 @@ import {UAParser} from "ua-parser-js";
 
 let baseUrl = #{@ast.options.url.inspect};
 let useStaging = false;
+let msgNotConnect = "Not connected or server not found";
+    
+export function setMsgNotConnect(msg: string) {
+  msgNotConnect = msg;
+}
 
 export function setStaging(use: boolean) {
   useStaging = !!use;
@@ -159,7 +164,11 @@ async function makeRequest({name, args}: {name: string, args: any}) {
         }
       } catch (e) {
         console.error(e);
-        reject({type: "BadFormattedResponse", message: `Response couldn't be parsed as JSON (${req.responseText}):\\n${e.toString()}`});
+        if (!req.responseText) {
+          reject({type: "NotConnect", message: msgNotConnect});
+        } else {
+          reject({type: "BadFormattedResponse", message: `Response couldn't be parsed as JSON (${req.responseText}):\\n${e.toString()}`});
+        }
         listenersDict["fatal"].forEach(hook => hook(e, name, args));
       }
     };
