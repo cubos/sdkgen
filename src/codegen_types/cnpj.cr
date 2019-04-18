@@ -38,10 +38,10 @@ module AST
     end
 
     def kt_decode(expr, desc)
-      "#{expr}.getString(#{desc}).replace(Regex(\"/(..)(...)(...)(....)(..)/\"), \"$1.$2.$3/$4-$5\")"
+      "#{expr}.getString(#{desc})?.replace(Regex(\"/(..)(...)(...)(....)(..)/\"), \"$1.$2.$3/$4-$5\")"
     end
 
-    def kt_encode(expr)
+    def kt_encode(expr, desc)
       "#{expr}.replace(Regex(\"/[^0-9]/g\"), \"\").padStart(14, 0.toChar())"
     end
 

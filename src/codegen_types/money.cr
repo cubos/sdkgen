@@ -40,10 +40,10 @@ module AST
 
         # KOTLIN
     def kt_decode(expr, desc)
-      "#{expr}.getString(#{desc})"
+      "#{expr}.getInt(#{desc})"
     end 
 
-    def kt_encode(expr)
+    def kt_encode(expr, desc)
       "#{expr}"
     end 
 

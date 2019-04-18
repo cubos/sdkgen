@@ -24,7 +24,7 @@ module AST
       ""
     end
 
-    def kt_encode(expr)
+    def kt_encode(expr, desc)
       "null"
     end 
 

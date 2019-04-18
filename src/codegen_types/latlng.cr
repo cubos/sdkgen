@@ -38,7 +38,7 @@ module AST
       "Location(\"\").apply { latitude = #{expr}.getDouble(#{desc})  ; longitude = #{expr}.getDouble(#{desc}) }"
     end
 
-    def kt_encode(expr)
+    def kt_encode(expr, desc)
       "{ lat: #{expr}.latitude, lng: #{expr}.longitude }"
     end
 

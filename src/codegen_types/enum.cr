@@ -53,7 +53,7 @@ module AST
       "#{name}.valueOf( #{expr}.getString(#{desc}) )"
     end 
 
-    def kt_encode(expr)
+    def kt_encode(expr, desc)
       "#{expr}.name"
     end 
 

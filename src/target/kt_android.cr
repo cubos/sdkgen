@@ -10,7 +10,7 @@ module AST
 			raise "todo: kt_return_type_name in #{self.class.name}"
 		end
   
-    def kt_encode(expr) 
+    def kt_encode(expr, desc) 
 			raise "todo: kt_encode in #{self.class.name}"
 		end
 	end
@@ -103,16 +103,17 @@ END
           var type: ErrorType? = null,
           var message: String? = null
       )
+    }\n
 
 END
 
     @ast.struct_types.each do |t| 
-    @io << t.kt_definition
+    @io << ident(t.kt_definition)
     @io << "\n\n"
     end  
 
     @ast.enum_types.each do |e| 
-    @io << e.kt_definition
+    @io << ident(e.kt_definition)
     @io << "\n\n"
     end  
 
@@ -127,7 +128,7 @@ END
               end
       @io << ident(String.build do |io|
         io << "     override fun #{mangle op.pretty_name}(#{args.join(", ")}) {\n"
-        puts = op.args.map { |arg| "put(\"#{arg.name}\", #{arg.type.kt_encode(mangle arg.name)})"}.join("\n")
+        puts = op.args.map { |arg| "put(\"#{arg.name}\", #{arg.type.kt_encode(mangle(arg.name), nil)})"}.join("\n")
         if op.args.size > 0
             io << "          val bodyArgs = JSONObject().apply {\n"  
             io << "              #{puts}\n"
@@ -137,23 +138,13 @@ END
             io << "                  callback(error, null)\n"
             io << "              } else {\n"
 
-            resultJsonExpression = ""
-            if op.return_type.is_a? AST::ArrayType
-                resultJsonExpression = "json.getJSONArray(\"result\")!!"
-            elsif op.return_type.is_a? AST::StructType
-                resultJsonExpression = "json.getJSONObject(\"result\")!!"
-            else
-                resultJsonExpression = "#{op.return_type.kt_decode("json", "result")}"
-            end
-            io << "               val result = #{resultJsonExpression}\n"
-
             responseExpression = ""
             if op.return_type.is_a? AST::ArrayType
                 responseExpression = "#{op.return_type.kt_return_type_name[0].upcase + op.return_type.kt_return_type_name[1..-1]}.fromJsonArray(result)"
             elsif op.return_type.is_a? AST::StructType
                 responseExpression = "#{op.return_type.kt_native_type}.fromJson(result)"
             else
-                responseExpression = "#{op.return_type.kt_decode("json", "result")}"
+                responseExpression = "#{op.return_type.kt_decode("json?", "\"result\"")}"
             end
             io << "               val response = #{responseExpression}\n"
             
@@ -192,13 +183,11 @@ END
           JSONObject().apply {
               put("type", "android")
               put("fingerprint", "" + Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID))
-              put("platform", object : JSONObject() {
-                  init {
-                      put("version", Build.VERSION.RELEASE)
-                      put("sdkVersion", Build.VERSION.SDK_INT)
-                      put("brand", Build.BRAND)
-                      put("model", Build.MODEL)
-                  }
+              put("platform", JSONObject().apply {
+                    put("version", Build.VERSION.RELEASE)
+                    put("sdkVersion", Build.VERSION.SDK_INT)
+                    put("brand", Build.BRAND)
+                    put("model", Build.MODEL)
               })
               try {
                   put("version", context.packageManager.getPackageInfo(context.packageName, 0).versionName)
@@ -207,15 +196,13 @@ END
               }
 
               put("language", language())
-              put("screen", object : JSONObject() {
-                  init {
-                      val manager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-                      val display = manager.defaultDisplay
-                      val size = Point()
-                      display.getSize(size)
-                      put("width", size.x)
-                      put("height", size.y)
-                  }
+              put("screen", JSONObject().apply {
+                    val manager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+                    val display = manager.defaultDisplay
+                    val size = Point()
+                    display.getSize(size)
+                    put("width", size.x)
+                    put("height", size.y)
               })
               val pref = context.getSharedPreferences("api", Context.MODE_PRIVATE)
               if (pref.contains("deviceId")) put("id", pref.getString("deviceId", null))
@@ -296,7 +283,7 @@ END
                         val stringBody = response?.body()?.string()
                         //TODO Use kotlin coroutine instead
                         val handlerThread = HandlerThread("JsonHandleThread")
-                        Handler(handlerThread.looper).post({
+                        Handler(handlerThread.looper).post {
                             val responseBody = JSONObject(stringBody)
 
                             val pref = context.getSharedPreferences("api", Context.MODE_PRIVATE)
@@ -311,7 +298,7 @@ END
                             } else {
                                 callback(null, responseBody)
                             }
-                        })
+                        }
                     }
                 })
             } catch (e: JSONException) {
@@ -320,7 +307,6 @@ END
             }
         }
     }
-}
 END
   end
 end
