@@ -50,13 +50,13 @@ module AST
       elsif base.is_a? AST::StructType
           decodeExpr = "try { #{base.kt_native_type}.fromJson(#{expr}) } catch(e: Exception) { null } "
       else
-          decodeExpr = "try { #{base.kt_decode(expr, desc)} } catch(e: Exception) { null }"
+          decodeExpr = "#{base.kt_decode(expr, desc)}"
       end
       "#{decodeExpr}"
     end 
 
-    def kt_encode(expr)
-      "#{expr}?.let { #{kt_return_type_name} -> #{base.kt_encode(kt_return_type_name)} }"
+    def kt_encode(expr, desc)
+      "#{expr}?.#{base.kt_encode(desc, nil)}"
     end 
 
     def kt_native_type

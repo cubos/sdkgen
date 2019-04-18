@@ -45,7 +45,7 @@ module AST
       "Calendar.getInstance().apply { time = SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\").parse(#{expr}.getString(#{desc})) }"
     end
 
-    def kt_encode(expr)
+    def kt_encode(expr, desc)
       "SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\").format(#{expr})"
     end
 

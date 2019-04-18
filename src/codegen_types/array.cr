@@ -78,8 +78,8 @@ module AST
         end
     end 
 
-    def kt_encode(expr)
-      inner = base.kt_encode("item")
+    def kt_encode(expr, desc)
+      inner = base.kt_encode("item", nil)
       "JSONArray().apply { 
         #{expr}.forEach { item -> put(#{inner}) }
       }"

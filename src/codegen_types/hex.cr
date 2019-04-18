@@ -42,7 +42,7 @@ module AST
       raise "Not implemented"
     end 
 
-    def kt_encode(expr)
+    def kt_encode(expr, desc)
       raise "Not implemented"
     end 
 

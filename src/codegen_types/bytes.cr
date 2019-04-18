@@ -41,7 +41,7 @@ module AST
       "Base64.decode(#{expr}.getString(#{desc}), Base64.DEFAULT)"
     end 
 
-    def kt_encode(expr)
+    def kt_encode(expr, desc)
       "Base64.encodeToString(#{expr}, Base64.DEFAULT)"
     end 
 

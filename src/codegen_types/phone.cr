@@ -43,7 +43,7 @@ module AST
       "#{expr}.getString(#{desc})"
     end 
 
-    def kt_encode(expr)
+    def kt_encode(expr, desc)
       "#{expr}"
     end 
 

@@ -24,8 +24,8 @@ module AST
       type.typescript_check_decoded(expr, descr)
     end
 
-    def kt_encode(expr) 
-      type.kt_encode(expr)
+    def kt_encode(expr, desc) 
+      type.kt_encode(expr, nil)
     end 
 
     def kt_decode(expr, desc)

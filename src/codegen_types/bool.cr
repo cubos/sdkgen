@@ -41,7 +41,7 @@ module AST
       "#{expr}.getBoolean(#{desc})"
     end 
 
-    def kt_encode(expr)
+    def kt_encode(expr, desc)
       "#{expr}"
     end 
 

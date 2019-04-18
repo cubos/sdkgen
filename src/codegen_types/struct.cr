@@ -74,7 +74,7 @@ module AST
         index = 0
         fields.each do |field|
           index = index + 1
-          io << "    #{field.name} = #{expr}.let { #{field.type.kt_decode("it", "\"#{field.name}\"")} }"
+          io << "    #{field.name} = #{expr}.#{field.type.kt_decode("", "\"#{field.name}\"")}"
           if index < fields.size
            io << ","
           end 
@@ -84,11 +84,11 @@ module AST
       end
     end
 
-    def kt_encode(expr)
+    def kt_encode(expr, desc)
       String::Builder.build do |io|
         io << "JSONObject().apply {\n"
         fields.each do |field|
-          io << ident "put(\"#{field.name}\", #{field.type.kt_encode("#{expr}.#{field.name}")})\n"
+          io << ident "put(\"#{field.name}\", #{ field.type.kt_encode("#{expr}", "#{field.name}") })\n"
         end
         io << "}\n"
       end
@@ -116,21 +116,17 @@ module AST
         io << "): Serializable {\n\n"
         io << "    companion object {\n"
         io << "        fun fromJson(jsonToParse : JSONObject): #{kt_native_type} {\n"
-        io << "            return #{kt_decode("jsonToParse", "")}"
+        io << "            return Gson().fromJson(jsonToParse.toString(), #{name}::class.java)\n"
         io << "        }\n"   
         io << "\n"
         io << "        fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<#{kt_native_type}> {\n"
-        io << "            val array = arrayListOf<#{kt_native_type}>()\n"
-        io << "            for (i in 0 until jsonArrayToParse.length()) {\n"
-        io << "                array.add(fromJson(jsonArrayToParse.getJSONObject(i)))\n"
-        io << "            }\n"
-        io << "            return array\n"
+        io << "            return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<#{name}>::class.java).toList())\n"
         io << "        }\n"
         io << "    }\n"
         
         toJsonExpr = "this@#{name}"
         io << "    fun toJson(): JSONObject {\n"
-        io << "        return #{kt_encode(toJsonExpr)}" 
+        io << "        return JSONObject(Gson().toJson(this))" 
         io << "    }"
         io << "}"
       end

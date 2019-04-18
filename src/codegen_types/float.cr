@@ -37,10 +37,10 @@ module AST
     end
 
     def kt_decode(expr, desc)
-      "#{expr}.getDouble(#{desc}).toFloat()"
+      "#{expr}.getDouble(#{desc})?.toFloat()"
     end
 
-    def kt_encode(expr)
+    def kt_encode(expr, desc)
       "#{expr}"
     end
 
