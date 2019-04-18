@@ -86,11 +86,7 @@ module AST
 
     def kt_encode(expr, desc)
       String::Builder.build do |io|
-        io << "JSONObject().apply {\n"
-        fields.each do |field|
-          io << ident "put(\"#{field.name}\", #{ field.type.kt_encode("#{expr}", "#{field.name}") })\n"
-        end
-        io << "}\n"
+        io << "Gson().toJson(#{desc}) \n"
       end
     end
 
