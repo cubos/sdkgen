@@ -38,11 +38,11 @@ module AST
 
 # KOTLIN
     def kt_decode(expr, desc)      
-      "Calendar.getInstance().apply { time = SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\").parse(#{expr}.getString(#{desc})) }"
+      "Calendar.getInstance().apply { time = dateTimeFormat.parse(#{expr}.getString(#{desc})) }"
     end
 
     def kt_encode(expr, desc)
-      "SimpleDateFormat(\"yyyy-MM-dd HH:mm:ss\").format(#{expr})"
+      "dateTimeFormat.format(#{expr})"
     end
 
     def kt_native_type

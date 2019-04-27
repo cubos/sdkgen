@@ -70,13 +70,13 @@ module AST
     # KOTLIN
     def kt_decode(expr, desc)
       String::Builder.build do |io|
-      io << "Gson().fromJson(#{expr}.getJSONObject(\"result\")?.toString(), #{name}::class.java)"
+      io << "gson.fromJson(#{expr}.getJSONObject(\"result\")?.toString(), #{name}::class.java)"
       end
     end
 
     def kt_encode(expr, desc)
       String::Builder.build do |io|
-        io << "Gson().toJson(#{expr})"
+        io << "gson.toJson(#{expr})"
       end
     end
 
@@ -102,17 +102,17 @@ module AST
         io << "): Serializable {\n\n"
         io << "    companion object {\n"
         io << "        fun fromJson(jsonToParse : JSONObject): #{kt_native_type} {\n"
-        io << "            return Gson().fromJson(jsonToParse.toString(), #{name}::class.java)\n"
+        io << "            return gson.fromJson(jsonToParse.toString(), #{name}::class.java)\n"
         io << "        }\n"   
         io << "\n"
         io << "        fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<#{kt_native_type}> {\n"
-        io << "            return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<#{name}>::class.java).toList())\n"
+        io << "            return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<#{name}>::class.java).toList())\n"
         io << "        }\n"
         io << "    }\n"
         
         toJsonExpr = "this@#{name}"
         io << "    fun toJson(): JSONObject {\n"
-        io << "        return JSONObject(Gson().toJson(this))" 
+        io << "        return JSONObject(gson.toJson(this))" 
         io << "    }"
         io << "}"
       end

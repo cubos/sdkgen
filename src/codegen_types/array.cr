@@ -64,7 +64,7 @@ module AST
     # TODO make this itearion call the fromJson method of the type if its a struct or fromJsonArray if its another array
     def kt_decode(expr, desc)
         String.build do |io|
-          io << "Gson().fromJson<ArrayList<#{base.kt_native_type}>>(#{expr}.getJSONArray(\"result\")?.toString(), object : TypeToken<ArrayList<#{base.kt_native_type}>>() { }.type) \n"
+          io << "gson.fromJson<ArrayList<#{base.kt_native_type}>>(#{expr}.getJSONArray(\"result\")?.toString(), object : TypeToken<ArrayList<#{base.kt_native_type}>>() { }.type) \n"
           # io << "ArrayList<#{base.kt_native_type}>().apply {\n" 
           # io << "    for (i in 0 until #{expr}.length()) {\n"
           # if base.is_a? AST::ArrayType
