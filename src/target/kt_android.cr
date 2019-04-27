@@ -1,20 +1,5 @@
 require "./target"
 require "random/secure"
-module AST
-	class Type
-		def kt_native_type 
-			raise "todo: kt_native_type in #{self.class.name}"
-		end
-
-    def kt_return_type_name 
-			raise "todo: kt_return_type_name in #{self.class.name}"
-		end
-  
-    def kt_encode(expr, desc) 
-			raise "todo: kt_encode in #{self.class.name}"
-		end
-	end
-end 
 
 class KtAndroidTarget < Target
   def mangle(ident)
@@ -39,7 +24,6 @@ class KtAndroidTarget < Target
   def gen
     @io << <<-END
 
-import android.location.Location
 import android.util.Base64
 import org.json.JSONObject
 import java.text.SimpleDateFormat
@@ -61,7 +45,9 @@ import okhttp3.*
 import java.io.IOException
 import java.io.Serializable
 import org.json.JSONArray
+import com.google.gson.reflect.TypeToken
 
+@SuppressLint("SimpleDateFormat")
 open class API {
     
     interface Calls {\n
@@ -129,31 +115,37 @@ END
       @io << ident(String.build do |io|
         io << "     override fun #{mangle op.pretty_name}(#{args.join(", ")}) {\n"
         puts = op.args.map { |arg| "put(\"#{arg.name}\", #{arg.type.kt_encode(mangle(arg.name), nil)})"}.join("\n")
+        bodyParameter = "null"
         if op.args.size > 0
-            io << "          val bodyArgs = JSONObject().apply {\n"  
+            bodyParameter = "bodyArgs" 
+            io << "          val #{bodyParameter} = JSONObject().apply {\n"  
             io << "              #{puts}\n"
             io << "          }\n"
-            io << "          makeRequest(\"#{mangle op.pretty_name}\", bodyArgs, { error, json -> \n"
-            io << "              if (error != null) {\n"
-            io << "                  callback(error, null)\n"
-            io << "              } else {\n"
-
-            responseExpression = ""
-            if op.return_type.is_a? AST::ArrayType
-                responseExpression = "#{op.return_type.kt_return_type_name[0].upcase + op.return_type.kt_return_type_name[1..-1]}.fromJsonArray(result)"
-            elsif op.return_type.is_a? AST::StructType
-                responseExpression = "#{op.return_type.kt_native_type}.fromJson(result)"
-            else
-                responseExpression = "#{op.return_type.kt_decode("json?", "\"result\"")}"
-            end
-            io << "               val response = #{responseExpression}\n"
-            
-            io << "               callback(null, response)"
-            io << "              }\n"
-            io << "          })\n"
         else 
             ""
         end
+        io << "          makeRequest(\"#{mangle op.pretty_name}\", #{bodyParameter}, { error, json -> \n"
+        io << "              if (error != null) {\n"
+        io << "                  callback(error, null)\n"
+        io << "              } else {\n"
+        
+        responseExpression = ""
+        if op.return_type.is_a? AST::TypeReference
+            responseExpression = "val response = #{op.return_type.kt_decode("json?", nil )}\n"
+        elsif op.return_type.is_a? AST::ArrayType
+            responseExpression = "val response = #{op.return_type.kt_decode("json?", nil )}\n"
+        elsif op.return_type.is_a? AST::OptionalType
+            responseExpression = "val response = #{op.return_type.kt_decode("json?", "\"result\"" )}\n"
+        else
+            responseExpression = "val response = #{op.return_type.kt_decode("json?", "\"result\"" )}\n"
+        end
+
+        io << ident responseExpression
+        # io << "               val response = #{op.return_type.kt_decode("json?.getJSONObject(\"result\")?.toString()", nil )}\n"
+        
+        io << "               callback(null, response)\n"
+        io << "              }\n"
+        io << "          })\n"
         io << "     }\n"
       end)
     end
@@ -255,7 +247,7 @@ END
             return bcp47Tag.toString()
         }
 
-        private inline fun makeRequest(functionName: String, bodyArgs: JSONObject, crossinline callback: (error: Error?, result: JSONObject?) -> Unit, timeoutSeconds: Int = 15) {
+        private inline fun makeRequest(functionName: String, bodyArgs: JSONObject?, crossinline callback: (error: Error?, result: JSONObject?) -> Unit, timeoutSeconds: Int = 15) {
             try {
                 val body = JSONObject().apply {
                     put("id", randomBytesHex(8))

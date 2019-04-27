@@ -18,6 +18,11 @@ type User {
     avatar: bytes?
 }
 
+type UserProfile {
+    user: User
+    profileName: string?
+}
+
 get user(user: User): User
 
 get fooString(var1: string): string
@@ -53,3 +58,26 @@ get fooUrl(var1: url): url
 get fooUuid(var1: uuid): uuid
 
 get fooXml(var1: xml): xml
+
+get fooUserProfile(user: UserProfile): UserProfile
+
+get users(id: string): User[]
+
+get profiles(): UserProfile[]
+
+get list(users: User[]): UserProfile[]
+
+get optPram(param: User?): User?
+
+get date(date: date): date
+
+get listOpt(users: User[]?): UserProfile[]?
+
+get dateOpt(date: date?): date?
+get dateListOpt(date: date[]?): date[]?
+
+get datetime(date: datetime): datetime
+get datetimeOpt(date: datetime?): datetime?
+get datetimeListOpt(date: datetime[]?): datetime[]?
+get isMyDick(param1: bool): bool
+get optString(): string?

@@ -70,23 +70,13 @@ module AST
     # KOTLIN
     def kt_decode(expr, desc)
       String::Builder.build do |io|
-      io << "#{name}(\n"
-        index = 0
-        fields.each do |field|
-          index = index + 1
-          io << "    #{field.name} = #{expr}.#{field.type.kt_decode("", "\"#{field.name}\"")}"
-          if index < fields.size
-           io << ","
-          end 
-          io << "\n"
-        end
-      io << ")"
+      io << "Gson().fromJson(#{expr}.getJSONObject(\"result\")?.toString(), #{name}::class.java)"
       end
     end
 
     def kt_encode(expr, desc)
       String::Builder.build do |io|
-        io << "Gson().toJson(#{desc}) \n"
+        io << "Gson().toJson(#{expr})"
       end
     end
 
