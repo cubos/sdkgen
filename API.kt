@@ -163,6 +163,11 @@ open class API {
 
 	companion object {
       lateinit var context: Context
+      private val gson = Gson()
+      private val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS",Locale.US).apply {
+          setTimeZone(TimeZone.getTimeZone("GMT"))
+      }
+      private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
       fun init(appContext: Context, useStaging: Boolean) {
             API.useStaging = useStaging
             context = appContext 
@@ -193,15 +198,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): ImageUrl {
-                return Gson().fromJson(jsonToParse.toString(), ImageUrl::class.java)
+                return gson.fromJson(jsonToParse.toString(), ImageUrl::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<ImageUrl> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<ImageUrl>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<ImageUrl>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class SellingProduct(
         var id: String, 
@@ -215,15 +220,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): SellingProduct {
-                return Gson().fromJson(jsonToParse.toString(), SellingProduct::class.java)
+                return gson.fromJson(jsonToParse.toString(), SellingProduct::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<SellingProduct> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<SellingProduct>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<SellingProduct>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineAction(
         var id: String, 
@@ -260,15 +265,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineAction {
-                return Gson().fromJson(jsonToParse.toString(), OfflineAction::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineAction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineAction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineAction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineAction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineAttachPromotion(
         var cpf: String, 
@@ -277,15 +282,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineAttachPromotion {
-                return Gson().fromJson(jsonToParse.toString(), OfflineAttachPromotion::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineAttachPromotion::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineAttachPromotion> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineAttachPromotion>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineAttachPromotion>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineTipRemovalAction(
         var cpf: String, 
@@ -294,15 +299,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineTipRemovalAction {
-                return Gson().fromJson(jsonToParse.toString(), OfflineTipRemovalAction::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineTipRemovalAction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineTipRemovalAction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineTipRemovalAction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineTipRemovalAction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineSellWithoutCardAction(
         var id: String, 
@@ -316,15 +321,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineSellWithoutCardAction {
-                return Gson().fromJson(jsonToParse.toString(), OfflineSellWithoutCardAction::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineSellWithoutCardAction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineSellWithoutCardAction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineSellWithoutCardAction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineSellWithoutCardAction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineSellWithoutCardActionBuyers(
         var cpf: String, 
@@ -335,15 +340,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineSellWithoutCardActionBuyers {
-                return Gson().fromJson(jsonToParse.toString(), OfflineSellWithoutCardActionBuyers::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineSellWithoutCardActionBuyers::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineSellWithoutCardActionBuyers> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineSellWithoutCardActionBuyers>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineSellWithoutCardActionBuyers>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineSellWithoutCardActionBuyersPayments(
         var id: String?, 
@@ -357,15 +362,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineSellWithoutCardActionBuyersPayments {
-                return Gson().fromJson(jsonToParse.toString(), OfflineSellWithoutCardActionBuyersPayments::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineSellWithoutCardActionBuyersPayments::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineSellWithoutCardActionBuyersPayments> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineSellWithoutCardActionBuyersPayments>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineSellWithoutCardActionBuyersPayments>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineSellWithoutCardActionBuyersRappiObject(
         var paymentId: String, 
@@ -378,15 +383,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineSellWithoutCardActionBuyersRappiObject {
-                return Gson().fromJson(jsonToParse.toString(), OfflineSellWithoutCardActionBuyersRappiObject::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineSellWithoutCardActionBuyersRappiObject::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineSellWithoutCardActionBuyersRappiObject> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineSellWithoutCardActionBuyersRappiObject>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineSellWithoutCardActionBuyersRappiObject>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineSellWithoutCardActionProducts(
         var id: String, 
@@ -406,15 +411,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineSellWithoutCardActionProducts {
-                return Gson().fromJson(jsonToParse.toString(), OfflineSellWithoutCardActionProducts::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineSellWithoutCardActionProducts::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineSellWithoutCardActionProducts> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineSellWithoutCardActionProducts>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineSellWithoutCardActionProducts>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineSellWithoutCardActionCombos(
         var id: String, 
@@ -434,15 +439,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineSellWithoutCardActionCombos {
-                return Gson().fromJson(jsonToParse.toString(), OfflineSellWithoutCardActionCombos::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineSellWithoutCardActionCombos::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineSellWithoutCardActionCombos> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineSellWithoutCardActionCombos>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineSellWithoutCardActionCombos>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineTransferUnpaidTransactionsAction(
         var date: Calendar, 
@@ -454,15 +459,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineTransferUnpaidTransactionsAction {
-                return Gson().fromJson(jsonToParse.toString(), OfflineTransferUnpaidTransactionsAction::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineTransferUnpaidTransactionsAction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineTransferUnpaidTransactionsAction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineTransferUnpaidTransactionsAction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineTransferUnpaidTransactionsAction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineCompleteRefundAction(
         var transactionId: String, 
@@ -478,15 +483,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineCompleteRefundAction {
-                return Gson().fromJson(jsonToParse.toString(), OfflineCompleteRefundAction::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineCompleteRefundAction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineCompleteRefundAction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineCompleteRefundAction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineCompleteRefundAction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineCompleteRefundActionProducts(
         var id: String, 
@@ -495,15 +500,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineCompleteRefundActionProducts {
-                return Gson().fromJson(jsonToParse.toString(), OfflineCompleteRefundActionProducts::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineCompleteRefundActionProducts::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineCompleteRefundActionProducts> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineCompleteRefundActionProducts>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineCompleteRefundActionProducts>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineCompleteRefundActionCombos(
         var id: String, 
@@ -512,15 +517,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineCompleteRefundActionCombos {
-                return Gson().fromJson(jsonToParse.toString(), OfflineCompleteRefundActionCombos::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineCompleteRefundActionCombos::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineCompleteRefundActionCombos> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineCompleteRefundActionCombos>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineCompleteRefundActionCombos>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineCompleteRefundActionFakeRecharge(
         var id: String, 
@@ -529,15 +534,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineCompleteRefundActionFakeRecharge {
-                return Gson().fromJson(jsonToParse.toString(), OfflineCompleteRefundActionFakeRecharge::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineCompleteRefundActionFakeRecharge::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineCompleteRefundActionFakeRecharge> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineCompleteRefundActionFakeRecharge>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineCompleteRefundActionFakeRecharge>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineAttachToReserveAction(
         var cpf: String, 
@@ -549,15 +554,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineAttachToReserveAction {
-                return Gson().fromJson(jsonToParse.toString(), OfflineAttachToReserveAction::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineAttachToReserveAction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineAttachToReserveAction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineAttachToReserveAction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineAttachToReserveAction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineDiscountAction(
         var cpf: String, 
@@ -566,15 +571,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineDiscountAction {
-                return Gson().fromJson(jsonToParse.toString(), OfflineDiscountAction::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineDiscountAction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineDiscountAction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineDiscountAction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineDiscountAction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineDiscountActionTransactions(
         var id: String, 
@@ -583,15 +588,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineDiscountActionTransactions {
-                return Gson().fromJson(jsonToParse.toString(), OfflineDiscountActionTransactions::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineDiscountActionTransactions::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineDiscountActionTransactions> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineDiscountActionTransactions>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineDiscountActionTransactions>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class ConfirmRefundPrePaidTransactionAction(
         var newTransactionId: String?, 
@@ -600,15 +605,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): ConfirmRefundPrePaidTransactionAction {
-                return Gson().fromJson(jsonToParse.toString(), ConfirmRefundPrePaidTransactionAction::class.java)
+                return gson.fromJson(jsonToParse.toString(), ConfirmRefundPrePaidTransactionAction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<ConfirmRefundPrePaidTransactionAction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<ConfirmRefundPrePaidTransactionAction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<ConfirmRefundPrePaidTransactionAction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OldEventBillPaymentAction(
         var cpf: String, 
@@ -621,15 +626,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OldEventBillPaymentAction {
-                return Gson().fromJson(jsonToParse.toString(), OldEventBillPaymentAction::class.java)
+                return gson.fromJson(jsonToParse.toString(), OldEventBillPaymentAction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OldEventBillPaymentAction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OldEventBillPaymentAction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OldEventBillPaymentAction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineGroupedSell(
         var transactions: ArrayList<OfflineTransactionAction>, 
@@ -638,15 +643,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineGroupedSell {
-                return Gson().fromJson(jsonToParse.toString(), OfflineGroupedSell::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineGroupedSell::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineGroupedSell> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineGroupedSell>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineGroupedSell>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineCheckoutAction(
         var cpf: String, 
@@ -655,15 +660,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineCheckoutAction {
-                return Gson().fromJson(jsonToParse.toString(), OfflineCheckoutAction::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineCheckoutAction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineCheckoutAction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineCheckoutAction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineCheckoutAction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflinePostPayment(
         var cpf: String, 
@@ -677,15 +682,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflinePostPayment {
-                return Gson().fromJson(jsonToParse.toString(), OfflinePostPayment::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflinePostPayment::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflinePostPayment> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflinePostPayment>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflinePostPayment>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflinePostPaymentTransactions(
         var tipValue: Int, 
@@ -695,15 +700,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflinePostPaymentTransactions {
-                return Gson().fromJson(jsonToParse.toString(), OfflinePostPaymentTransactions::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflinePostPaymentTransactions::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflinePostPaymentTransactions> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflinePostPaymentTransactions>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflinePostPaymentTransactions>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflinePostPaymentEntrances(
         var count: Int, 
@@ -714,15 +719,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflinePostPaymentEntrances {
-                return Gson().fromJson(jsonToParse.toString(), OfflinePostPaymentEntrances::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflinePostPaymentEntrances::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflinePostPaymentEntrances> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflinePostPaymentEntrances>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflinePostPaymentEntrances>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineDetachAndRefundActivation(
         var type: OfflineDetachAndRefundActivationType, 
@@ -733,15 +738,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineDetachAndRefundActivation {
-                return Gson().fromJson(jsonToParse.toString(), OfflineDetachAndRefundActivation::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineDetachAndRefundActivation::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineDetachAndRefundActivation> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineDetachAndRefundActivation>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineDetachAndRefundActivation>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class EntranceConsumedRecharge(
         var usedValue: Int, 
@@ -750,15 +755,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): EntranceConsumedRecharge {
-                return Gson().fromJson(jsonToParse.toString(), EntranceConsumedRecharge::class.java)
+                return gson.fromJson(jsonToParse.toString(), EntranceConsumedRecharge::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<EntranceConsumedRecharge> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<EntranceConsumedRecharge>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<EntranceConsumedRecharge>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineEntrance(
         var count: Int, 
@@ -768,15 +773,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineEntrance {
-                return Gson().fromJson(jsonToParse.toString(), OfflineEntrance::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineEntrance::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineEntrance> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineEntrance>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineEntrance>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineEntranceAction(
         var recharges: ArrayList<OfflineRechargeEntranceAction>, 
@@ -787,15 +792,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineEntranceAction {
-                return Gson().fromJson(jsonToParse.toString(), OfflineEntranceAction::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineEntranceAction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineEntranceAction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineEntranceAction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineEntranceAction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineRefundRecharge(
         var cpf: String, 
@@ -806,15 +811,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineRefundRecharge {
-                return Gson().fromJson(jsonToParse.toString(), OfflineRefundRecharge::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineRefundRecharge::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineRefundRecharge> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineRefundRecharge>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineRefundRecharge>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineConsumeRecharge(
         var cpf: String, 
@@ -824,15 +829,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineConsumeRecharge {
-                return Gson().fromJson(jsonToParse.toString(), OfflineConsumeRecharge::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineConsumeRecharge::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineConsumeRecharge> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineConsumeRecharge>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineConsumeRecharge>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineAttachAction(
         var cpf: String 
@@ -840,15 +845,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineAttachAction {
-                return Gson().fromJson(jsonToParse.toString(), OfflineAttachAction::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineAttachAction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineAttachAction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineAttachAction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineAttachAction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineDetachAction(
         var cpf: String 
@@ -856,15 +861,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineDetachAction {
-                return Gson().fromJson(jsonToParse.toString(), OfflineDetachAction::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineDetachAction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineDetachAction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineDetachAction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineDetachAction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineCreateUserAction(
         var cpf: String, 
@@ -879,15 +884,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineCreateUserAction {
-                return Gson().fromJson(jsonToParse.toString(), OfflineCreateUserAction::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineCreateUserAction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineCreateUserAction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineCreateUserAction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineCreateUserAction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineRechargeAction(
         var id: String, 
@@ -905,15 +910,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineRechargeAction {
-                return Gson().fromJson(jsonToParse.toString(), OfflineRechargeAction::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineRechargeAction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineRechargeAction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineRechargeAction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineRechargeAction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineRechargeEntranceAction(
         var usedValue: Int, 
@@ -932,15 +937,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineRechargeEntranceAction {
-                return Gson().fromJson(jsonToParse.toString(), OfflineRechargeEntranceAction::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineRechargeEntranceAction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineRechargeEntranceAction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineRechargeEntranceAction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineRechargeEntranceAction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineTransactionAction(
         var id: String, 
@@ -954,15 +959,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineTransactionAction {
-                return Gson().fromJson(jsonToParse.toString(), OfflineTransactionAction::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineTransactionAction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineTransactionAction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineTransactionAction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineTransactionAction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineTransactionActionBuyers(
         var cpf: String, 
@@ -973,15 +978,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineTransactionActionBuyers {
-                return Gson().fromJson(jsonToParse.toString(), OfflineTransactionActionBuyers::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineTransactionActionBuyers::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineTransactionActionBuyers> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineTransactionActionBuyers>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineTransactionActionBuyers>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineTransactionActionBuyersPayments(
         var type: OfflineTransactionActionBuyersPaymentsType, 
@@ -994,15 +999,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineTransactionActionBuyersPayments {
-                return Gson().fromJson(jsonToParse.toString(), OfflineTransactionActionBuyersPayments::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineTransactionActionBuyersPayments::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineTransactionActionBuyersPayments> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineTransactionActionBuyersPayments>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineTransactionActionBuyersPayments>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineTransactionActionProducts(
         var id: String, 
@@ -1022,15 +1027,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineTransactionActionProducts {
-                return Gson().fromJson(jsonToParse.toString(), OfflineTransactionActionProducts::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineTransactionActionProducts::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineTransactionActionProducts> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineTransactionActionProducts>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineTransactionActionProducts>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineTransactionActionCombos(
         var id: String, 
@@ -1050,15 +1055,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineTransactionActionCombos {
-                return Gson().fromJson(jsonToParse.toString(), OfflineTransactionActionCombos::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineTransactionActionCombos::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineTransactionActionCombos> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineTransactionActionCombos>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineTransactionActionCombos>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class SignedOfflineAction(
         var action: String, 
@@ -1067,15 +1072,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): SignedOfflineAction {
-                return Gson().fromJson(jsonToParse.toString(), SignedOfflineAction::class.java)
+                return gson.fromJson(jsonToParse.toString(), SignedOfflineAction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<SignedOfflineAction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<SignedOfflineAction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<SignedOfflineAction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineActionError(
         var actionId: String, 
@@ -1084,15 +1089,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineActionError {
-                return Gson().fromJson(jsonToParse.toString(), OfflineActionError::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineActionError::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineActionError> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineActionError>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineActionError>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class PPUAuthorization(
         var id: String, 
@@ -1101,15 +1106,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): PPUAuthorization {
-                return Gson().fromJson(jsonToParse.toString(), PPUAuthorization::class.java)
+                return gson.fromJson(jsonToParse.toString(), PPUAuthorization::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<PPUAuthorization> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<PPUAuthorization>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<PPUAuthorization>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class ValidRecharge(
         var id: String, 
@@ -1126,15 +1131,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): ValidRecharge {
-                return Gson().fromJson(jsonToParse.toString(), ValidRecharge::class.java)
+                return gson.fromJson(jsonToParse.toString(), ValidRecharge::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<ValidRecharge> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<ValidRecharge>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<ValidRecharge>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class MqttPlaceInfo(
         var msgId: String?, 
@@ -1144,15 +1149,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): MqttPlaceInfo {
-                return Gson().fromJson(jsonToParse.toString(), MqttPlaceInfo::class.java)
+                return gson.fromJson(jsonToParse.toString(), MqttPlaceInfo::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<MqttPlaceInfo> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<MqttPlaceInfo>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<MqttPlaceInfo>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class MqttDeviceStatus(
         var online: Boolean 
@@ -1160,15 +1165,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): MqttDeviceStatus {
-                return Gson().fromJson(jsonToParse.toString(), MqttDeviceStatus::class.java)
+                return gson.fromJson(jsonToParse.toString(), MqttDeviceStatus::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<MqttDeviceStatus> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<MqttDeviceStatus>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<MqttDeviceStatus>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineUserTransaction(
         var id: String, 
@@ -1190,15 +1195,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineUserTransaction {
-                return Gson().fromJson(jsonToParse.toString(), OfflineUserTransaction::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineUserTransaction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineUserTransaction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineUserTransaction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineUserTransaction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineUserTransactionProducts(
         var id: String, 
@@ -1210,15 +1215,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineUserTransactionProducts {
-                return Gson().fromJson(jsonToParse.toString(), OfflineUserTransactionProducts::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineUserTransactionProducts::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineUserTransactionProducts> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineUserTransactionProducts>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineUserTransactionProducts>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineUserTransactionCombos(
         var id: String, 
@@ -1230,15 +1235,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineUserTransactionCombos {
-                return Gson().fromJson(jsonToParse.toString(), OfflineUserTransactionCombos::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineUserTransactionCombos::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineUserTransactionCombos> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineUserTransactionCombos>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineUserTransactionCombos>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineUserPayments(
         var id: String, 
@@ -1250,15 +1255,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineUserPayments {
-                return Gson().fromJson(jsonToParse.toString(), OfflineUserPayments::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineUserPayments::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineUserPayments> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineUserPayments>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineUserPayments>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineUserPaymentsTransactions(
         var value: Int, 
@@ -1267,15 +1272,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineUserPaymentsTransactions {
-                return Gson().fromJson(jsonToParse.toString(), OfflineUserPaymentsTransactions::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineUserPaymentsTransactions::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineUserPaymentsTransactions> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineUserPaymentsTransactions>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineUserPaymentsTransactions>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineUserState(
         var id: String, 
@@ -1297,15 +1302,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineUserState {
-                return Gson().fromJson(jsonToParse.toString(), OfflineUserState::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineUserState::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineUserState> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineUserState>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineUserState>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OfflineUserStatePromotions(
         var id: String, 
@@ -1315,15 +1320,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OfflineUserStatePromotions {
-                return Gson().fromJson(jsonToParse.toString(), OfflineUserStatePromotions::class.java)
+                return gson.fromJson(jsonToParse.toString(), OfflineUserStatePromotions::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OfflineUserStatePromotions> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OfflineUserStatePromotions>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OfflineUserStatePromotions>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class ZigTagBlockStatus(
         var readyCount: Int, 
@@ -1332,15 +1337,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): ZigTagBlockStatus {
-                return Gson().fromJson(jsonToParse.toString(), ZigTagBlockStatus::class.java)
+                return gson.fromJson(jsonToParse.toString(), ZigTagBlockStatus::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<ZigTagBlockStatus> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<ZigTagBlockStatus>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<ZigTagBlockStatus>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class BlockedZigTag(
         var uid: String 
@@ -1348,15 +1353,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): BlockedZigTag {
-                return Gson().fromJson(jsonToParse.toString(), BlockedZigTag::class.java)
+                return gson.fromJson(jsonToParse.toString(), BlockedZigTag::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<BlockedZigTag> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<BlockedZigTag>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<BlockedZigTag>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class RefundTransactionProduct(
         var id: String, 
@@ -1365,15 +1370,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): RefundTransactionProduct {
-                return Gson().fromJson(jsonToParse.toString(), RefundTransactionProduct::class.java)
+                return gson.fromJson(jsonToParse.toString(), RefundTransactionProduct::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<RefundTransactionProduct> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<RefundTransactionProduct>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<RefundTransactionProduct>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class RefundTransactionCombo(
         var id: String, 
@@ -1382,15 +1387,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): RefundTransactionCombo {
-                return Gson().fromJson(jsonToParse.toString(), RefundTransactionCombo::class.java)
+                return gson.fromJson(jsonToParse.toString(), RefundTransactionCombo::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<RefundTransactionCombo> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<RefundTransactionCombo>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<RefundTransactionCombo>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class RefundTransaction(
         var combos: ArrayList<RefundTransactionCombo>?, 
@@ -1399,15 +1404,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): RefundTransaction {
-                return Gson().fromJson(jsonToParse.toString(), RefundTransaction::class.java)
+                return gson.fromJson(jsonToParse.toString(), RefundTransaction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<RefundTransaction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<RefundTransaction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<RefundTransaction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class RefundTransactionRequest(
         var transactionId: String, 
@@ -1422,15 +1427,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): RefundTransactionRequest {
-                return Gson().fromJson(jsonToParse.toString(), RefundTransactionRequest::class.java)
+                return gson.fromJson(jsonToParse.toString(), RefundTransactionRequest::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<RefundTransactionRequest> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<RefundTransactionRequest>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<RefundTransactionRequest>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class RefundMultipleTransactionsRequest(
         var reason: String, 
@@ -1443,15 +1448,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): RefundMultipleTransactionsRequest {
-                return Gson().fromJson(jsonToParse.toString(), RefundMultipleTransactionsRequest::class.java)
+                return gson.fromJson(jsonToParse.toString(), RefundMultipleTransactionsRequest::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<RefundMultipleTransactionsRequest> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<RefundMultipleTransactionsRequest>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<RefundMultipleTransactionsRequest>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class RefundTransactionResult(
         var request: RefundTransactionRequest, 
@@ -1464,15 +1469,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): RefundTransactionResult {
-                return Gson().fromJson(jsonToParse.toString(), RefundTransactionResult::class.java)
+                return gson.fromJson(jsonToParse.toString(), RefundTransactionResult::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<RefundTransactionResult> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<RefundTransactionResult>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<RefundTransactionResult>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class RefundTransactionResultIncrementPpuAuths(
         var id: String, 
@@ -1481,15 +1486,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): RefundTransactionResultIncrementPpuAuths {
-                return Gson().fromJson(jsonToParse.toString(), RefundTransactionResultIncrementPpuAuths::class.java)
+                return gson.fromJson(jsonToParse.toString(), RefundTransactionResultIncrementPpuAuths::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<RefundTransactionResultIncrementPpuAuths> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<RefundTransactionResultIncrementPpuAuths>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<RefundTransactionResultIncrementPpuAuths>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class RefundTransactionResultIncrementRecharges(
         var id: String, 
@@ -1505,15 +1510,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): RefundTransactionResultIncrementRecharges {
-                return Gson().fromJson(jsonToParse.toString(), RefundTransactionResultIncrementRecharges::class.java)
+                return gson.fromJson(jsonToParse.toString(), RefundTransactionResultIncrementRecharges::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<RefundTransactionResultIncrementRecharges> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<RefundTransactionResultIncrementRecharges>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<RefundTransactionResultIncrementRecharges>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class RefundTransactionResultNewTransaction(
         var offlineId: String, 
@@ -1528,15 +1533,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): RefundTransactionResultNewTransaction {
-                return Gson().fromJson(jsonToParse.toString(), RefundTransactionResultNewTransaction::class.java)
+                return gson.fromJson(jsonToParse.toString(), RefundTransactionResultNewTransaction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<RefundTransactionResultNewTransaction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<RefundTransactionResultNewTransaction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<RefundTransactionResultNewTransaction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class RefundTransactionResultNewTransactionProducts(
         var relativeId: Int, 
@@ -1547,15 +1552,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): RefundTransactionResultNewTransactionProducts {
-                return Gson().fromJson(jsonToParse.toString(), RefundTransactionResultNewTransactionProducts::class.java)
+                return gson.fromJson(jsonToParse.toString(), RefundTransactionResultNewTransactionProducts::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<RefundTransactionResultNewTransactionProducts> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<RefundTransactionResultNewTransactionProducts>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<RefundTransactionResultNewTransactionProducts>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class RefundUser(
         var cpf: String, 
@@ -1564,15 +1569,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): RefundUser {
-                return Gson().fromJson(jsonToParse.toString(), RefundUser::class.java)
+                return gson.fromJson(jsonToParse.toString(), RefundUser::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<RefundUser> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<RefundUser>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<RefundUser>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class UsedPromotion(
         var id: String, 
@@ -1583,15 +1588,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): UsedPromotion {
-                return Gson().fromJson(jsonToParse.toString(), UsedPromotion::class.java)
+                return gson.fromJson(jsonToParse.toString(), UsedPromotion::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<UsedPromotion> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<UsedPromotion>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<UsedPromotion>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class CreditAsker(
         var cpf: String, 
@@ -1600,15 +1605,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): CreditAsker {
-                return Gson().fromJson(jsonToParse.toString(), CreditAsker::class.java)
+                return gson.fromJson(jsonToParse.toString(), CreditAsker::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<CreditAsker> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<CreditAsker>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<CreditAsker>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class UserWithPpu(
         var cpf: String, 
@@ -1619,15 +1624,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): UserWithPpu {
-                return Gson().fromJson(jsonToParse.toString(), UserWithPpu::class.java)
+                return gson.fromJson(jsonToParse.toString(), UserWithPpu::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<UserWithPpu> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<UserWithPpu>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<UserWithPpu>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class RefundTip(
         var incrementPpuAuths: ArrayList<RefundTipIncrementPpuAuths>, 
@@ -1636,15 +1641,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): RefundTip {
-                return Gson().fromJson(jsonToParse.toString(), RefundTip::class.java)
+                return gson.fromJson(jsonToParse.toString(), RefundTip::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<RefundTip> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<RefundTip>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<RefundTip>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class RefundTipIncrementPpuAuths(
         var id: String, 
@@ -1653,15 +1658,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): RefundTipIncrementPpuAuths {
-                return Gson().fromJson(jsonToParse.toString(), RefundTipIncrementPpuAuths::class.java)
+                return gson.fromJson(jsonToParse.toString(), RefundTipIncrementPpuAuths::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<RefundTipIncrementPpuAuths> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<RefundTipIncrementPpuAuths>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<RefundTipIncrementPpuAuths>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class RefundTipIncrementRecharges(
         var id: String, 
@@ -1677,15 +1682,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): RefundTipIncrementRecharges {
-                return Gson().fromJson(jsonToParse.toString(), RefundTipIncrementRecharges::class.java)
+                return gson.fromJson(jsonToParse.toString(), RefundTipIncrementRecharges::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<RefundTipIncrementRecharges> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<RefundTipIncrementRecharges>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<RefundTipIncrementRecharges>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OldEventBill(
         var noTipOwedValue: Int, 
@@ -1695,15 +1700,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OldEventBill {
-                return Gson().fromJson(jsonToParse.toString(), OldEventBill::class.java)
+                return gson.fromJson(jsonToParse.toString(), OldEventBill::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OldEventBill> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OldEventBill>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OldEventBill>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OldEventBillProducts(
         var id: String, 
@@ -1716,15 +1721,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OldEventBillProducts {
-                return Gson().fromJson(jsonToParse.toString(), OldEventBillProducts::class.java)
+                return gson.fromJson(jsonToParse.toString(), OldEventBillProducts::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OldEventBillProducts> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OldEventBillProducts>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OldEventBillProducts>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class PrePaidRefundResult(
         var cpf: String, 
@@ -1734,15 +1739,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): PrePaidRefundResult {
-                return Gson().fromJson(jsonToParse.toString(), PrePaidRefundResult::class.java)
+                return gson.fromJson(jsonToParse.toString(), PrePaidRefundResult::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<PrePaidRefundResult> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<PrePaidRefundResult>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<PrePaidRefundResult>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class PrePaidRefundResultIncrementPpuAuths(
         var id: String, 
@@ -1751,15 +1756,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): PrePaidRefundResultIncrementPpuAuths {
-                return Gson().fromJson(jsonToParse.toString(), PrePaidRefundResultIncrementPpuAuths::class.java)
+                return gson.fromJson(jsonToParse.toString(), PrePaidRefundResultIncrementPpuAuths::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<PrePaidRefundResultIncrementPpuAuths> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<PrePaidRefundResultIncrementPpuAuths>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<PrePaidRefundResultIncrementPpuAuths>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class PrePaidRefundResultIncrementRecharges(
         var id: String, 
@@ -1775,15 +1780,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): PrePaidRefundResultIncrementRecharges {
-                return Gson().fromJson(jsonToParse.toString(), PrePaidRefundResultIncrementRecharges::class.java)
+                return gson.fromJson(jsonToParse.toString(), PrePaidRefundResultIncrementRecharges::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<PrePaidRefundResultIncrementRecharges> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<PrePaidRefundResultIncrementRecharges>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<PrePaidRefundResultIncrementRecharges>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class Entrance(
         var id: String, 
@@ -1797,15 +1802,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): Entrance {
-                return Gson().fromJson(jsonToParse.toString(), Entrance::class.java)
+                return gson.fromJson(jsonToParse.toString(), Entrance::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<Entrance> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<Entrance>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<Entrance>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class EntranceList(
         var user: String, 
@@ -1814,15 +1819,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): EntranceList {
-                return Gson().fromJson(jsonToParse.toString(), EntranceList::class.java)
+                return gson.fromJson(jsonToParse.toString(), EntranceList::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<EntranceList> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<EntranceList>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<EntranceList>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class Invoice(
         var id: String, 
@@ -1833,15 +1838,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): Invoice {
-                return Gson().fromJson(jsonToParse.toString(), Invoice::class.java)
+                return gson.fromJson(jsonToParse.toString(), Invoice::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<Invoice> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<Invoice>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<Invoice>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class IssueResult(
         var issuedInvoices: ArrayList<Invoice>, 
@@ -1851,15 +1856,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): IssueResult {
-                return Gson().fromJson(jsonToParse.toString(), IssueResult::class.java)
+                return gson.fromJson(jsonToParse.toString(), IssueResult::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<IssueResult> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<IssueResult>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<IssueResult>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class Recharge(
         var id: String?, 
@@ -1872,15 +1877,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): Recharge {
-                return Gson().fromJson(jsonToParse.toString(), Recharge::class.java)
+                return gson.fromJson(jsonToParse.toString(), Recharge::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<Recharge> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<Recharge>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<Recharge>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class RechargeBackup(
         var id: String, 
@@ -1896,15 +1901,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): RechargeBackup {
-                return Gson().fromJson(jsonToParse.toString(), RechargeBackup::class.java)
+                return gson.fromJson(jsonToParse.toString(), RechargeBackup::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<RechargeBackup> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<RechargeBackup>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<RechargeBackup>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class PlaceRelation(
         var createdBy: User?, 
@@ -1921,15 +1926,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): PlaceRelation {
-                return Gson().fromJson(jsonToParse.toString(), PlaceRelation::class.java)
+                return gson.fromJson(jsonToParse.toString(), PlaceRelation::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<PlaceRelation> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<PlaceRelation>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<PlaceRelation>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class SoldProduct(
         var name: String, 
@@ -1940,15 +1945,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): SoldProduct {
-                return Gson().fromJson(jsonToParse.toString(), SoldProduct::class.java)
+                return gson.fromJson(jsonToParse.toString(), SoldProduct::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<SoldProduct> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<SoldProduct>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<SoldProduct>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class BarProductReport(
         var barName: String, 
@@ -1957,15 +1962,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): BarProductReport {
-                return Gson().fromJson(jsonToParse.toString(), BarProductReport::class.java)
+                return gson.fromJson(jsonToParse.toString(), BarProductReport::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<BarProductReport> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<BarProductReport>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<BarProductReport>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class SellerReport(
         var name: String, 
@@ -1975,15 +1980,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): SellerReport {
-                return Gson().fromJson(jsonToParse.toString(), SellerReport::class.java)
+                return gson.fromJson(jsonToParse.toString(), SellerReport::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<SellerReport> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<SellerReport>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<SellerReport>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class BarSellerReport(
         var barName: String, 
@@ -1992,15 +1997,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): BarSellerReport {
-                return Gson().fromJson(jsonToParse.toString(), BarSellerReport::class.java)
+                return gson.fromJson(jsonToParse.toString(), BarSellerReport::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<BarSellerReport> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<BarSellerReport>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<BarSellerReport>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class Buyer(
         var zigAuthorization: String, 
@@ -2009,15 +2014,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): Buyer {
-                return Gson().fromJson(jsonToParse.toString(), Buyer::class.java)
+                return gson.fromJson(jsonToParse.toString(), Buyer::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<Buyer> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<Buyer>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<Buyer>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class Sell(
         var buyers: ArrayList<Buyer>, 
@@ -2026,15 +2031,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): Sell {
-                return Gson().fromJson(jsonToParse.toString(), Sell::class.java)
+                return gson.fromJson(jsonToParse.toString(), Sell::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<Sell> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<Sell>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<Sell>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class Fail(
         var zigCode: String, 
@@ -2044,15 +2049,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): Fail {
-                return Gson().fromJson(jsonToParse.toString(), Fail::class.java)
+                return gson.fromJson(jsonToParse.toString(), Fail::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<Fail> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<Fail>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<Fail>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class PromotionResult(
         var product: String, 
@@ -2061,15 +2066,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): PromotionResult {
-                return Gson().fromJson(jsonToParse.toString(), PromotionResult::class.java)
+                return gson.fromJson(jsonToParse.toString(), PromotionResult::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<PromotionResult> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<PromotionResult>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<PromotionResult>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class SellResult(
         var fails: ArrayList<Fail>?, 
@@ -2081,15 +2086,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): SellResult {
-                return Gson().fromJson(jsonToParse.toString(), SellResult::class.java)
+                return gson.fromJson(jsonToParse.toString(), SellResult::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<SellResult> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<SellResult>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<SellResult>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class ProportionalValue(
         var value: Int, 
@@ -2099,15 +2104,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): ProportionalValue {
-                return Gson().fromJson(jsonToParse.toString(), ProportionalValue::class.java)
+                return gson.fromJson(jsonToParse.toString(), ProportionalValue::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<ProportionalValue> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<ProportionalValue>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<ProportionalValue>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class Product(
         var id: String, 
@@ -2126,15 +2131,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): Product {
-                return Gson().fromJson(jsonToParse.toString(), Product::class.java)
+                return gson.fromJson(jsonToParse.toString(), Product::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<Product> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<Product>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<Product>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class Combo(
         var id: String, 
@@ -2153,15 +2158,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): Combo {
-                return Gson().fromJson(jsonToParse.toString(), Combo::class.java)
+                return gson.fromJson(jsonToParse.toString(), Combo::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<Combo> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<Combo>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<Combo>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class SellableThings(
         var products: ArrayList<Product>, 
@@ -2170,15 +2175,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): SellableThings {
-                return Gson().fromJson(jsonToParse.toString(), SellableThings::class.java)
+                return gson.fromJson(jsonToParse.toString(), SellableThings::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<SellableThings> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<SellableThings>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<SellableThings>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class SellablesCategory(
         var id: String, 
@@ -2193,15 +2198,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): SellablesCategory {
-                return Gson().fromJson(jsonToParse.toString(), SellablesCategory::class.java)
+                return gson.fromJson(jsonToParse.toString(), SellablesCategory::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<SellablesCategory> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<SellablesCategory>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<SellablesCategory>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class SellablesCategorySubCategories(
         var id: String, 
@@ -2216,15 +2221,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): SellablesCategorySubCategories {
-                return Gson().fromJson(jsonToParse.toString(), SellablesCategorySubCategories::class.java)
+                return gson.fromJson(jsonToParse.toString(), SellablesCategorySubCategories::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<SellablesCategorySubCategories> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<SellablesCategorySubCategories>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<SellablesCategorySubCategories>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class SellablesCategorySubCategoriesSubCategories(
         var id: String, 
@@ -2238,15 +2243,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): SellablesCategorySubCategoriesSubCategories {
-                return Gson().fromJson(jsonToParse.toString(), SellablesCategorySubCategoriesSubCategories::class.java)
+                return gson.fromJson(jsonToParse.toString(), SellablesCategorySubCategoriesSubCategories::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<SellablesCategorySubCategoriesSubCategories> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<SellablesCategorySubCategoriesSubCategories>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<SellablesCategorySubCategoriesSubCategories>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class FavoritesCategory(
         var products: ArrayList<Product>, 
@@ -2255,15 +2260,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): FavoritesCategory {
-                return Gson().fromJson(jsonToParse.toString(), FavoritesCategory::class.java)
+                return gson.fromJson(jsonToParse.toString(), FavoritesCategory::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<FavoritesCategory> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<FavoritesCategory>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<FavoritesCategory>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class SellableThings2(
         var categories: ArrayList<SellablesCategory>, 
@@ -2272,15 +2277,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): SellableThings2 {
-                return Gson().fromJson(jsonToParse.toString(), SellableThings2::class.java)
+                return gson.fromJson(jsonToParse.toString(), SellableThings2::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<SellableThings2> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<SellableThings2>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<SellableThings2>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class CompleteProduct(
         var id: String, 
@@ -2293,15 +2298,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): CompleteProduct {
-                return Gson().fromJson(jsonToParse.toString(), CompleteProduct::class.java)
+                return gson.fromJson(jsonToParse.toString(), CompleteProduct::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<CompleteProduct> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<CompleteProduct>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<CompleteProduct>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class StockTransfers(
         var date: Calendar, 
@@ -2312,15 +2317,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): StockTransfers {
-                return Gson().fromJson(jsonToParse.toString(), StockTransfers::class.java)
+                return gson.fromJson(jsonToParse.toString(), StockTransfers::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<StockTransfers> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<StockTransfers>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<StockTransfers>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class ProductTransfer(
         var id: String, 
@@ -2331,15 +2336,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): ProductTransfer {
-                return Gson().fromJson(jsonToParse.toString(), ProductTransfer::class.java)
+                return gson.fromJson(jsonToParse.toString(), ProductTransfer::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<ProductTransfer> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<ProductTransfer>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<ProductTransfer>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class Ticket(
         var name: String 
@@ -2347,15 +2352,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): Ticket {
-                return Gson().fromJson(jsonToParse.toString(), Ticket::class.java)
+                return gson.fromJson(jsonToParse.toString(), Ticket::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<Ticket> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<Ticket>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<Ticket>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class UserTicket(
         var name: String?, 
@@ -2365,15 +2370,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): UserTicket {
-                return Gson().fromJson(jsonToParse.toString(), UserTicket::class.java)
+                return gson.fromJson(jsonToParse.toString(), UserTicket::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<UserTicket> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<UserTicket>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<UserTicket>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class Bar(
         var id: String, 
@@ -2383,15 +2388,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): Bar {
-                return Gson().fromJson(jsonToParse.toString(), Bar::class.java)
+                return gson.fromJson(jsonToParse.toString(), Bar::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<Bar> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<Bar>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<Bar>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class Permission(
         var slug: String, 
@@ -2400,15 +2405,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): Permission {
-                return Gson().fromJson(jsonToParse.toString(), Permission::class.java)
+                return gson.fromJson(jsonToParse.toString(), Permission::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<Permission> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<Permission>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<Permission>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class Employee(
         var id: String, 
@@ -2427,15 +2432,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): Employee {
-                return Gson().fromJson(jsonToParse.toString(), Employee::class.java)
+                return gson.fromJson(jsonToParse.toString(), Employee::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<Employee> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<Employee>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<Employee>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class Seller(
         var id: String, 
@@ -2445,15 +2450,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): Seller {
-                return Gson().fromJson(jsonToParse.toString(), Seller::class.java)
+                return gson.fromJson(jsonToParse.toString(), Seller::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<Seller> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<Seller>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<Seller>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class SellerTransaction(
         var id: String, 
@@ -2468,15 +2473,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): SellerTransaction {
-                return Gson().fromJson(jsonToParse.toString(), SellerTransaction::class.java)
+                return gson.fromJson(jsonToParse.toString(), SellerTransaction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<SellerTransaction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<SellerTransaction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<SellerTransaction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class CashierSingleClosing(
         var credit: Int, 
@@ -2492,15 +2497,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): CashierSingleClosing {
-                return Gson().fromJson(jsonToParse.toString(), CashierSingleClosing::class.java)
+                return gson.fromJson(jsonToParse.toString(), CashierSingleClosing::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<CashierSingleClosing> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<CashierSingleClosing>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<CashierSingleClosing>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class CashierClosing(
         var rechargeMoneyReceived: CashierSingleClosing, 
@@ -2509,15 +2514,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): CashierClosing {
-                return Gson().fromJson(jsonToParse.toString(), CashierClosing::class.java)
+                return gson.fromJson(jsonToParse.toString(), CashierClosing::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<CashierClosing> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<CashierClosing>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<CashierClosing>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class MqttEventInfo(
         var msgId: String?, 
@@ -2537,15 +2542,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): MqttEventInfo {
-                return Gson().fromJson(jsonToParse.toString(), MqttEventInfo::class.java)
+                return gson.fromJson(jsonToParse.toString(), MqttEventInfo::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<MqttEventInfo> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<MqttEventInfo>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<MqttEventInfo>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class MqttEventInfoMaleCouvert(
         var id: String, 
@@ -2555,15 +2560,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): MqttEventInfoMaleCouvert {
-                return Gson().fromJson(jsonToParse.toString(), MqttEventInfoMaleCouvert::class.java)
+                return gson.fromJson(jsonToParse.toString(), MqttEventInfoMaleCouvert::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<MqttEventInfoMaleCouvert> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<MqttEventInfoMaleCouvert>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<MqttEventInfoMaleCouvert>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class MqttEventInfoFemaleCouvert(
         var id: String, 
@@ -2573,15 +2578,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): MqttEventInfoFemaleCouvert {
-                return Gson().fromJson(jsonToParse.toString(), MqttEventInfoFemaleCouvert::class.java)
+                return gson.fromJson(jsonToParse.toString(), MqttEventInfoFemaleCouvert::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<MqttEventInfoFemaleCouvert> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<MqttEventInfoFemaleCouvert>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<MqttEventInfoFemaleCouvert>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class CurrentEvent(
         var placeId: String, 
@@ -2591,15 +2596,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): CurrentEvent {
-                return Gson().fromJson(jsonToParse.toString(), CurrentEvent::class.java)
+                return gson.fromJson(jsonToParse.toString(), CurrentEvent::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<CurrentEvent> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<CurrentEvent>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<CurrentEvent>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class Reserve(
         var id: String, 
@@ -2615,15 +2620,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): Reserve {
-                return Gson().fromJson(jsonToParse.toString(), Reserve::class.java)
+                return gson.fromJson(jsonToParse.toString(), Reserve::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<Reserve> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<Reserve>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<Reserve>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class ReservePromotions(
         var id: String, 
@@ -2633,15 +2638,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): ReservePromotions {
-                return Gson().fromJson(jsonToParse.toString(), ReservePromotions::class.java)
+                return gson.fromJson(jsonToParse.toString(), ReservePromotions::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<ReservePromotions> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<ReservePromotions>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<ReservePromotions>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class PromotionInfo(
         var id: String, 
@@ -2654,15 +2659,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): PromotionInfo {
-                return Gson().fromJson(jsonToParse.toString(), PromotionInfo::class.java)
+                return gson.fromJson(jsonToParse.toString(), PromotionInfo::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<PromotionInfo> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<PromotionInfo>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<PromotionInfo>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class ReserveAndPromotion(
         var reserves: ArrayList<Reserve>, 
@@ -2671,15 +2676,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): ReserveAndPromotion {
-                return Gson().fromJson(jsonToParse.toString(), ReserveAndPromotion::class.java)
+                return gson.fromJson(jsonToParse.toString(), ReserveAndPromotion::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<ReserveAndPromotion> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<ReserveAndPromotion>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<ReserveAndPromotion>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class Waiter(
         var id: String, 
@@ -2688,15 +2693,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): Waiter {
-                return Gson().fromJson(jsonToParse.toString(), Waiter::class.java)
+                return gson.fromJson(jsonToParse.toString(), Waiter::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<Waiter> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<Waiter>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<Waiter>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class DeliveryInstance(
         var type: SellingProductType, 
@@ -2709,15 +2714,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): DeliveryInstance {
-                return Gson().fromJson(jsonToParse.toString(), DeliveryInstance::class.java)
+                return gson.fromJson(jsonToParse.toString(), DeliveryInstance::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<DeliveryInstance> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<DeliveryInstance>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<DeliveryInstance>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class DeliveryTransaction(
         var id: String, 
@@ -2734,15 +2739,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): DeliveryTransaction {
-                return Gson().fromJson(jsonToParse.toString(), DeliveryTransaction::class.java)
+                return gson.fromJson(jsonToParse.toString(), DeliveryTransaction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<DeliveryTransaction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<DeliveryTransaction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<DeliveryTransaction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class ProductsToDelivery(
         var id: String, 
@@ -2760,15 +2765,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): ProductsToDelivery {
-                return Gson().fromJson(jsonToParse.toString(), ProductsToDelivery::class.java)
+                return gson.fromJson(jsonToParse.toString(), ProductsToDelivery::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<ProductsToDelivery> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<ProductsToDelivery>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<ProductsToDelivery>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class Organization(
         var id: String, 
@@ -2779,15 +2784,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): Organization {
-                return Gson().fromJson(jsonToParse.toString(), Organization::class.java)
+                return gson.fromJson(jsonToParse.toString(), Organization::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<Organization> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<Organization>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<Organization>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class Place(
         var id: String, 
@@ -2806,15 +2811,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): Place {
-                return Gson().fromJson(jsonToParse.toString(), Place::class.java)
+                return gson.fromJson(jsonToParse.toString(), Place::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<Place> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<Place>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<Place>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class PlaceLocation(
         var latitude: Float?, 
@@ -2823,15 +2828,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): PlaceLocation {
-                return Gson().fromJson(jsonToParse.toString(), PlaceLocation::class.java)
+                return gson.fromJson(jsonToParse.toString(), PlaceLocation::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<PlaceLocation> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<PlaceLocation>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<PlaceLocation>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class PlaceFeatures(
         var id: String, 
@@ -2840,15 +2845,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): PlaceFeatures {
-                return Gson().fromJson(jsonToParse.toString(), PlaceFeatures::class.java)
+                return gson.fromJson(jsonToParse.toString(), PlaceFeatures::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<PlaceFeatures> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<PlaceFeatures>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<PlaceFeatures>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class PostPaidOwnedValue(
         var currentEvent: Int, 
@@ -2857,15 +2862,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): PostPaidOwnedValue {
-                return Gson().fromJson(jsonToParse.toString(), PostPaidOwnedValue::class.java)
+                return gson.fromJson(jsonToParse.toString(), PostPaidOwnedValue::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<PostPaidOwnedValue> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<PostPaidOwnedValue>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<PostPaidOwnedValue>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class PartialPayReturn(
         var notPaidTip: Int, 
@@ -2874,15 +2879,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): PartialPayReturn {
-                return Gson().fromJson(jsonToParse.toString(), PartialPayReturn::class.java)
+                return gson.fromJson(jsonToParse.toString(), PartialPayReturn::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<PartialPayReturn> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<PartialPayReturn>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<PartialPayReturn>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class ZigMachinePayment(
         var notPaidTip: Int, 
@@ -2894,15 +2899,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): ZigMachinePayment {
-                return Gson().fromJson(jsonToParse.toString(), ZigMachinePayment::class.java)
+                return gson.fromJson(jsonToParse.toString(), ZigMachinePayment::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<ZigMachinePayment> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<ZigMachinePayment>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<ZigMachinePayment>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class TransactionBuyer(
         var name: String, 
@@ -2913,15 +2918,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): TransactionBuyer {
-                return Gson().fromJson(jsonToParse.toString(), TransactionBuyer::class.java)
+                return gson.fromJson(jsonToParse.toString(), TransactionBuyer::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<TransactionBuyer> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<TransactionBuyer>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<TransactionBuyer>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class Transaction(
         var id: String, 
@@ -2939,15 +2944,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): Transaction {
-                return Gson().fromJson(jsonToParse.toString(), Transaction::class.java)
+                return gson.fromJson(jsonToParse.toString(), Transaction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<Transaction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<Transaction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<Transaction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class PostPaidTransaction(
         var id: String, 
@@ -2965,15 +2970,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): PostPaidTransaction {
-                return Gson().fromJson(jsonToParse.toString(), PostPaidTransaction::class.java)
+                return gson.fromJson(jsonToParse.toString(), PostPaidTransaction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<PostPaidTransaction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<PostPaidTransaction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<PostPaidTransaction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class OpenedBillBackup(
         var zigCode: String?, 
@@ -2986,15 +2991,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): OpenedBillBackup {
-                return Gson().fromJson(jsonToParse.toString(), OpenedBillBackup::class.java)
+                return gson.fromJson(jsonToParse.toString(), OpenedBillBackup::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<OpenedBillBackup> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<OpenedBillBackup>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<OpenedBillBackup>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class RefundActivationProduct(
         var id: String, 
@@ -3004,15 +3009,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): RefundActivationProduct {
-                return Gson().fromJson(jsonToParse.toString(), RefundActivationProduct::class.java)
+                return gson.fromJson(jsonToParse.toString(), RefundActivationProduct::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<RefundActivationProduct> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<RefundActivationProduct>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<RefundActivationProduct>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class UserSetup(
         var foreign: Boolean?, 
@@ -3027,15 +3032,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): UserSetup {
-                return Gson().fromJson(jsonToParse.toString(), UserSetup::class.java)
+                return gson.fromJson(jsonToParse.toString(), UserSetup::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<UserSetup> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<UserSetup>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<UserSetup>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class ZigAndRelation(
         var zig: ZigDevice, 
@@ -3044,15 +3049,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): ZigAndRelation {
-                return Gson().fromJson(jsonToParse.toString(), ZigAndRelation::class.java)
+                return gson.fromJson(jsonToParse.toString(), ZigAndRelation::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<ZigAndRelation> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<ZigAndRelation>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<ZigAndRelation>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class CpfDataOrUser(
         var name: String?, 
@@ -3061,15 +3066,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): CpfDataOrUser {
-                return Gson().fromJson(jsonToParse.toString(), CpfDataOrUser::class.java)
+                return gson.fromJson(jsonToParse.toString(), CpfDataOrUser::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<CpfDataOrUser> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<CpfDataOrUser>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<CpfDataOrUser>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class PaidTransaction(
         var id: String, 
@@ -3078,15 +3083,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): PaidTransaction {
-                return Gson().fromJson(jsonToParse.toString(), PaidTransaction::class.java)
+                return gson.fromJson(jsonToParse.toString(), PaidTransaction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<PaidTransaction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<PaidTransaction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<PaidTransaction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class UserRecharge(
         var id: String, 
@@ -3099,15 +3104,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): UserRecharge {
-                return Gson().fromJson(jsonToParse.toString(), UserRecharge::class.java)
+                return gson.fromJson(jsonToParse.toString(), UserRecharge::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<UserRecharge> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<UserRecharge>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<UserRecharge>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class ZigLineEvent(
         var id: String, 
@@ -3122,15 +3127,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): ZigLineEvent {
-                return Gson().fromJson(jsonToParse.toString(), ZigLineEvent::class.java)
+                return gson.fromJson(jsonToParse.toString(), ZigLineEvent::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<ZigLineEvent> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<ZigLineEvent>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<ZigLineEvent>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class CheckIn(
         var eventId: String 
@@ -3138,15 +3143,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): CheckIn {
-                return Gson().fromJson(jsonToParse.toString(), CheckIn::class.java)
+                return gson.fromJson(jsonToParse.toString(), CheckIn::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<CheckIn> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<CheckIn>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<CheckIn>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class CheckOut(
         var value: Int 
@@ -3154,15 +3159,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): CheckOut {
-                return Gson().fromJson(jsonToParse.toString(), CheckOut::class.java)
+                return gson.fromJson(jsonToParse.toString(), CheckOut::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<CheckOut> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<CheckOut>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<CheckOut>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class Capture(
         var value: Int 
@@ -3170,15 +3175,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): Capture {
-                return Gson().fromJson(jsonToParse.toString(), Capture::class.java)
+                return gson.fromJson(jsonToParse.toString(), Capture::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<Capture> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<Capture>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<Capture>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class PPUCardAuthorization(
         var value: Int, 
@@ -3187,15 +3192,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): PPUCardAuthorization {
-                return Gson().fromJson(jsonToParse.toString(), PPUCardAuthorization::class.java)
+                return gson.fromJson(jsonToParse.toString(), PPUCardAuthorization::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<PPUCardAuthorization> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<PPUCardAuthorization>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<PPUCardAuthorization>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class Information(
         var title: String, 
@@ -3205,15 +3210,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): Information {
-                return Gson().fromJson(jsonToParse.toString(), Information::class.java)
+                return gson.fromJson(jsonToParse.toString(), Information::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<Information> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<Information>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<Information>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class RechargeAction(
         var id: String?, 
@@ -3229,15 +3234,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): RechargeAction {
-                return Gson().fromJson(jsonToParse.toString(), RechargeAction::class.java)
+                return gson.fromJson(jsonToParse.toString(), RechargeAction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<RechargeAction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<RechargeAction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<RechargeAction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class PaidPostPaidTransaction(
         var id: String, 
@@ -3249,15 +3254,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): PaidPostPaidTransaction {
-                return Gson().fromJson(jsonToParse.toString(), PaidPostPaidTransaction::class.java)
+                return gson.fromJson(jsonToParse.toString(), PaidPostPaidTransaction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<PaidPostPaidTransaction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<PaidPostPaidTransaction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<PaidPostPaidTransaction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class PaidPostPaidTransactionTransactions(
         var transactionId: String, 
@@ -3268,15 +3273,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): PaidPostPaidTransactionTransactions {
-                return Gson().fromJson(jsonToParse.toString(), PaidPostPaidTransactionTransactions::class.java)
+                return gson.fromJson(jsonToParse.toString(), PaidPostPaidTransactionTransactions::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<PaidPostPaidTransactionTransactions> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<PaidPostPaidTransactionTransactions>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<PaidPostPaidTransactionTransactions>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class Action(
         var id: String, 
@@ -3293,15 +3298,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): Action {
-                return Gson().fromJson(jsonToParse.toString(), Action::class.java)
+                return gson.fromJson(jsonToParse.toString(), Action::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<Action> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<Action>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<Action>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class HistoryAction(
         var id: String, 
@@ -3320,15 +3325,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): HistoryAction {
-                return Gson().fromJson(jsonToParse.toString(), HistoryAction::class.java)
+                return gson.fromJson(jsonToParse.toString(), HistoryAction::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<HistoryAction> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<HistoryAction>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<HistoryAction>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class User(
         var id: String, 
@@ -3346,15 +3351,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): User {
-                return Gson().fromJson(jsonToParse.toString(), User::class.java)
+                return gson.fromJson(jsonToParse.toString(), User::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<User> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<User>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<User>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class UserState(
         var user: User, 
@@ -3364,15 +3369,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): UserState {
-                return Gson().fromJson(jsonToParse.toString(), UserState::class.java)
+                return gson.fromJson(jsonToParse.toString(), UserState::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<UserState> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<UserState>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<UserState>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class MqttSyncUser(
         var action: MqttSyncUserAction, 
@@ -3381,15 +3386,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): MqttSyncUser {
-                return Gson().fromJson(jsonToParse.toString(), MqttSyncUser::class.java)
+                return gson.fromJson(jsonToParse.toString(), MqttSyncUser::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<MqttSyncUser> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<MqttSyncUser>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<MqttSyncUser>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class ZigPayment(
         var type: ZigPaymentType, 
@@ -3399,15 +3404,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): ZigPayment {
-                return Gson().fromJson(jsonToParse.toString(), ZigPayment::class.java)
+                return gson.fromJson(jsonToParse.toString(), ZigPayment::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<ZigPayment> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<ZigPayment>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<ZigPayment>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class ZigMachineAnswer(
         var acquirerResponseCode: String, 
@@ -3418,15 +3423,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): ZigMachineAnswer {
-                return Gson().fromJson(jsonToParse.toString(), ZigMachineAnswer::class.java)
+                return gson.fromJson(jsonToParse.toString(), ZigMachineAnswer::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<ZigMachineAnswer> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<ZigMachineAnswer>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<ZigMachineAnswer>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class PostPayment(
         var cardTransactionId: String?, 
@@ -3436,15 +3441,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): PostPayment {
-                return Gson().fromJson(jsonToParse.toString(), PostPayment::class.java)
+                return gson.fromJson(jsonToParse.toString(), PostPayment::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<PostPayment> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<PostPayment>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<PostPayment>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class StonePostPayment(
         var stoneTransactionJson: String?, 
@@ -3454,15 +3459,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): StonePostPayment {
-                return Gson().fromJson(jsonToParse.toString(), StonePostPayment::class.java)
+                return gson.fromJson(jsonToParse.toString(), StonePostPayment::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<StonePostPayment> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<StonePostPayment>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<StonePostPayment>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class Payment(
         var method: ZigMachinePaymentMethod, 
@@ -3471,15 +3476,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): Payment {
-                return Gson().fromJson(jsonToParse.toString(), Payment::class.java)
+                return gson.fromJson(jsonToParse.toString(), Payment::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<Payment> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<Payment>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<Payment>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class CipurseChallenge(
         var id: String, 
@@ -3491,15 +3496,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): CipurseChallenge {
-                return Gson().fromJson(jsonToParse.toString(), CipurseChallenge::class.java)
+                return gson.fromJson(jsonToParse.toString(), CipurseChallenge::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<CipurseChallenge> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<CipurseChallenge>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<CipurseChallenge>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class DesfireChallenge(
         var id: String, 
@@ -3509,15 +3514,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): DesfireChallenge {
-                return Gson().fromJson(jsonToParse.toString(), DesfireChallenge::class.java)
+                return gson.fromJson(jsonToParse.toString(), DesfireChallenge::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<DesfireChallenge> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<DesfireChallenge>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<DesfireChallenge>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     data class ZigDevice(
         var user: User?, 
@@ -3527,15 +3532,15 @@ open class API {
 
         companion object {
             fun fromJson(jsonToParse : JSONObject): ZigDevice {
-                return Gson().fromJson(jsonToParse.toString(), ZigDevice::class.java)
+                return gson.fromJson(jsonToParse.toString(), ZigDevice::class.java)
             }
 
             fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<ZigDevice> {
-                return ArrayList(Gson().fromJson(jsonArrayToParse.toString(), Array<ZigDevice>::class.java).toList())
+                return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<ZigDevice>::class.java).toList())
             }
         }
         fun toJson(): JSONObject {
-            return JSONObject(Gson().toJson(this))    }}
+            return JSONObject(gson.toJson(this))    }}
 
     enum class Gender {
     Male, 
@@ -3784,14 +3789,14 @@ var calls = object: Calls {
          override fun sendOfflineActions(list: ArrayList<SignedOfflineAction>, flag: Int?, callback: (error: Error?, OfflineActionError: ArrayList<OfflineActionError>?) -> Unit) {
               val bodyArgs = JSONObject().apply {
                   put("list", JSONArray().apply { 
-            list.forEach { item -> put(Gson().toJson(item)) }
+            list.forEach { item -> put(gson.toJson(item)) }
           })
               }
               makeRequest("sendOfflineActions", bodyArgs, { error, json -> 
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<OfflineActionError>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<OfflineActionError>>() { }.type) 
+        val response = gson.fromJson<ArrayList<OfflineActionError>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<OfflineActionError>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -3806,7 +3811,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), PPUAuthorization::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), PPUAuthorization::class.java)
                    callback(null, response)
                   }
               })
@@ -3821,7 +3826,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), PPUAuthorization::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), PPUAuthorization::class.java)
                    callback(null, response)
                   }
               })
@@ -3839,13 +3844,13 @@ var calls = object: Calls {
          override fun makeCardTransactionOffline(placeId: String, payment: ZigPayment, flag: Int?, callback: (error: Error?, zigMachineAnswer: ZigMachineAnswer?) -> Unit) {
               val bodyArgs = JSONObject().apply {
                   put("placeId", placeId)
-    put("payment", Gson().toJson(payment))
+    put("payment", gson.toJson(payment))
               }
               makeRequest("makeCardTransactionOffline", bodyArgs, { error, json -> 
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), ZigMachineAnswer::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), ZigMachineAnswer::class.java)
                    callback(null, response)
                   }
               })
@@ -3873,7 +3878,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), OfflineUserState::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), OfflineUserState::class.java)
                    callback(null, response)
                   }
               })
@@ -3881,8 +3886,8 @@ var calls = object: Calls {
          override fun getOfflineUserState(zigTagUid: String, updatedAt: Calendar?, ppuUpdatedAt: Calendar?, cpf: String?, placeId: String, minPpuValue: Int?, flag: Int?, callback: (error: Error?, offlineUserState: OfflineUserState??) -> Unit) {
               val bodyArgs = JSONObject().apply {
                   put("zigTagUid", zigTagUid)
-    put("updatedAt", updatedAt?.let { SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(updatedAt) })
-    put("ppuUpdatedAt", ppuUpdatedAt?.let { SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(ppuUpdatedAt) })
+    put("updatedAt", updatedAt?.let { dateTimeFormat.format(updatedAt) })
+    put("ppuUpdatedAt", ppuUpdatedAt?.let { dateTimeFormat.format(ppuUpdatedAt) })
     put("cpf", cpf?.let { cpf })
     put("placeId", placeId)
     put("minPpuValue", minPpuValue?.let { minPpuValue })
@@ -3891,7 +3896,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), OfflineUserState::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), OfflineUserState::class.java)
                    callback(null, response)
                   }
               })
@@ -3904,7 +3909,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), MqttEventInfo::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), MqttEventInfo::class.java)
                    callback(null, response)
                   }
               })
@@ -3917,40 +3922,40 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), MqttEventInfo::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), MqttEventInfo::class.java)
                    callback(null, response)
                   }
               })
          }
          override fun offlineRefundTransaction(request: RefundTransactionRequest, flag: Int?, callback: (error: Error?, refundTransactionResult: RefundTransactionResult?) -> Unit) {
               val bodyArgs = JSONObject().apply {
-                  put("request", Gson().toJson(request))
+                  put("request", gson.toJson(request))
               }
               makeRequest("offlineRefundTransaction", bodyArgs, { error, json -> 
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), RefundTransactionResult::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), RefundTransactionResult::class.java)
                    callback(null, response)
                   }
               })
          }
          override fun offlineRefundTransactionMultipleUsers(request: RefundTransactionRequest, flag: Int?, callback: (error: Error?, RefundUser: ArrayList<RefundUser>?) -> Unit) {
               val bodyArgs = JSONObject().apply {
-                  put("request", Gson().toJson(request))
+                  put("request", gson.toJson(request))
               }
               makeRequest("offlineRefundTransactionMultipleUsers", bodyArgs, { error, json -> 
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<RefundUser>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<RefundUser>>() { }.type) 
+        val response = gson.fromJson<ArrayList<RefundUser>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<RefundUser>>() { }.type) 
                    callback(null, response)
                   }
               })
          }
          override fun offlineUndoRefundTransaction(result: RefundTransactionResult, flag: Int?, callback: (error: Error?, result: Boolean?) -> Unit) {
               val bodyArgs = JSONObject().apply {
-                  put("result", Gson().toJson(result))
+                  put("result", gson.toJson(result))
               }
               makeRequest("offlineUndoRefundTransaction", bodyArgs, { error, json -> 
                   if (error != null) {
@@ -3967,7 +3972,7 @@ var calls = object: Calls {
     put("zigTagUid", zigTagUid)
     put("cpf", cpf)
     put("products", JSONArray().apply { 
-            products.forEach { item -> put(Gson().toJson(item)) }
+            products.forEach { item -> put(gson.toJson(item)) }
           })
     put("userCredit", userCredit)
               }
@@ -3975,7 +3980,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<UsedPromotion>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<UsedPromotion>>() { }.type) 
+        val response = gson.fromJson<ArrayList<UsedPromotion>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<UsedPromotion>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -3998,14 +4003,14 @@ var calls = object: Calls {
               val bodyArgs = JSONObject().apply {
                   put("placeId", placeId)
     put("users", JSONArray().apply { 
-            users.forEach { item -> put(Gson().toJson(item)) }
+            users.forEach { item -> put(gson.toJson(item)) }
           })
               }
               makeRequest("authorizeCreditForUsers", bodyArgs, { error, json -> 
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<UserWithPpu>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<UserWithPpu>>() { }.type) 
+        val response = gson.fromJson<ArrayList<UserWithPpu>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<UserWithPpu>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -4033,7 +4038,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), RefundTip::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), RefundTip::class.java)
                    callback(null, response)
                   }
               })
@@ -4047,7 +4052,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), RefundTip::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), RefundTip::class.java)
                    callback(null, response)
                   }
               })
@@ -4061,20 +4066,20 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), OldEventBill::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), OldEventBill::class.java)
                    callback(null, response)
                   }
               })
          }
          override fun tryToStartRefundPrePaidTransaction(request: RefundTransactionRequest, flag: Int?, callback: (error: Error?, RefundUser: ArrayList<RefundUser>?) -> Unit) {
               val bodyArgs = JSONObject().apply {
-                  put("request", Gson().toJson(request))
+                  put("request", gson.toJson(request))
               }
               makeRequest("tryToStartRefundPrePaidTransaction", bodyArgs, { error, json -> 
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<RefundUser>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<RefundUser>>() { }.type) 
+        val response = gson.fromJson<ArrayList<RefundUser>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<RefundUser>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -4101,7 +4106,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), User::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), User::class.java)
                    callback(null, response)
                   }
               })
@@ -4115,7 +4120,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), User::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), User::class.java)
                    callback(null, response)
                   }
               })
@@ -4129,7 +4134,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), User::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), User::class.java)
                    callback(null, response)
                   }
               })
@@ -4143,7 +4148,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), User::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), User::class.java)
                    callback(null, response)
                   }
               })
@@ -4157,7 +4162,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), User::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), User::class.java)
                    callback(null, response)
                   }
               })
@@ -4170,14 +4175,14 @@ var calls = object: Calls {
             entranceIds.forEach { item -> put(item) }
           })
     put("payments", JSONArray().apply { 
-            payments.forEach { item -> put(Gson().toJson(item)) }
+            payments.forEach { item -> put(gson.toJson(item)) }
           })
               }
               makeRequest("sellEntrancesWithZigMachine", bodyArgs, { error, json -> 
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), UserState::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), UserState::class.java)
                    callback(null, response)
                   }
               })
@@ -4190,14 +4195,14 @@ var calls = object: Calls {
             entranceIds.forEach { item -> put(item) }
           })
     put("payments", JSONArray().apply { 
-            payments.forEach { item -> put(Gson().toJson(item)) }
+            payments.forEach { item -> put(gson.toJson(item)) }
           })
               }
               makeRequest("sellEntrancesWithStoneZigMachine", bodyArgs, { error, json -> 
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), UserState::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), UserState::class.java)
                    callback(null, response)
                   }
               })
@@ -4210,7 +4215,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<Entrance>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<Entrance>>() { }.type) 
+        val response = gson.fromJson<ArrayList<Entrance>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<Entrance>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -4223,14 +4228,14 @@ var calls = object: Calls {
             entranceIds.forEach { item -> put(item) }
           })
     put("payments", JSONArray().apply { 
-            payments.forEach { item -> put(Gson().toJson(item)) }
+            payments.forEach { item -> put(gson.toJson(item)) }
           })
               }
               makeRequest("sellEntrances", bodyArgs, { error, json -> 
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), UserState::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), UserState::class.java)
                    callback(null, response)
                   }
               })
@@ -4244,7 +4249,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), EntranceList::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), EntranceList::class.java)
                    callback(null, response)
                   }
               })
@@ -4260,7 +4265,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), IssueResult::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), IssueResult::class.java)
                    callback(null, response)
                   }
               })
@@ -4274,7 +4279,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<Invoice>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<Invoice>>() { }.type) 
+        val response = gson.fromJson<ArrayList<Invoice>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<Invoice>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -4314,7 +4319,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), Employee::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), Employee::class.java)
                    callback(null, response)
                   }
               })
@@ -4334,7 +4339,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), Employee::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), Employee::class.java)
                    callback(null, response)
                   }
               })
@@ -4342,7 +4347,7 @@ var calls = object: Calls {
          override fun logAcquirerError(acquirer: String, date: Calendar, placeId: String, eventId: String, cpf: String, error: String, transactionJson: String?, flag: Int?, callback: (error: Error?, result: Boolean?) -> Unit) {
               val bodyArgs = JSONObject().apply {
                   put("acquirer", acquirer)
-    put("date", SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(date))
+    put("date", dateTimeFormat.format(date))
     put("placeId", placeId)
     put("eventId", eventId)
     put("cpf", cpf)
@@ -4361,7 +4366,7 @@ var calls = object: Calls {
          override fun rechargeZig(authorization: String, recharge: Recharge, place: String, paymentMethod: PostMethod, flag: Int?, callback: (error: Error?, result: Boolean?) -> Unit) {
               val bodyArgs = JSONObject().apply {
                   put("authorization", authorization)
-    put("recharge", Gson().toJson(recharge))
+    put("recharge", gson.toJson(recharge))
     put("place", place)
     put("paymentMethod", paymentMethod.name)
               }
@@ -4377,7 +4382,7 @@ var calls = object: Calls {
          override fun rechargeZigWithReason(authorization: String, recharge: Recharge, place: String, paymentMethod: PostMethod, reason: String, flag: Int?, callback: (error: Error?, result: Boolean?) -> Unit) {
               val bodyArgs = JSONObject().apply {
                   put("authorization", authorization)
-    put("recharge", Gson().toJson(recharge))
+    put("recharge", gson.toJson(recharge))
     put("place", place)
     put("paymentMethod", paymentMethod.name)
     put("reason", reason)
@@ -4395,7 +4400,7 @@ var calls = object: Calls {
               val bodyArgs = JSONObject().apply {
                   put("userId", userId)
     put("zigId", zigId)
-    put("recharge", Gson().toJson(recharge))
+    put("recharge", gson.toJson(recharge))
     put("place", place)
     put("paymentMethod", paymentMethod.name)
               }
@@ -4412,13 +4417,13 @@ var calls = object: Calls {
               val bodyArgs = JSONObject().apply {
                   put("placeId", placeId)
     put("authorization", authorization)
-    put("payment", Gson().toJson(payment))
+    put("payment", gson.toJson(payment))
               }
               makeRequest("rechargeWithMPos", bodyArgs, { error, json -> 
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), ZigMachineAnswer::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), ZigMachineAnswer::class.java)
                    callback(null, response)
                   }
               })
@@ -4446,7 +4451,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<RechargeBackup>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<RechargeBackup>>() { }.type) 
+        val response = gson.fromJson<ArrayList<RechargeBackup>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<RechargeBackup>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -4459,7 +4464,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<PlaceRelation>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<PlaceRelation>>() { }.type) 
+        val response = gson.fromJson<ArrayList<PlaceRelation>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<PlaceRelation>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -4469,7 +4474,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), BarProductReport::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), BarProductReport::class.java)
                    callback(null, response)
                   }
               })
@@ -4479,7 +4484,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), BarSellerReport::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), BarSellerReport::class.java)
                    callback(null, response)
                   }
               })
@@ -4487,12 +4492,12 @@ var calls = object: Calls {
          override fun sell(products: ArrayList<SellingProduct>, tip: Int, placeId: String, buyers: ArrayList<Buyer>, obs: String?, flag: Int?, callback: (error: Error?, sellResult: SellResult?) -> Unit) {
               val bodyArgs = JSONObject().apply {
                   put("products", JSONArray().apply { 
-            products.forEach { item -> put(Gson().toJson(item)) }
+            products.forEach { item -> put(gson.toJson(item)) }
           })
     put("tip", tip)
     put("placeId", placeId)
     put("buyers", JSONArray().apply { 
-            buyers.forEach { item -> put(Gson().toJson(item)) }
+            buyers.forEach { item -> put(gson.toJson(item)) }
           })
     put("obs", obs?.let { obs })
               }
@@ -4500,7 +4505,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), SellResult::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), SellResult::class.java)
                    callback(null, response)
                   }
               })
@@ -4508,12 +4513,12 @@ var calls = object: Calls {
          override fun groupedSell(products: ArrayList<SellingProduct>, tip: Int, placeId: String, buyers: ArrayList<Buyer>, obs: String?, flag: Int?, callback: (error: Error?, sellResult: SellResult?) -> Unit) {
               val bodyArgs = JSONObject().apply {
                   put("products", JSONArray().apply { 
-            products.forEach { item -> put(Gson().toJson(item)) }
+            products.forEach { item -> put(gson.toJson(item)) }
           })
     put("tip", tip)
     put("placeId", placeId)
     put("buyers", JSONArray().apply { 
-            buyers.forEach { item -> put(Gson().toJson(item)) }
+            buyers.forEach { item -> put(gson.toJson(item)) }
           })
     put("obs", obs?.let { obs })
               }
@@ -4521,7 +4526,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), SellResult::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), SellResult::class.java)
                    callback(null, response)
                   }
               })
@@ -4564,7 +4569,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<Product>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<Product>>() { }.type) 
+        val response = gson.fromJson<ArrayList<Product>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<Product>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -4577,7 +4582,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<Combo>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<Combo>>() { }.type) 
+        val response = gson.fromJson<ArrayList<Combo>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<Combo>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -4590,7 +4595,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), SellableThings::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), SellableThings::class.java)
                    callback(null, response)
                   }
               })
@@ -4603,7 +4608,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), SellableThings2::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), SellableThings2::class.java)
                    callback(null, response)
                   }
               })
@@ -4616,7 +4621,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<CompleteProduct>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<CompleteProduct>>() { }.type) 
+        val response = gson.fromJson<ArrayList<CompleteProduct>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<CompleteProduct>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -4663,7 +4668,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<ProductTransfer>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<ProductTransfer>>() { }.type) 
+        val response = gson.fromJson<ArrayList<ProductTransfer>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<ProductTransfer>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -4678,7 +4683,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<UserTicket>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<UserTicket>>() { }.type) 
+        val response = gson.fromJson<ArrayList<UserTicket>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<UserTicket>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -4691,7 +4696,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<Ticket>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<Ticket>>() { }.type) 
+        val response = gson.fromJson<ArrayList<Ticket>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<Ticket>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -4705,7 +4710,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<Ticket>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<Ticket>>() { }.type) 
+        val response = gson.fromJson<ArrayList<Ticket>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<Ticket>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -4719,7 +4724,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<SellerTransaction>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<SellerTransaction>>() { }.type) 
+        val response = gson.fromJson<ArrayList<SellerTransaction>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<SellerTransaction>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -4732,7 +4737,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), CashierClosing::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), CashierClosing::class.java)
                    callback(null, response)
                   }
               })
@@ -4745,7 +4750,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<Reserve>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<Reserve>>() { }.type) 
+        val response = gson.fromJson<ArrayList<Reserve>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<Reserve>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -4772,7 +4777,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), ReserveAndPromotion::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), ReserveAndPromotion::class.java)
                    callback(null, response)
                   }
               })
@@ -4788,7 +4793,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<DeliveryTransaction>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<DeliveryTransaction>>() { }.type) 
+        val response = gson.fromJson<ArrayList<DeliveryTransaction>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<DeliveryTransaction>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -4796,7 +4801,7 @@ var calls = object: Calls {
          override fun deliveryProducts(deliveryInstances: ArrayList<DeliveryInstance>, placeId: String, barId: String, flag: Int?, callback: (error: Error?, result: Boolean?) -> Unit) {
               val bodyArgs = JSONObject().apply {
                   put("deliveryInstances", JSONArray().apply { 
-            deliveryInstances.forEach { item -> put(Gson().toJson(item)) }
+            deliveryInstances.forEach { item -> put(gson.toJson(item)) }
           })
     put("placeId", placeId)
     put("barId", barId)
@@ -4834,7 +4839,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<DeliveryTransaction>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<DeliveryTransaction>>() { }.type) 
+        val response = gson.fromJson<ArrayList<DeliveryTransaction>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<DeliveryTransaction>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -4847,7 +4852,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<DeliveryTransaction>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<DeliveryTransaction>>() { }.type) 
+        val response = gson.fromJson<ArrayList<DeliveryTransaction>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<DeliveryTransaction>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -4873,7 +4878,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<ProductsToDelivery>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<ProductsToDelivery>>() { }.type) 
+        val response = gson.fromJson<ArrayList<ProductsToDelivery>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<ProductsToDelivery>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -4921,7 +4926,7 @@ var calls = object: Calls {
          override fun deliverProductsWithPush(deliveryInstances: ArrayList<DeliveryInstance>, placeId: String, barId: String, sendPush: Boolean, flag: Int?, callback: (error: Error?, result: Boolean?) -> Unit) {
               val bodyArgs = JSONObject().apply {
                   put("deliveryInstances", JSONArray().apply { 
-            deliveryInstances.forEach { item -> put(Gson().toJson(item)) }
+            deliveryInstances.forEach { item -> put(gson.toJson(item)) }
           })
     put("placeId", placeId)
     put("barId", barId)
@@ -4945,7 +4950,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), PostPaidOwnedValue::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), PostPaidOwnedValue::class.java)
                    callback(null, response)
                   }
               })
@@ -4961,7 +4966,7 @@ var calls = object: Calls {
           })
     put("placeId", placeId)
     put("payments", JSONArray().apply { 
-            payments.forEach { item -> put(Gson().toJson(item)) }
+            payments.forEach { item -> put(gson.toJson(item)) }
           })
               }
               makeRequest("payMultipleUserPostPaidTransactionsWithTipAndZigMachine", bodyArgs, { error, json -> 
@@ -4984,14 +4989,14 @@ var calls = object: Calls {
           })
     put("placeId", placeId)
     put("payments", JSONArray().apply { 
-            payments.forEach { item -> put(Gson().toJson(item)) }
+            payments.forEach { item -> put(gson.toJson(item)) }
           })
               }
               makeRequest("payMultipleUserPostPaidPartialTransactions", bodyArgs, { error, json -> 
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), PartialPayReturn::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), PartialPayReturn::class.java)
                    callback(null, response)
                   }
               })
@@ -5006,13 +5011,13 @@ var calls = object: Calls {
             transactionIds.forEach { item -> put(item) }
           })
     put("placeId", placeId)
-    put("payment", Gson().toJson(payment))
+    put("payment", gson.toJson(payment))
               }
               makeRequest("makeCardTransactionAndPayPartialTransactions", bodyArgs, { error, json -> 
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), ZigMachinePayment::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), ZigMachinePayment::class.java)
                    callback(null, response)
                   }
               })
@@ -5028,14 +5033,14 @@ var calls = object: Calls {
           })
     put("placeId", placeId)
     put("payments", JSONArray().apply { 
-            payments.forEach { item -> put(Gson().toJson(item)) }
+            payments.forEach { item -> put(gson.toJson(item)) }
           })
               }
               makeRequest("payMultipleUserPostPaidPartialTransactionsStone", bodyArgs, { error, json -> 
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), PartialPayReturn::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), PartialPayReturn::class.java)
                    callback(null, response)
                   }
               })
@@ -5049,7 +5054,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<Transaction>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<Transaction>>() { }.type) 
+        val response = gson.fromJson<ArrayList<Transaction>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<Transaction>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -5063,7 +5068,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<PostPaidTransaction>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<PostPaidTransaction>>() { }.type) 
+        val response = gson.fromJson<ArrayList<PostPaidTransaction>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<PostPaidTransaction>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -5079,7 +5084,7 @@ var calls = object: Calls {
           })
     put("placeId", placeId)
     put("payments", JSONArray().apply { 
-            payments.forEach { item -> put(Gson().toJson(item)) }
+            payments.forEach { item -> put(gson.toJson(item)) }
           })
               }
               makeRequest("payMultipleUserPostPaidTransactions", bodyArgs, { error, json -> 
@@ -5102,7 +5107,7 @@ var calls = object: Calls {
           })
     put("placeId", placeId)
     put("payments", JSONArray().apply { 
-            payments.forEach { item -> put(Gson().toJson(item)) }
+            payments.forEach { item -> put(gson.toJson(item)) }
           })
               }
               makeRequest("payMultipleUserPostPaidTransactionsWithTip", bodyArgs, { error, json -> 
@@ -5122,7 +5127,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<OpenedBillBackup>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<OpenedBillBackup>>() { }.type) 
+        val response = gson.fromJson<ArrayList<OpenedBillBackup>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<OpenedBillBackup>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -5263,34 +5268,34 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<RefundActivationProduct>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<RefundActivationProduct>>() { }.type) 
+        val response = gson.fromJson<ArrayList<RefundActivationProduct>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<RefundActivationProduct>>() { }.type) 
                    callback(null, response)
                   }
               })
          }
          override fun createUser(setup: UserSetup, flag: Int?, callback: (error: Error?, user: User?) -> Unit) {
               val bodyArgs = JSONObject().apply {
-                  put("setup", Gson().toJson(setup))
+                  put("setup", gson.toJson(setup))
               }
               makeRequest("createUser", bodyArgs, { error, json -> 
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), User::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), User::class.java)
                    callback(null, response)
                   }
               })
          }
          override fun createUserWithAvatar(setup: UserSetup, avatar: ByteArray?, flag: Int?, callback: (error: Error?, user: User?) -> Unit) {
               val bodyArgs = JSONObject().apply {
-                  put("setup", Gson().toJson(setup))
+                  put("setup", gson.toJson(setup))
     put("avatar", avatar?.let { Base64.encodeToString(avatar, Base64.DEFAULT) })
               }
               makeRequest("createUserWithAvatar", bodyArgs, { error, json -> 
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), User::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), User::class.java)
                    callback(null, response)
                   }
               })
@@ -5303,7 +5308,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), User::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), User::class.java)
                    callback(null, response)
                   }
               })
@@ -5316,7 +5321,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), CpfDataOrUser::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), CpfDataOrUser::class.java)
                    callback(null, response)
                   }
               })
@@ -5330,7 +5335,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), User::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), User::class.java)
                    callback(null, response)
                   }
               })
@@ -5344,7 +5349,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<Action>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<Action>>() { }.type) 
+        val response = gson.fromJson<ArrayList<Action>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<Action>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -5358,7 +5363,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<Action>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<Action>>() { }.type) 
+        val response = gson.fromJson<ArrayList<Action>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<Action>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -5367,13 +5372,13 @@ var calls = object: Calls {
               val bodyArgs = JSONObject().apply {
                   put("cpf", cpf)
     put("placeId", placeId)
-    put("from", SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(from))
+    put("from", dateTimeFormat.format(from))
               }
               makeRequest("getClientZigLineByCpfFromDate", bodyArgs, { error, json -> 
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<Action>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<Action>>() { }.type) 
+        val response = gson.fromJson<ArrayList<Action>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<Action>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -5387,7 +5392,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<HistoryAction>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<HistoryAction>>() { }.type) 
+        val response = gson.fromJson<ArrayList<HistoryAction>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<HistoryAction>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -5401,7 +5406,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<HistoryAction>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<HistoryAction>>() { }.type) 
+        val response = gson.fromJson<ArrayList<HistoryAction>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<HistoryAction>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -5410,13 +5415,13 @@ var calls = object: Calls {
               val bodyArgs = JSONObject().apply {
                   put("cpf", cpf)
     put("placeId", placeId)
-    put("from", SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(from))
+    put("from", dateTimeFormat.format(from))
               }
               makeRequest("getClientHistoryInPlaceByCpfFromDate", bodyArgs, { error, json -> 
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<HistoryAction>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<HistoryAction>>() { }.type) 
+        val response = gson.fromJson<ArrayList<HistoryAction>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<HistoryAction>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -5430,7 +5435,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Calendar.getInstance().apply { time = SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(json?.getString("result")) }
+        val response = Calendar.getInstance().apply { time = dateTimeFormat.parse(json?.getString("result")) }
                    callback(null, response)
                   }
               })
@@ -5457,7 +5462,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), UserState::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), UserState::class.java)
                    callback(null, response)
                   }
               })
@@ -5465,13 +5470,13 @@ var calls = object: Calls {
          override fun getAllUpdatedUsers(placeId: String, since: Calendar, flag: Int?, callback: (error: Error?, String: ArrayList<String>?) -> Unit) {
               val bodyArgs = JSONObject().apply {
                   put("placeId", placeId)
-    put("since", SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(since))
+    put("since", dateTimeFormat.format(since))
               }
               makeRequest("getAllUpdatedUsers", bodyArgs, { error, json -> 
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<String>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<String>>() { }.type) 
+        val response = gson.fromJson<ArrayList<String>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<String>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -5480,13 +5485,13 @@ var calls = object: Calls {
               val bodyArgs = JSONObject().apply {
                   put("placeId", placeId)
     put("authorization", authorization)
-    put("payment", Gson().toJson(payment))
+    put("payment", gson.toJson(payment))
               }
               makeRequest("makeCardTransaction", bodyArgs, { error, json -> 
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), ZigMachineAnswer::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), ZigMachineAnswer::class.java)
                    callback(null, response)
                   }
               })
@@ -5530,7 +5535,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), CipurseChallenge::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), CipurseChallenge::class.java)
                    callback(null, response)
                   }
               })
@@ -5545,7 +5550,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), DesfireChallenge::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), DesfireChallenge::class.java)
                    callback(null, response)
                   }
               })
@@ -5559,7 +5564,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), ZigDevice::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), ZigDevice::class.java)
                    callback(null, response)
                   }
               })
@@ -5600,7 +5605,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), ZigDevice::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), ZigDevice::class.java)
                    callback(null, response)
                   }
               })
@@ -5615,7 +5620,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), ZigDevice::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), ZigDevice::class.java)
                    callback(null, response)
                   }
               })
@@ -5630,7 +5635,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), ZigAndRelation::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), ZigAndRelation::class.java)
                    callback(null, response)
                   }
               })
@@ -5643,7 +5648,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson<ArrayList<String>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<String>>() { }.type) 
+        val response = gson.fromJson<ArrayList<String>>(json?.getJSONArray("result")?.toString(), object : TypeToken<ArrayList<String>>() { }.type) 
                    callback(null, response)
                   }
               })
@@ -5671,7 +5676,7 @@ var calls = object: Calls {
                   if (error != null) {
                       callback(error, null)
                   } else {
-        val response = Gson().fromJson(json?.getJSONObject("result")?.toString(), User::class.java)
+        val response = gson.fromJson(json?.getJSONObject("result")?.toString(), User::class.java)
                    callback(null, response)
                   }
               })

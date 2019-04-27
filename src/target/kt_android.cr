@@ -69,6 +69,11 @@ END
 
 	companion object {
       lateinit var context: Context
+      private val gson = Gson()
+      private val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS",Locale.US).apply {
+          setTimeZone(TimeZone.getTimeZone("GMT"))
+      }
+      private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
       fun init(appContext: Context, useStaging: Boolean) {
             API.useStaging = useStaging
             context = appContext 
