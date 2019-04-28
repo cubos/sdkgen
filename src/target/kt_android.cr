@@ -270,14 +270,14 @@ END
                  client.newCall(request).enqueue(object: Callback {
                     override fun onFailure(call: Call?, e: IOException?) {
                         e?.printStackTrace()
-                        Handler(Looper.mainLooper).post {
+                        Handler(Looper.getMainLooper()).post {
                           callback(Error(ErrorType.Fatal, e?.message ?: "Chamada falhou sem mensagem de erro!"), null)
                         }
                     }
 
                     override fun onResponse(call: Call?, response: Response?) {
                         if (response == null || response.code() == 502) {
-                            Handler(Looper.mainLooper).post {               
+                            Handler(Looper.getMainLooper()).post {               
                               callback(Error(ErrorType.Fatal, "Erro Fatal (502) - Tente novamente"), null)
                             }
                             return
@@ -287,7 +287,7 @@ END
                             val stringBody = response?.body()?.string()
                             JSONObject(stringBody)
                         } catch (e: Exception) {
-                            Handler(Looper.mainLooper).post {               
+                            Handler(Looper.getMainLooper()).post {               
                               callback(Error(ErrorType.Fatal, "502 - Tente novamente"), null)
                             }
                             null
@@ -302,11 +302,11 @@ END
                             //TODO Fetch correct error type
                             val error = Error(ErrorType.valueOf(jsonError.getString("type")), jsonError.getString("message"))
                             Log.e("API Error", jsonError.getString("type") + " - " + error.message);
-                            Handler(Looper.mainLooper).post {               
+                            Handler(Looper.getMainLooper()).post {               
                               callback(error, null)
                             }
                         } else {
-                            Handler(Looper.mainLooper).post {               
+                            Handler(Looper.getMainLooper()).post {               
                               callback(null, responseBody)
                             }
                         }
@@ -314,7 +314,7 @@ END
                 })
             } catch (e: JSONException) {
                 e.printStackTrace()
-                Handler(Looper.mainLooper).post {               
+                Handler(Looper.getMainLooper()).post {               
                   callback(Error(ErrorType.Fatal, e.message ?: "Erro ao parsear json"), null)
                 }
             }
