@@ -97,9 +97,9 @@ END
 END
 
     @ast.struct_types.each do |t|
-      t.fields.each do |f| 
+      t.fields.each do |f|
         f.name = mangle f.name
-      end  
+      end
       @io << ident(t.kt_definition)
       @io << "\n\n"
     end
