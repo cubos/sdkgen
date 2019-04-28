@@ -48,7 +48,7 @@ import org.json.JSONArray
 import com.google.gson.reflect.TypeToken
 
 @SuppressLint("SimpleDateFormat")
-open class API {
+object API {
     
     interface Calls {\n
 END
@@ -67,34 +67,32 @@ END
     @io << <<-END
     }
 
-	companion object {
-      lateinit var context: Context
-      private val gson = Gson()
-      private val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS",Locale.US).apply {
-          setTimeZone(TimeZone.getTimeZone("GMT"))
-      }
-      private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-      fun init(appContext: Context, useStaging: Boolean) {
-            API.useStaging = useStaging
-            context = appContext 
-      }
-      
-      const val BASE_URL = #{@ast.options.url.inspect}
-      var useStaging = false
-      private val hexArray = "0123456789abcdef".toCharArray()
-      
-      var connectionPool = ConnectionPool(100, 45, TimeUnit.SECONDS)
-      var client = OkHttpClient.Builder()
-            .connectionPool(connectionPool)
-            .dispatcher(Dispatcher().apply { maxRequests = 200 ; maxRequestsPerHost = 200 })
-            .connectTimeout(15, TimeUnit.SECONDS)
-            .build()
-      
-      class Error(
-          var type: ErrorType? = null,
-          var message: String? = null
-      )
-    }\n
+    lateinit var context: Context
+    private val gson = Gson()
+    private val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS",Locale.US).apply {
+        setTimeZone(TimeZone.getTimeZone("GMT"))
+    }
+    private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+    fun init(appContext: Context, useStaging: Boolean) {
+          API.useStaging = useStaging
+          context = appContext 
+    }
+    
+    const val BASE_URL = #{@ast.options.url.inspect}
+    var useStaging = false
+    private val hexArray = "0123456789abcdef".toCharArray()
+    
+    var connectionPool = ConnectionPool(100, 45, TimeUnit.SECONDS)
+    var client = OkHttpClient.Builder()
+          .connectionPool(connectionPool)
+          .dispatcher(Dispatcher().apply { maxRequests = 200 ; maxRequestsPerHost = 200 })
+          .connectTimeout(15, TimeUnit.SECONDS)
+          .build()
+    
+    class Error(
+        var type: ErrorType? = null,
+        var message: String? = null
+    )\n
 
 END
 
