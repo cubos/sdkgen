@@ -48,7 +48,7 @@ module AST
     def kt_native_type
       "String"
     end
-  
+
     def kt_native_type
       "String"
     end

@@ -36,7 +36,7 @@ module AST
         io << "}\n"
       end
     end
-    
+
     def kt_decode(expr, desc)
       "#{expr}.getString(#{desc})"
     end

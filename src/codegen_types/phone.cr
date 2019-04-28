@@ -41,11 +41,11 @@ module AST
     # KOTLIN
     def kt_decode(expr, desc)
       "#{expr}.getString(#{desc})"
-    end 
+    end
 
     def kt_encode(expr, desc)
       "#{expr}"
-    end 
+    end
 
     def kt_native_type
       "String"
@@ -53,7 +53,7 @@ module AST
 
     def kt_return_type_name
       "phone"
-    end 
+    end
     # KOTLIN
 
   end

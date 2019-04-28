@@ -33,7 +33,6 @@ module AST
       typescript_check_encoded(expr, descr)
     end
 
-
     def kt_decode(expr, desc)
       "Location(\"\").apply { latitude = #{expr}.getDouble(#{desc})  ; longitude = #{expr}.getDouble(#{desc}) }"
     end
@@ -49,6 +48,5 @@ module AST
     def kt_return_type_name
       "latlng"
     end
-
   end
 end

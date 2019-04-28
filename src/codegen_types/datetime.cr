@@ -36,8 +36,8 @@ module AST
       end
     end
 
-# KOTLIN
-    def kt_decode(expr, desc)      
+    # KOTLIN
+    def kt_decode(expr, desc)
       "Calendar.getInstance().apply { time = dateTimeFormat.parse(#{expr}.getString(#{desc})) }"
     end
 
@@ -53,6 +53,6 @@ module AST
       "datetime"
     end
     # KOTLIN
-    
+
   end
 end

@@ -52,6 +52,5 @@ module AST
     def kt_return_type_name
       "value"
     end
-
   end
 end

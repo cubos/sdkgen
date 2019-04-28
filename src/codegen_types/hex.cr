@@ -37,14 +37,14 @@ module AST
       end
     end
 
-        # KOTLIN
+    # KOTLIN
     def kt_decode(expr, desc)
       raise "Not implemented"
-    end 
+    end
 
     def kt_encode(expr, desc)
       raise "Not implemented"
-    end 
+    end
 
     def kt_native_type
       raise "Not implemented"
@@ -52,7 +52,7 @@ module AST
 
     def kt_return_type_name
       raise "Not implemented"
-    end 
+    end
     # KOTLIN
   end
 end

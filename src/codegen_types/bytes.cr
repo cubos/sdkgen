@@ -36,14 +36,14 @@ module AST
       end
     end
 
-        # KOTLIN
+    # KOTLIN
     def kt_decode(expr, desc)
       "Base64.decode(#{expr}.getString(#{desc}), Base64.DEFAULT)"
-    end 
+    end
 
     def kt_encode(expr, desc)
       "Base64.encodeToString(#{expr}, Base64.DEFAULT)"
-    end 
+    end
 
     def kt_native_type
       "ByteArray"
@@ -51,7 +51,7 @@ module AST
 
     def kt_return_type_name
       "value"
-    end 
+    end
     # KOTLIN
   end
 end
