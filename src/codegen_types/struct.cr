@@ -70,7 +70,7 @@ module AST
     # KOTLIN
     def kt_decode(expr, desc)
       String::Builder.build do |io|
-      io << "gson.fromJson(#{expr}.getJSONObject(\"result\")?.toString(), #{name}::class.java)"
+        io << "gson.fromJson(#{expr}.getJSONObject(\"result\")?.toString(), #{name}::class.java)"
       end
     end
 
@@ -89,11 +89,11 @@ module AST
         io << "data class #{name}(\n"
         index = 0
         fields.each do |field|
-          io << "    var #{field.name}: #{field.type.kt_native_type}"  
-          
-          suffix = ""  
-          if index < fields.size - 1 
-            suffix = "," 
+          io << "    var #{field.name}: #{field.type.kt_native_type}"
+
+          suffix = ""
+          if index < fields.size - 1
+            suffix = ","
           end
 
           io << "#{suffix} \n"
@@ -103,24 +103,24 @@ module AST
         io << "    companion object {\n"
         io << "        fun fromJson(jsonToParse : JSONObject): #{kt_native_type} {\n"
         io << "            return gson.fromJson(jsonToParse.toString(), #{name}::class.java)\n"
-        io << "        }\n"   
+        io << "        }\n"
         io << "\n"
         io << "        fun fromJsonArray(jsonArrayToParse : JSONArray): ArrayList<#{kt_native_type}> {\n"
         io << "            return ArrayList(gson.fromJson(jsonArrayToParse.toString(), Array<#{name}>::class.java).toList())\n"
         io << "        }\n"
         io << "    }\n"
-        
+
         toJsonExpr = "this@#{name}"
         io << "    fun toJson(): JSONObject {\n"
-        io << "        return JSONObject(gson.toJson(this))" 
+        io << "        return JSONObject(gson.toJson(this))"
         io << "    }"
         io << "}"
       end
     end
 
     def kt_return_type_name
-      name[0].downcase + name[1..-1] 
-    end 
+      name[0].downcase + name[1..-1]
+    end
     # KOTLIN
 
   end

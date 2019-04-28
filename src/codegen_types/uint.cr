@@ -37,8 +37,8 @@ module AST
         io << "}\n"
       end
     end
-    
-    #Kotlin
+
+    # Kotlin
     def kt_decode(expr, desc)
       "#{expr}.getInt(#{desc})"
     end
@@ -54,6 +54,6 @@ module AST
     def kt_return_type_name
       "value"
     end
-    #Kotlin
+    # Kotlin
   end
 end

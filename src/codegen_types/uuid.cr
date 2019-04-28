@@ -37,14 +37,14 @@ module AST
       end
     end
 
-        # KOTLIN
+    # KOTLIN
     def kt_decode(expr, desc)
       "#{expr}.getString(#{desc})"
-    end 
+    end
 
     def kt_encode(expr, desc)
       "#{expr}"
-    end 
+    end
 
     def kt_native_type
       "String"
@@ -52,7 +52,7 @@ module AST
 
     def kt_return_type_name
       "uuid"
-    end 
+    end
     # KOTLIN
   end
 end

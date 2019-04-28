@@ -51,15 +51,15 @@ module AST
     # KOTLIN
     def kt_decode(expr, desc)
       "#{name}.valueOf( #{expr}.getString(#{desc}) )"
-    end 
+    end
 
     def kt_encode(expr, desc)
       "#{expr}.name"
-    end 
+    end
 
     def kt_definition
       String.build do |io|
-      io << "enum class #{name} {\n"
+        io << "enum class #{name} {\n"
         io << values.join(", \n")
         io << "\n}"
       end
@@ -71,7 +71,7 @@ module AST
 
     def kt_return_type_name
       "#{name}"
-    end 
+    end
     # KOTLIN
   end
 end

@@ -26,19 +26,18 @@ module AST
 
     def kt_encode(expr, desc)
       "null"
-    end 
+    end
 
     def kt_decode(expr, desc)
       "null"
-    end 
+    end
 
     def kt_native_type
       raise "BUG: Void should never be used in target kotlin"
-    end 
+    end
 
     def kt_return_type_name
-      "" 
-    end 
-
+      ""
+    end
   end
 end

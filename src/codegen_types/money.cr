@@ -38,14 +38,14 @@ module AST
       end
     end
 
-        # KOTLIN
+    # KOTLIN
     def kt_decode(expr, desc)
       "#{expr}.getInt(#{desc})"
-    end 
+    end
 
     def kt_encode(expr, desc)
       "#{expr}"
-    end 
+    end
 
     def kt_native_type
       "Int"
@@ -53,8 +53,8 @@ module AST
 
     def kt_return_type_name
       "money"
-    end 
+    end
     # KOTLIN
-    
+
   end
 end

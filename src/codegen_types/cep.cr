@@ -37,7 +37,6 @@ module AST
       end
     end
 
-
     def kt_decode(expr, desc)
       "#{expr}.getString(#{desc})?.replace(Regex(\"/(..)(...)(...)/\"), \"$1.$2-$3\")"
     end
@@ -53,6 +52,5 @@ module AST
     def kt_return_type_name
       "cep"
     end
-
   end
 end

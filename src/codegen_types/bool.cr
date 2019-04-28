@@ -39,19 +39,19 @@ module AST
     # KOTLIN
     def kt_decode(expr, desc)
       "#{expr}.getBoolean(#{desc})"
-    end 
+    end
 
     def kt_encode(expr, desc)
       "#{expr}"
-    end 
+    end
 
     def kt_native_type
       "Boolean"
     end
 
     def kt_return_type_name
-      "boolean" 
-    end 
+      "boolean"
+    end
     # KOTLIN
 
   end

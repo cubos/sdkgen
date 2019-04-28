@@ -40,19 +40,19 @@ module AST
     # KOTLIN
     def kt_decode(expr, desc)
       "String(Base64.decode(#{expr}.getString(#{desc}), Base64.DEFAULT))"
-    end 
+    end
 
     def kt_encode(expr, desc)
       "#{expr}"
-    end 
+    end
 
     def kt_native_type
       "String"
     end
 
     def kt_return_type_name
-      "base64Data" 
-    end 
+      "base64Data"
+    end
     # KOTLIN
 
   end

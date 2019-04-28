@@ -3,17 +3,17 @@ require "random/secure"
 
 class KtAndroidTarget < Target
   def mangle(ident)
-    if %w[ 
-      as as? break class continue do else false
-      for fun if in !in interface is !is null object 
-      package return super this throw true try typealias
-      val var when while by catch constructor delegate 
-      dynamic field file finally get import init param 
-      property receiver set setparam where actual abstract  
-      annotation companion const crossinline data enum expect
-      external final infix inline inner internal lateinit noinline 
-      open operator out override private protected public reified 
-      sealed suspend tailrec vararg Double Float Long	Int	Short	Byte
+    if %w[
+         as as? break class continue do else false
+         for fun if in !in interface is !is null object
+         package return super this throw true try typealias
+         val var when while by catch constructor delegate
+         dynamic field file finally get import init param
+         property receiver set setparam where actual abstract
+         annotation companion const crossinline data enum expect
+         external final infix inline inner internal lateinit noinline
+         open operator out override private protected public reified
+         sealed suspend tailrec vararg Double Float Long Int Short Byte
        ].includes? ident
       "_" + ident
     else
@@ -55,11 +55,11 @@ END
     @ast.operations.each do |op|
       args = op.args.map { |arg| "#{mangle arg.name}: #{arg.type.kt_native_type}" }
       args << "flag: Int? = null" # TODO make it something like API.DEFAULT and insert error parameter to callback
-      args << if !op.return_type.is_a? AST::VoidPrimitiveType 
-                "callback: (error: Error?, #{op.return_type.kt_return_type_name}: #{op.return_type.kt_native_type}?) -> Unit" 
-              else
-                "callback: (error: Error?, result: Boolean?) -> Unit"
-              end
+      args << if !op.return_type.is_a? AST::VoidPrimitiveType
+        "callback: (error: Error?, #{op.return_type.kt_return_type_name}: #{op.return_type.kt_native_type}?) -> Unit"
+      else
+        "callback: (error: Error?, result: Boolean?) -> Unit"
+      end
       @io << ident(String.build do |io|
         io << "   fun #{mangle op.pretty_name}(#{args.join(", ")}) \n"
       end)
@@ -98,56 +98,56 @@ END
 
 END
 
-    @ast.struct_types.each do |t| 
-    @io << ident(t.kt_definition)
-    @io << "\n\n"
-    end  
+    @ast.struct_types.each do |t|
+      @io << ident(t.kt_definition)
+      @io << "\n\n"
+    end
 
-    @ast.enum_types.each do |e| 
-    @io << ident(e.kt_definition)
-    @io << "\n\n"
-    end  
+    @ast.enum_types.each do |e|
+      @io << ident(e.kt_definition)
+      @io << "\n\n"
+    end
 
     @io << "var calls = object: Calls { \n"
     @ast.operations.each do |op|
       args = op.args.map { |arg| "#{mangle arg.name}: #{arg.type.kt_native_type}" }
       args << "flag: Int?" # TODO make it something like API.DEFAULT and insert error parameter to callback
-      args << if !op.return_type.is_a? AST::VoidPrimitiveType 
-                "callback: (error: Error?, #{op.return_type.kt_return_type_name}: #{op.return_type.kt_native_type}?) -> Unit" 
-              else
-                "callback: (error: Error?, result: Boolean?) -> Unit"
-              end
+      args << if !op.return_type.is_a? AST::VoidPrimitiveType
+        "callback: (error: Error?, #{op.return_type.kt_return_type_name}: #{op.return_type.kt_native_type}?) -> Unit"
+      else
+        "callback: (error: Error?, result: Boolean?) -> Unit"
+      end
       @io << ident(String.build do |io|
         io << "     override fun #{mangle op.pretty_name}(#{args.join(", ")}) {\n"
-        puts = op.args.map { |arg| "put(\"#{arg.name}\", #{arg.type.kt_encode(mangle(arg.name), nil)})"}.join("\n")
+        puts = op.args.map { |arg| "put(\"#{arg.name}\", #{arg.type.kt_encode(mangle(arg.name), nil)})" }.join("\n")
         bodyParameter = "null"
         if op.args.size > 0
-            bodyParameter = "bodyArgs" 
-            io << "          val #{bodyParameter} = JSONObject().apply {\n"  
-            io << "              #{puts}\n"
-            io << "          }\n"
-        else 
-            ""
+          bodyParameter = "bodyArgs"
+          io << "          val #{bodyParameter} = JSONObject().apply {\n"
+          io << "              #{puts}\n"
+          io << "          }\n"
+        else
+          ""
         end
         io << "          makeRequest(\"#{mangle op.pretty_name}\", #{bodyParameter}, { error, json -> \n"
         io << "              if (error != null) {\n"
         io << "                  callback(error, null)\n"
         io << "              } else {\n"
-        
+
         responseExpression = ""
         if op.return_type.is_a? AST::TypeReference
-            responseExpression = "val response = #{op.return_type.kt_decode("json?", nil )}\n"
+          responseExpression = "val response = #{op.return_type.kt_decode("json?", nil)}\n"
         elsif op.return_type.is_a? AST::ArrayType
-            responseExpression = "val response = #{op.return_type.kt_decode("json?", nil )}\n"
+          responseExpression = "val response = #{op.return_type.kt_decode("json?", nil)}\n"
         elsif op.return_type.is_a? AST::OptionalType
-            responseExpression = "val response = #{op.return_type.kt_decode("json?", "\"result\"" )}\n"
+          responseExpression = "val response = #{op.return_type.kt_decode("json?", "\"result\"")}\n"
         else
-            responseExpression = "val response = #{op.return_type.kt_decode("json?", "\"result\"" )}\n"
+          responseExpression = "val response = #{op.return_type.kt_decode("json?", "\"result\"")}\n"
         end
 
         io << ident responseExpression
         # io << "               val response = #{op.return_type.kt_decode("json?.getJSONObject(\"result\")?.toString()", nil )}\n"
-        
+
         io << "               callback(null, response)\n"
         io << "              }\n"
         io << "          })\n"
