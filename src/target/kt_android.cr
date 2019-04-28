@@ -259,7 +259,7 @@ END
                     put("id", randomBytesHex(8))
                     put("device", device())
                     put("name", functionName)
-                    put("args", bodyArgs)
+                    put("args", bodyArgs ?: JSONObject())
                     put("staging", API.useStaging)
                 }
 
@@ -278,8 +278,14 @@ END
                             callback(Error(ErrorType.Fatal, "Erro Fatal (502) - Tente novamente"), null)
                         }
 
-                        val stringBody = response?.body()?.string()
-                        val responseBody = JSONObject(stringBody)
+                        var responseBody: JSONObject? = null
+                        try {
+                          val stringBody = response?.body()?.string()
+                          val responseBody = JSONObject(stringBody)
+                        } catch (e: Exception) {
+                          callback(Error(ErrorType.Fatal, "502 - Tente novamente"), null)
+                          return 
+                        }
 
                         val pref = context.getSharedPreferences("api", Context.MODE_PRIVATE)
                         pref.edit().putString("deviceId", responseBody.getString("deviceId")).apply()
