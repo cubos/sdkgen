@@ -16,11 +16,6 @@ script:
     - cd ..
     - if [[ "$TRAVIS_TAG" ]] ; then
         docker image build . -t cubos/sdkgen -t cubos/sdkgen:$TRAVIS_TAG;
-        docker image build ./target-node -t cubos/sdkgen/target-node -t cubos/sdkgen/target-node:$TRAVIS_TAG;
-        docker image build ./target-web -t cubos/sdkgen/target-web -t cubos/sdkgen/target-web:$TRAVIS_TAG;
-        docker image build ./target-android -t cubos/sdkgen/target-android -t cubos/sdkgen/target-android:$TRAVIS_TAG;
-        docker image build ./target-node -t cubos/sdkgen/target-node -t cubos/sdkgen/target-node:$TRAVIS_TAG;
-        docker image build ./target-android-kt -t cubos/sdkgen/target-android-kt -t cubos/sdkgen/target-android-kt:$TRAVIS_TAG;
       else
         docker image build .;
       fi
