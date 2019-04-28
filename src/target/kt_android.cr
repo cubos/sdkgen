@@ -9,7 +9,7 @@ class KtAndroidTarget < Target
          package return super this throw true try typealias
          val var when while by catch constructor delegate
          dynamic field file finally get import init param
-         property receiver set setparam where actual abstract
+         property receiver set setparam in where actual abstract
          annotation companion const crossinline data enum expect
          external final infix inline inner internal lateinit noinline
          open operator out override private protected public reified
@@ -97,6 +97,9 @@ END
 END
 
     @ast.struct_types.each do |t|
+      t.fields.each do |f| 
+        f.name = mangle f.name
+      end  
       @io << ident(t.kt_definition)
       @io << "\n\n"
     end
