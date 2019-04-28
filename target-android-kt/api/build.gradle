@@ -42,7 +42,7 @@ publishing {
         maven(MavenPublication) {
             artifacts {
                 groupId 'io.cubos.api'
-                artifactId 'sdkgen2-kt'
+                artifactId 'sdkgen2'
                 version '1.0.10'
                 artifact 'build/outputs/aar/api-release.aar'
 
