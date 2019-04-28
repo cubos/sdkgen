@@ -37,7 +37,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Point
 import android.os.Handler
-import android.os.HandlerThread
 import android.provider.Settings
 import android.util.Log
 import com.google.gson.Gson
@@ -46,6 +45,7 @@ import java.io.IOException
 import java.io.Serializable
 import org.json.JSONArray
 import com.google.gson.reflect.TypeToken
+import android.os.Looper
 
 @SuppressLint("SimpleDateFormat")
 object API {
@@ -270,19 +270,26 @@ END
                  client.newCall(request).enqueue(object: Callback {
                     override fun onFailure(call: Call?, e: IOException?) {
                         e?.printStackTrace()
-                        callback(Error(ErrorType.Fatal, e?.message ?: "Chamada falhou sem mensagem de erro!"), null)
+                        Handler(Looper.mainLooper).post {
+                          callback(Error(ErrorType.Fatal, e?.message ?: "Chamada falhou sem mensagem de erro!"), null)
+                        }
                     }
 
                     override fun onResponse(call: Call?, response: Response?) {
                         if (response == null || response.code() == 502) {
-                            callback(Error(ErrorType.Fatal, "Erro Fatal (502) - Tente novamente"), null)
+                            Handler(Looper.mainLooper).post {               
+                              callback(Error(ErrorType.Fatal, "Erro Fatal (502) - Tente novamente"), null)
+                            }
+                            return
                         }
 
                         var responseBody = try {
                             val stringBody = response?.body()?.string()
                             JSONObject(stringBody)
                         } catch (e: Exception) {
-                            callback(Error(ErrorType.Fatal, "502 - Tente novamente"), null)
+                            Handler(Looper.mainLooper).post {               
+                              callback(Error(ErrorType.Fatal, "502 - Tente novamente"), null)
+                            }
                             null
                             return
                         }
@@ -295,15 +302,21 @@ END
                             //TODO Fetch correct error type
                             val error = Error(ErrorType.valueOf(jsonError.getString("type")), jsonError.getString("message"))
                             Log.e("API Error", jsonError.getString("type") + " - " + error.message);
-                            callback(error, null)
+                            Handler(Looper.mainLooper).post {               
+                              callback(error, null)
+                            }
                         } else {
-                            callback(null, responseBody)
+                            Handler(Looper.mainLooper).post {               
+                              callback(null, responseBody)
+                            }
                         }
                     }
                 })
             } catch (e: JSONException) {
                 e.printStackTrace()
-                callback(Error(ErrorType.Fatal, e.message ?: "Erro ao parsear json"), null)
+                Handler(Looper.mainLooper).post {               
+                  callback(Error(ErrorType.Fatal, e.message ?: "Erro ao parsear json"), null)
+                }
             }
         }
     }
