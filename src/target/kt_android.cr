@@ -279,23 +279,19 @@ END
                         }
 
                         val stringBody = response?.body()?.string()
-                        //TODO Use kotlin coroutine instead
-                        val handlerThread = HandlerThread("JsonHandleThread")
-                        Handler(handlerThread.looper).post {
-                            val responseBody = JSONObject(stringBody)
+                        val responseBody = JSONObject(stringBody)
 
-                            val pref = context.getSharedPreferences("api", Context.MODE_PRIVATE)
-                            pref.edit().putString("deviceId", responseBody.getString("deviceId")).apply()
+                        val pref = context.getSharedPreferences("api", Context.MODE_PRIVATE)
+                        pref.edit().putString("deviceId", responseBody.getString("deviceId")).apply()
 
-                            if (!responseBody.getBoolean("ok")) {
-                                val jsonError = responseBody.getJSONObject("error")
-                                //TODO Fetch correct error type
-                                val error = Error(ErrorType.valueOf(jsonError.getString("type")), jsonError.getString("message"))
-                                Log.e("API Error", jsonError.getString("type") + " - " + error.message);
-                                callback(error, null)
-                            } else {
-                                callback(null, responseBody)
-                            }
+                        if (!responseBody.getBoolean("ok")) {
+                            val jsonError = responseBody.getJSONObject("error")
+                            //TODO Fetch correct error type
+                            val error = Error(ErrorType.valueOf(jsonError.getString("type")), jsonError.getString("message"))
+                            Log.e("API Error", jsonError.getString("type") + " - " + error.message);
+                            callback(error, null)
+                        } else {
+                            callback(null, responseBody)
                         }
                     }
                 })
