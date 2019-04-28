@@ -278,13 +278,13 @@ END
                             callback(Error(ErrorType.Fatal, "Erro Fatal (502) - Tente novamente"), null)
                         }
 
-                        var responseBody: JSONObject? = null
-                        try {
-                          val stringBody = response?.body()?.string()
-                          val responseBody = JSONObject(stringBody)
+                        var responseBody = try {
+                            val stringBody = response?.body()?.string()
+                            JSONObject(stringBody)
                         } catch (e: Exception) {
-                          callback(Error(ErrorType.Fatal, "502 - Tente novamente"), null)
-                          return 
+                            callback(Error(ErrorType.Fatal, "502 - Tente novamente"), null)
+                            null
+                            return
                         }
 
                         val pref = context.getSharedPreferences("api", Context.MODE_PRIVATE)
