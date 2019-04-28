@@ -78,7 +78,7 @@ END
           context = appContext 
     }
     
-    const val BASE_URL = #{@ast.options.url.inspect}
+    var BASE_URL = #{@ast.options.url.inspect}
     var useStaging = false
     private val hexArray = "0123456789abcdef".toCharArray()
     
