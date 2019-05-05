@@ -236,6 +236,10 @@ export class Parser {
                 options.syntheticDefaultImports = this.multiExpect({TrueKeywordToken: () => true, FalseKeywordToken: () => false});
                 this.nextToken();
                 break;
+            case "retryRequest":
+                options.retryRequest = this.multiExpect({TrueKeywordToken: () => true, FalseKeywordToken: () => false});
+                this.nextToken();
+                break;
             default:
                 throw new ParserError(`Unknown option $${varToken.value} at ${varToken.location}`);
         }

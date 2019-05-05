@@ -92,7 +92,8 @@ export class Options extends AstNode {
         public url = "",
         public useRethink = true,
         public strict = false,
-        public syntheticDefaultImports = true
+        public syntheticDefaultImports = true,
+        public retryRequest = true
     ) { super(); }
 }
 
