@@ -48,6 +48,7 @@ primitiveToAstClass.set("hex", HexPrimitiveType);
 primitiveToAstClass.set("base64", Base64PrimitiveType);
 primitiveToAstClass.set("safehtml", SafeHtmlPrimitiveType);
 primitiveToAstClass.set("xml", XmlPrimitiveType);
+primitiveToAstClass.set("void", VoidPrimitiveType);
 
 export class Parser {
     private lexers: Lexer[];

@@ -6,8 +6,13 @@ export class Lexer {
     public static PRIMITIVES = [
         "bool", "int", "uint", "float", "string", "date", "datetime", "bytes",
         "money", "cpf", "cnpj", "email", "phone", "cep", "latlng", "url",
-        "uuid", "hex", "base64", "safehtml", "xml"
+        "uuid", "hex", "base64", "safehtml", "xml", "void"
     ];
+
+    public static KEYWORDS = [
+        ...Lexer.PRIMITIVES,
+        "error", "enum", "type", "import", "get", "function", "true", "false"
+    ]
 
     private startPos = 0;
     private startLine = 1;

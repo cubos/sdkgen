@@ -9,17 +9,7 @@ describe(Parser, () => {
                 type Foo {
                     foo: ${p}
                 }
-            `, new AstRoot([
-                new TypeDefinition(
-                    "Foo",
-                    new StructType(
-                        [
-                            new Field("foo", new (primitiveToAstClass.get(p)!))
-                        ],
-                        []
-                    )
-                )
-            ]));
+            `);
         });
 
         test(`handles simple get operations for primitive type '${p}'`, () => {
@@ -27,46 +17,17 @@ describe(Parser, () => {
                 get foo(): ${p}
                 get bar(): ${p}?
                 get baz(): ${p}[]
-            `, new AstRoot(
-                [],
-                [
-                    new GetOperation(
-                        "foo",
-                        [],
-                        new (primitiveToAstClass.get(p)!)
-                    ),
-                    new GetOperation(
-                        "bar",
-                        [],
-                        new OptionalType(new (primitiveToAstClass.get(p)!))
-                    ),
-                    new GetOperation(
-                        "baz",
-                        [],
-                        new ArrayType(new (primitiveToAstClass.get(p)!))
-                    )
-                ]
-            ));
+            `);
         });
     }
 
-    for (const kw of ["type", "get", "function", "enum", "import", "error", "void"].concat(Lexer.PRIMITIVES)) {
+    for (const kw of Lexer.KEYWORDS) {
         test(`handles '${kw}' on the name of a field`, () => {
             expectParses(`
                 type Foo {
                     ${kw}: int
                 }
-            `, new AstRoot([
-                new TypeDefinition(
-                    "Foo",
-                    new StructType(
-                        [
-                            new Field(kw, new IntPrimitiveType)
-                        ],
-                        []
-                    )
-                )
-            ]));
+            `);
         });
     }
 
@@ -144,12 +105,11 @@ describe(Parser, () => {
     });
 });
 
-function expectParses(source: string, expectedAst?: AstRoot) {
+function expectParses(source: string) {
     const parser = new Parser(new Lexer(source));
     const ast = parser.parse();
 
-    if (expectedAst)
-        expect(JSON.stringify(ast, null, 2)).toEqual(JSON.stringify(expectedAst, null, 2));
+    expect(ast).toMatchSnapshot();
 }
 
 function expectDoesntParse(source: string, message: string) {

@@ -1,0 +1,2636 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Parser handles 'base64' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "base64",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'bool' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "bool",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'bytes' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "bytes",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'cep' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "cep",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'cnpj' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "cnpj",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'cpf' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "cpf",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'date' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "date",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'datetime' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "datetime",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'email' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "email",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'enum' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "enum",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'error' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "error",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'false' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "false",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'float' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "float",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'function' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "function",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'get' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "get",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'hex' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "hex",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'import' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "import",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'int' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "int",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'latlng' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "latlng",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'money' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "money",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'phone' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "phone",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'safehtml' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "safehtml",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'string' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "string",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'true' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "true",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'type' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "type",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'uint' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "uint",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'url' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "url",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'uuid' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "uuid",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'void' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "void",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles 'xml' on the name of a field 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "xml",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles arrays and optionals 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "aa",
+            "secret": false,
+            "type": ArrayType {
+              "base": StringPrimitiveType {},
+            },
+          },
+          Field {
+            "name": "bbb",
+            "secret": false,
+            "type": OptionalType {
+              "base": OptionalType {
+                "base": ArrayType {
+                  "base": OptionalType {
+                    "base": IntPrimitiveType {},
+                  },
+                },
+              },
+            },
+          },
+          Field {
+            "name": "cccc",
+            "secret": false,
+            "type": ArrayType {
+              "base": ArrayType {
+                "base": ArrayType {
+                  "base": IntPrimitiveType {},
+                },
+              },
+            },
+          },
+          Field {
+            "name": "ddddd",
+            "secret": false,
+            "type": ArrayType {
+              "base": ArrayType {
+                "base": OptionalType {
+                  "base": OptionalType {
+                    "base": OptionalType {
+                      "base": ArrayType {
+                        "base": OptionalType {
+                          "base": OptionalType {
+                            "base": ArrayType {
+                              "base": ArrayType {
+                                "base": ArrayType {
+                                  "base": UIntPrimitiveType {},
+                                },
+                              },
+                            },
+                          },
+                        },
+                      },
+                    },
+                  },
+                },
+              },
+            },
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles combinations of all part 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [
+    "Foo",
+    "Bar",
+  ],
+  "operations": Array [
+    GetOperation {
+      "args": Array [],
+      "name": "baz",
+      "returnType": TypeReference {
+        "name": "Baz",
+      },
+    },
+  ],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "api.cubos.io/sdkgenspec",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Baz",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "a",
+            "secret": false,
+            "type": OptionalType {
+              "base": StringPrimitiveType {},
+            },
+          },
+          Field {
+            "name": "b",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles errors 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [
+    "Foo",
+    "Bar",
+    "FooBar",
+  ],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [],
+}
+`;
+
+exports[`Parser handles options on the top 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "api.cubos.io/sdkgenspec",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [],
+}
+`;
+
+exports[`Parser handles primitive type 'base64' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "foo",
+            "secret": false,
+            "type": Base64PrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles primitive type 'bool' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "foo",
+            "secret": false,
+            "type": BoolPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles primitive type 'bytes' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "foo",
+            "secret": false,
+            "type": BytesPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles primitive type 'cep' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "foo",
+            "secret": false,
+            "type": CepPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles primitive type 'cnpj' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "foo",
+            "secret": false,
+            "type": CnpjPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles primitive type 'cpf' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "foo",
+            "secret": false,
+            "type": CpfPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles primitive type 'date' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "foo",
+            "secret": false,
+            "type": DatePrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles primitive type 'datetime' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "foo",
+            "secret": false,
+            "type": DateTimePrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles primitive type 'email' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "foo",
+            "secret": false,
+            "type": EmailPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles primitive type 'float' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "foo",
+            "secret": false,
+            "type": FloatPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles primitive type 'hex' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "foo",
+            "secret": false,
+            "type": HexPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles primitive type 'int' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "foo",
+            "secret": false,
+            "type": IntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles primitive type 'latlng' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "foo",
+            "secret": false,
+            "type": LatLngPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles primitive type 'money' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "foo",
+            "secret": false,
+            "type": MoneyPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles primitive type 'phone' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "foo",
+            "secret": false,
+            "type": PhonePrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles primitive type 'safehtml' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "foo",
+            "secret": false,
+            "type": SafeHtmlPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles primitive type 'string' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "foo",
+            "secret": false,
+            "type": StringPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles primitive type 'uint' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "foo",
+            "secret": false,
+            "type": UIntPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles primitive type 'url' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "foo",
+            "secret": false,
+            "type": UrlPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles primitive type 'uuid' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "foo",
+            "secret": false,
+            "type": UuidPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles primitive type 'void' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "foo",
+            "secret": false,
+            "type": VoidPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles primitive type 'xml' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "foo",
+            "secret": false,
+            "type": XmlPrimitiveType {},
+          },
+        ],
+        "spreads": Array [],
+      },
+    },
+  ],
+}
+`;
+
+exports[`Parser handles simple get operations for primitive type 'base64' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [
+    GetOperation {
+      "args": Array [],
+      "name": "foo",
+      "returnType": Base64PrimitiveType {},
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "bar",
+      "returnType": OptionalType {
+        "base": Base64PrimitiveType {},
+      },
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "baz",
+      "returnType": ArrayType {
+        "base": Base64PrimitiveType {},
+      },
+    },
+  ],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [],
+}
+`;
+
+exports[`Parser handles simple get operations for primitive type 'bool' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [
+    GetOperation {
+      "args": Array [],
+      "name": "foo",
+      "returnType": BoolPrimitiveType {},
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "bar",
+      "returnType": OptionalType {
+        "base": BoolPrimitiveType {},
+      },
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "baz",
+      "returnType": ArrayType {
+        "base": BoolPrimitiveType {},
+      },
+    },
+  ],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [],
+}
+`;
+
+exports[`Parser handles simple get operations for primitive type 'bytes' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [
+    GetOperation {
+      "args": Array [],
+      "name": "foo",
+      "returnType": BytesPrimitiveType {},
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "bar",
+      "returnType": OptionalType {
+        "base": BytesPrimitiveType {},
+      },
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "baz",
+      "returnType": ArrayType {
+        "base": BytesPrimitiveType {},
+      },
+    },
+  ],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [],
+}
+`;
+
+exports[`Parser handles simple get operations for primitive type 'cep' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [
+    GetOperation {
+      "args": Array [],
+      "name": "foo",
+      "returnType": CepPrimitiveType {},
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "bar",
+      "returnType": OptionalType {
+        "base": CepPrimitiveType {},
+      },
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "baz",
+      "returnType": ArrayType {
+        "base": CepPrimitiveType {},
+      },
+    },
+  ],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [],
+}
+`;
+
+exports[`Parser handles simple get operations for primitive type 'cnpj' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [
+    GetOperation {
+      "args": Array [],
+      "name": "foo",
+      "returnType": CnpjPrimitiveType {},
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "bar",
+      "returnType": OptionalType {
+        "base": CnpjPrimitiveType {},
+      },
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "baz",
+      "returnType": ArrayType {
+        "base": CnpjPrimitiveType {},
+      },
+    },
+  ],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [],
+}
+`;
+
+exports[`Parser handles simple get operations for primitive type 'cpf' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [
+    GetOperation {
+      "args": Array [],
+      "name": "foo",
+      "returnType": CpfPrimitiveType {},
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "bar",
+      "returnType": OptionalType {
+        "base": CpfPrimitiveType {},
+      },
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "baz",
+      "returnType": ArrayType {
+        "base": CpfPrimitiveType {},
+      },
+    },
+  ],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [],
+}
+`;
+
+exports[`Parser handles simple get operations for primitive type 'date' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [
+    GetOperation {
+      "args": Array [],
+      "name": "foo",
+      "returnType": DatePrimitiveType {},
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "bar",
+      "returnType": OptionalType {
+        "base": DatePrimitiveType {},
+      },
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "baz",
+      "returnType": ArrayType {
+        "base": DatePrimitiveType {},
+      },
+    },
+  ],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [],
+}
+`;
+
+exports[`Parser handles simple get operations for primitive type 'datetime' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [
+    GetOperation {
+      "args": Array [],
+      "name": "foo",
+      "returnType": DateTimePrimitiveType {},
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "bar",
+      "returnType": OptionalType {
+        "base": DateTimePrimitiveType {},
+      },
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "baz",
+      "returnType": ArrayType {
+        "base": DateTimePrimitiveType {},
+      },
+    },
+  ],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [],
+}
+`;
+
+exports[`Parser handles simple get operations for primitive type 'email' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [
+    GetOperation {
+      "args": Array [],
+      "name": "foo",
+      "returnType": EmailPrimitiveType {},
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "bar",
+      "returnType": OptionalType {
+        "base": EmailPrimitiveType {},
+      },
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "baz",
+      "returnType": ArrayType {
+        "base": EmailPrimitiveType {},
+      },
+    },
+  ],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [],
+}
+`;
+
+exports[`Parser handles simple get operations for primitive type 'float' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [
+    GetOperation {
+      "args": Array [],
+      "name": "foo",
+      "returnType": FloatPrimitiveType {},
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "bar",
+      "returnType": OptionalType {
+        "base": FloatPrimitiveType {},
+      },
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "baz",
+      "returnType": ArrayType {
+        "base": FloatPrimitiveType {},
+      },
+    },
+  ],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [],
+}
+`;
+
+exports[`Parser handles simple get operations for primitive type 'hex' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [
+    GetOperation {
+      "args": Array [],
+      "name": "foo",
+      "returnType": HexPrimitiveType {},
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "bar",
+      "returnType": OptionalType {
+        "base": HexPrimitiveType {},
+      },
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "baz",
+      "returnType": ArrayType {
+        "base": HexPrimitiveType {},
+      },
+    },
+  ],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [],
+}
+`;
+
+exports[`Parser handles simple get operations for primitive type 'int' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [
+    GetOperation {
+      "args": Array [],
+      "name": "foo",
+      "returnType": IntPrimitiveType {},
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "bar",
+      "returnType": OptionalType {
+        "base": IntPrimitiveType {},
+      },
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "baz",
+      "returnType": ArrayType {
+        "base": IntPrimitiveType {},
+      },
+    },
+  ],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [],
+}
+`;
+
+exports[`Parser handles simple get operations for primitive type 'latlng' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [
+    GetOperation {
+      "args": Array [],
+      "name": "foo",
+      "returnType": LatLngPrimitiveType {},
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "bar",
+      "returnType": OptionalType {
+        "base": LatLngPrimitiveType {},
+      },
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "baz",
+      "returnType": ArrayType {
+        "base": LatLngPrimitiveType {},
+      },
+    },
+  ],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [],
+}
+`;
+
+exports[`Parser handles simple get operations for primitive type 'money' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [
+    GetOperation {
+      "args": Array [],
+      "name": "foo",
+      "returnType": MoneyPrimitiveType {},
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "bar",
+      "returnType": OptionalType {
+        "base": MoneyPrimitiveType {},
+      },
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "baz",
+      "returnType": ArrayType {
+        "base": MoneyPrimitiveType {},
+      },
+    },
+  ],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [],
+}
+`;
+
+exports[`Parser handles simple get operations for primitive type 'phone' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [
+    GetOperation {
+      "args": Array [],
+      "name": "foo",
+      "returnType": PhonePrimitiveType {},
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "bar",
+      "returnType": OptionalType {
+        "base": PhonePrimitiveType {},
+      },
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "baz",
+      "returnType": ArrayType {
+        "base": PhonePrimitiveType {},
+      },
+    },
+  ],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [],
+}
+`;
+
+exports[`Parser handles simple get operations for primitive type 'safehtml' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [
+    GetOperation {
+      "args": Array [],
+      "name": "foo",
+      "returnType": SafeHtmlPrimitiveType {},
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "bar",
+      "returnType": OptionalType {
+        "base": SafeHtmlPrimitiveType {},
+      },
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "baz",
+      "returnType": ArrayType {
+        "base": SafeHtmlPrimitiveType {},
+      },
+    },
+  ],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [],
+}
+`;
+
+exports[`Parser handles simple get operations for primitive type 'string' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [
+    GetOperation {
+      "args": Array [],
+      "name": "foo",
+      "returnType": StringPrimitiveType {},
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "bar",
+      "returnType": OptionalType {
+        "base": StringPrimitiveType {},
+      },
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "baz",
+      "returnType": ArrayType {
+        "base": StringPrimitiveType {},
+      },
+    },
+  ],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [],
+}
+`;
+
+exports[`Parser handles simple get operations for primitive type 'uint' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [
+    GetOperation {
+      "args": Array [],
+      "name": "foo",
+      "returnType": UIntPrimitiveType {},
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "bar",
+      "returnType": OptionalType {
+        "base": UIntPrimitiveType {},
+      },
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "baz",
+      "returnType": ArrayType {
+        "base": UIntPrimitiveType {},
+      },
+    },
+  ],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [],
+}
+`;
+
+exports[`Parser handles simple get operations for primitive type 'url' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [
+    GetOperation {
+      "args": Array [],
+      "name": "foo",
+      "returnType": UrlPrimitiveType {},
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "bar",
+      "returnType": OptionalType {
+        "base": UrlPrimitiveType {},
+      },
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "baz",
+      "returnType": ArrayType {
+        "base": UrlPrimitiveType {},
+      },
+    },
+  ],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [],
+}
+`;
+
+exports[`Parser handles simple get operations for primitive type 'uuid' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [
+    GetOperation {
+      "args": Array [],
+      "name": "foo",
+      "returnType": UuidPrimitiveType {},
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "bar",
+      "returnType": OptionalType {
+        "base": UuidPrimitiveType {},
+      },
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "baz",
+      "returnType": ArrayType {
+        "base": UuidPrimitiveType {},
+      },
+    },
+  ],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [],
+}
+`;
+
+exports[`Parser handles simple get operations for primitive type 'void' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [
+    GetOperation {
+      "args": Array [],
+      "name": "foo",
+      "returnType": VoidPrimitiveType {},
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "bar",
+      "returnType": OptionalType {
+        "base": VoidPrimitiveType {},
+      },
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "baz",
+      "returnType": ArrayType {
+        "base": VoidPrimitiveType {},
+      },
+    },
+  ],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [],
+}
+`;
+
+exports[`Parser handles simple get operations for primitive type 'xml' 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [
+    GetOperation {
+      "args": Array [],
+      "name": "foo",
+      "returnType": XmlPrimitiveType {},
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "bar",
+      "returnType": OptionalType {
+        "base": XmlPrimitiveType {},
+      },
+    },
+    GetOperation {
+      "args": Array [],
+      "name": "baz",
+      "returnType": ArrayType {
+        "base": XmlPrimitiveType {},
+      },
+    },
+  ],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [],
+}
+`;
+
+exports[`Parser handles spreads in structs 1`] = `
+AstRoot {
+  "enumTypes": Array [],
+  "errors": Array [],
+  "operations": Array [],
+  "options": Options {
+    "retryRequest": true,
+    "strict": false,
+    "syntheticDefaultImports": true,
+    "url": "",
+    "useRethink": true,
+  },
+  "structTypes": Array [],
+  "typeDefinitions": Array [
+    TypeDefinition {
+      "name": "Foo",
+      "type": StructType {
+        "fields": Array [
+          Field {
+            "name": "aa",
+            "secret": false,
+            "type": StringPrimitiveType {},
+          },
+        ],
+        "spreads": Array [
+          TypeReference {
+            "name": "Bar",
+          },
+          TypeReference {
+            "name": "Baz",
+          },
+        ],
+      },
+    },
+  ],
+}
+`;
