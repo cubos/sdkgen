@@ -61,7 +61,9 @@ END
         "callback: (error: Error?, result: Boolean?) -> Unit"
       end
       @io << ident(String.build do |io|
-        io << "   fun #{mangle op.pretty_name}(#{args.join(", ")}) \n"
+        io << "   fun #{mangle op.pretty_name}(#{args.join(", ")}) { \n"
+        io << "       callback(Error(ErrorType.Fatal, \"Not Implemented\"), null) \n"
+        io << "   }\n"
       end)
     end
     @io << <<-END
