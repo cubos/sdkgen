@@ -434,23 +434,11 @@ export function start(port: number = 8000) {
         });
     }
 
-    if (process.env.DEBUGGING && !process.env.NOLOCALTUNNEL) {
-        port = (Math.random() * 50000 + 10000) | 0;
-    }
-
     if (!process.env.TEST) {
         server.listen(port, () => {
             const addr = server.address();
             const addrString = typeof addr === "string" ? addr : `${addr.address}:${addr.port}`;
             console.log(`Listening on ${addrString}`);
-        });
-    }
-
-    if (process.env.DEBUGGING && !process.env.NOLOCALTUNNEL) {
-        const subdomain = require("crypto").createHash("sha256").update(process.argv[1]).digest("hex").substr(0, 8);
-        require("localtunnel")(port, {subdomain}, (err: Error | null, tunnel: any) => {
-            if (err) throw err;
-            console.log("Tunnel URL:", tunnel.url);
         });
     }
 }
