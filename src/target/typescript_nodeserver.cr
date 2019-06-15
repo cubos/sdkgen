@@ -434,13 +434,11 @@ export function start(port: number = 8000) {
         });
     }
 
-    if (!process.env.TEST) {
-        server.listen(port, () => {
-            const addr = server.address();
-            const addrString = typeof addr === "string" ? addr : `${addr.address}:${addr.port}`;
-            console.log(`Listening on ${addrString}`);
-        });
-    }
+    server.listen(port, () => {
+        const addr = server.address();
+        const addrString = typeof addr === "string" ? addr : `${addr.address}:${addr.port}`;
+        console.log(`Listening on ${addrString}`);
+    });
 }
 
 fn.ping = async (ctx: Context) => "pong";
