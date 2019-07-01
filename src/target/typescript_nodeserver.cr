@@ -219,6 +219,16 @@ function sleep(ms: number) {
     return new Promise<void>(resolve => setTimeout(resolve, ms));
 }
 
+function getIp(req: http.IncomingMessage): string | undefined {
+    const possibleOverridenIp = req.headers["x-real-ip"] || req.headers["x-forwarded-for"];
+
+    if (possibleOverridenIp) {
+        return Array.isArray(possibleOverridenIp) ? possibleOverridenIp[0] : possibleOverridenIp;
+    } else {
+        return req.connection.remoteAddress;
+    }
+}
+
 export let server: http.Server;
 
 export const hook: {
@@ -262,7 +272,7 @@ export function start(port: number = 8000) {
                 res.end();
                 return;
             }
-            const ip = req.headers["x-real-ip"] as string || (req.headers["x-fowarded-for"] as string || "");
+            const ip = getIp(req) || "";
             const signature = req.method! + url.parse(req.url || "").pathname;
             if (httpHandlers[signature]) {
                 console.log(`${toDateTimeString(new Date())} http ${signature}`);
