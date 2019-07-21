@@ -136,7 +136,7 @@ END
       @io << ident ident "let cacheKey: string | null = null, decodedKey: string | null = null, cacheExpirationSeconds: number | null = null, cacheVersion: number | null = null;\n"
       @io << ident ident "if (cacheConfig.#{op.pretty_name}) {\n"
       @io << ident ident ident "try {\n"
-      @io << ident ident ident ident "const {key: cacheKey, expirationSeconds: cacheExpirationSeconds, version:  cacheVersion} = await cacheConfig.#{op.pretty_name}(#{(["ctx"] + op.args.map(&.name)).join(", ")});\n"
+      @io << ident ident ident ident "const {key: cacheKey, expirationSeconds: cacheExpirationSeconds, version: cacheVersion} = await cacheConfig.#{op.pretty_name}(#{(["ctx"] + op.args.map(&.name)).join(", ")});\n"
       @io << ident ident ident ident "if (!key) throw \"\";\n"
       @io << ident ident ident ident "const cacheKeyEncoded = crypto.createHash(\"sha256\").update(JSON.stringify(cacheKey)+ \"-#{op.pretty_name}\").digest(\"hex\").substr(0, 100); decodedKey = JSON.stringify(cacheKey);\n"
       @io << ident ident ident ident "const cache = await hook.getCache(cacheKeyEncoded, cacheVersion);console.log(JSON.stringify(cache));\n"
