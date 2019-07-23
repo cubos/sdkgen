@@ -133,7 +133,6 @@ END
         @io << "\n"
       end
       @io << "\n"
-      @io << ident ident "let cacheKey: string | null = null, decodedKey: string | null = null, cacheExpirationSeconds: number | null = null, cacheVersion: number | null = null;\n"
       @io << ident ident "if (cacheConfig.#{op.pretty_name}) {\n"
       @io << ident ident ident "try {\n"
       @io << ident ident ident ident "const {key: cacheKey, expirationSeconds: cacheExpirationSeconds, version: cacheVersion} = await cacheConfig.#{op.pretty_name}(#{(["ctx"] + op.args.map(&.name)).join(", ")});\n"
