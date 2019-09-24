@@ -55,4 +55,4 @@ The primitive types available are:
 - `bytes`: Arbitrary binary data.
 - `void`: Special type that means the lack of value. Can only be used as the return type of a `function` operation (more on that later)
 
-You can check the complete description on [language.md](../blob/master/language.md).
+You can check the complete description on [language.md](language.md).
