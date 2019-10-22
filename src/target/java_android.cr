@@ -377,6 +377,7 @@ END
 
     static public void setHttpTimeout(Long timeoutInMillis) {
         Internal.defaultTimeout = timeoutInMillis;
+        Internal.createHttpClient();
     }
 
     static public void setApiUrl(String url) {
@@ -834,10 +835,16 @@ END
                 @Override
                 public void run() {
                     call.cancel();
-                    callback.onResult(new Error() {{type = ErrorType.Connection ; message = "Timeout" ;}}, null);
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onResult(new Error() {{type = ErrorType.Connection ; message = "Timeout" ;}}, null);
+                        }
+                    });
+                    return;
                 }
             };
-            httpTimer.schedule(task, timeout != null ? timeout : 30000);
+            httpTimer.schedule(task, timeout != null ? timeout : defaultTimeout);
         }
 
         static Calendar toCalendar(Date date){
