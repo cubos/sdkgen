@@ -341,7 +341,7 @@ END
                     else
                         getDeviceId(callback);
                 }
-            });
+            }, null);
         }
     }
 
