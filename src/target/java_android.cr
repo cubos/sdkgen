@@ -512,6 +512,8 @@ END
 
             if (interceptor != null)
                 builder.addNetworkInterceptor(interceptor);
+
+            http = builder.build();
         }
 
         static void initialize() {
