@@ -113,9 +113,14 @@ END
     @ast.operations.each do |op|
       args = op.args.map { |arg| "final #{native_type arg.type} #{mangle arg.name}" }
       args << "final #{callback_type op.return_type} callback"
+
+      args2 = op.args.map { |arg| "final #{native_type arg.type} #{mangle arg.name}" }
+      args2 << "final int flags"
+      args2 << "final #{callback_type op.return_type} callback"
+
       @io << ident(String.build do |io|
         io << "public void #{mangle op.pretty_name}(#{args.join(", ")});\n"
-        io << "public void #{mangle op.pretty_name}(final int flags, #{args.join(", ")});\n"
+        io << "public void #{mangle op.pretty_name}(#{args2.join(", ")});\n"
         io << "public void #{mangle op.pretty_name}(#{args.join(", ")}, Long timeout);\n"
       end)
     end
@@ -145,6 +150,11 @@ END
     @ast.operations.each do |op|
       args = op.args.map { |arg| "final #{native_type arg.type} #{mangle arg.name}" }
       args << "final #{callback_type op.return_type} callback"
+
+      args2 = op.args.map { |arg| "final #{native_type arg.type} #{mangle arg.name}" }
+      args2 << "final int flags"
+      args2 << "final #{callback_type op.return_type} callback"
+
       @io << ident(String.build do |io|
         io << "@Override \n"
         io << "public void #{mangle op.pretty_name}(#{args.join(", ")}) {\n"
@@ -155,8 +165,8 @@ END
         io << "    #{mangle op.pretty_name}(#{(op.args.map { |arg| mangle arg.name } + ["0", "callback"]).join(", ")}, timeout);\n"
         io << "}\n\n"
         io << "@Override \n"
-        io << "public void #{mangle op.pretty_name}(final int flags, #{args.join(", ")}) {\n"
-        io << "    #{mangle op.pretty_name}(#{(op.args.map { |arg| mangle arg.name } + ["flags", "callback"]).join(", ")}, null);\n"
+        io << "public void #{mangle op.pretty_name}(#{args2.join(", ")}) {\n"
+        io << "    #{mangle op.pretty_name}(#{(op.args.map { |arg| mangle arg.name } + ["callback"]).join(", ")}, null);\n"
         io << "}\n\n"
       end)
       @io << "\n\n"
