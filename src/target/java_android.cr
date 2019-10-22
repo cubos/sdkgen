@@ -150,14 +150,14 @@ END
         io << "    #{mangle op.pretty_name}(#{(op.args.map { |arg| mangle arg.name } + ["0", "callback"]).join(", ")}, null);\n"
         io << "}\n\n"
         io << "@Override \n"
-        io << "public void #{mangle op.pretty_name}(#{args.join(", ")}, Long timeout) {\n"
+        io << "public void #{mangle op.pretty_name}(#{args.join(", ")}, final Long timeout) {\n"
         io << "    #{mangle op.pretty_name}(#{(op.args.map { |arg| mangle arg.name } + ["0", "callback"]).join(", ")}, timeout);\n"
         io << "}\n\n"
       end)
       @io << "\n\n"
       args = args[0..-2] + ["final int flags", args[-1]]
       @io << ident(String.build do |io|
-        io << "public void #{mangle op.pretty_name}(#{args.join(", ")}, Long timeout) {\n"
+        io << "public void #{mangle op.pretty_name}(#{args.join(", ")}, final Long timeout) {\n"
         io << ident(String.build do |io|
           if op.args.size == 0
             io << "final JSONObject args = new JSONObject();"
@@ -348,7 +348,7 @@ END
     static public void setHttpClientInterceptor(Interceptor interceptor) {
         Internal.initialize();
         Internal.interceptor = interceptor;
-        Internal.createHttpClient(null);
+        Internal.createHttpClient();
     }
 
     static public OkHttpClient getHttpClient() {
@@ -426,12 +426,12 @@ END
         static {
             dateTimeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
             //dateFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
-            createHttpClient(null);
+            createHttpClient();
         }
 
         static OkHttpClient getHttpClient() {
             if (http == null) {
-                createHttpClient(null);
+                createHttpClient();
             }
 
             return http;
@@ -441,14 +441,14 @@ END
             http = newClient;
         }
 
-        static OkHttpClient createHttpClient(Long timeout) {
-            if (http != null && (http.connectTimeoutMillis() == timeout || timeout == null)) {
+        static void createHttpClient() {
+            if (http != null) {
                 OkHttpClient.Builder builder = http.newBuilder();
                 if (interceptor != null)
                     builder.addNetworkInterceptor(interceptor);
                 
                 http = builder.build();
-                return http;
+                return;
             }
 
             connectionPool = new ConnectionPool(100, 45, TimeUnit.SECONDS);
@@ -484,17 +484,10 @@ END
                     .connectionPool(connectionPool)
                     .dispatcher(dispatcher)
                     .sslSocketFactory(sslSocketFactory, trustManager)
-                    .connectTimeout(timeout != null ? timeout : 45, timeout != null ? TimeUnit.MILLISECONDS : TimeUnit.SECONDS);
+                    .connectTimeout(60, TimeUnit.SECONDS);
 
             if (interceptor != null)
                 builder.addNetworkInterceptor(interceptor);
-
-            if (timeout != null) {
-                return builder.build();
-            } else {
-                http = builder.build();
-                return http;
-            }
         }
 
         static void initialize() {
@@ -738,7 +731,7 @@ END
 
         static void makeRequest(String name, JSONObject args, final RequestCallback callback, Long timeout) {
             initialize();
-
+            final Timer httpTimer = new Timer();
             JSONObject body = new JSONObject();
             try {
                 body.put("id", randomBytesHex(8));
@@ -756,16 +749,11 @@ END
                     .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), body.toString()))
                     .build();
 
-            final OkHttpClient httpClient;
-            if (timeout != null) {
-                httpClient = createHttpClient(timeout);
-            } else {
-                httpClient = http;
-            }
-
-            http.newCall(request).enqueue(new okhttp3.Callback() {
+            final Call call = http.newCall(request);
+            call.enqueue(new okhttp3.Callback() {
                 @Override
                 public void onFailure(Call call, final IOException e) {
+                    httpTimer.cancel();
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
@@ -776,7 +764,8 @@ END
                 }
 
                 @Override
-                public void onResponse(Call call, final Response response) throws IOException {    
+                public void onResponse(Call call, final Response response) throws IOException { 
+                    httpTimer.cancel();   
                     if (response.code() == 502) {
                         Log.e("API", "HTTP " + response.code());
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -815,6 +804,14 @@ END
                     });
                 }
             });
+            final TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    call.cancel();
+                    callback.onResult(new Error() {{type = ErrorType.Connection ; message = "Timeout" ;}}, null);
+                }
+            };
+            httpTimer.schedule(task, timeout != null ? timeout : 30000);
         }
 
         static Calendar toCalendar(Date date){
