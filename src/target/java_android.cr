@@ -115,6 +115,7 @@ END
       args << "final #{callback_type op.return_type} callback"
       @io << ident(String.build do |io|
         io << "public void #{mangle op.pretty_name}(#{args.join(", ")});\n"
+        io << "public void #{mangle op.pretty_name}(final int flags, #{args.join(", ")});\n"
         io << "public void #{mangle op.pretty_name}(#{args.join(", ")}, Long timeout);\n"
       end)
     end
@@ -152,6 +153,10 @@ END
         io << "@Override \n"
         io << "public void #{mangle op.pretty_name}(#{args.join(", ")}, final Long timeout) {\n"
         io << "    #{mangle op.pretty_name}(#{(op.args.map { |arg| mangle arg.name } + ["0", "callback"]).join(", ")}, timeout);\n"
+        io << "}\n\n"
+        io << "@Override \n"
+        io << "public void #{mangle op.pretty_name}(final int flags, #{args.join(", ")}) {\n"
+        io << "    #{mangle op.pretty_name}(#{(op.args.map { |arg| mangle arg.name } + ["flags", "callback"]).join(", ")}, null);\n"
         io << "}\n\n"
       end)
       @io << "\n\n"
@@ -360,6 +365,10 @@ END
         Internal.setHttpClient(newClient);
     }
 
+    static public void setHttpTimeout(Long timeoutInMillis) {
+        Internal.defaultTimeout = timeoutInMillis;
+    }
+
     static public void setApiUrl(String url) {
         Internal.forcedUrl = url;
     }
@@ -422,6 +431,7 @@ END
         static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         static Application application;
         static Interceptor interceptor = null;
+        static Long defaultTimeout = 30000L;
 
         static {
             dateTimeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -439,6 +449,10 @@ END
 
         static void setHttpClient(OkHttpClient newClient) {
             http = newClient;
+        }
+
+        static void setTimeout(Long timeout) {
+            defaultTimeout = timeout;
         }
 
         static void createHttpClient() {
