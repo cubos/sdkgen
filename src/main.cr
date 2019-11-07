@@ -16,7 +16,7 @@ destination = ""
 target_name = ""
 sources = [] of String
 
-OptionParser.parse do |parser|
+OptionParser.parse! do |parser|
   parser.banner = "Usage: salute [arguments]"
   parser.on("-o NAME", "--output=NAME", "Specifies the output file") { |name| destination = name }
   parser.on("-t TARGET", "--target=TARGET", "Specifies the target platform") { |target| target_name = target }
