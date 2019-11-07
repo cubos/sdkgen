@@ -471,7 +471,7 @@ END
                 OkHttpClient.Builder builder = http.newBuilder();
                 if (interceptor != null)
                     builder.addNetworkInterceptor(interceptor);
-                
+
                 http = builder.build();
                 return;
             }
@@ -509,7 +509,8 @@ END
                     .connectionPool(connectionPool)
                     .dispatcher(dispatcher)
                     .sslSocketFactory(sslSocketFactory, trustManager)
-                    .readTimeout(60, TimeUnit.SECONDS);
+                    .readTimeout(60, TimeUnit.SECONDS)
+                    .retryOnConnectionFailure(false);
 
             if (interceptor != null)
                 builder.addNetworkInterceptor(interceptor);
@@ -791,8 +792,8 @@ END
                 }
 
                 @Override
-                public void onResponse(Call call, final Response response) throws IOException { 
-                    httpTimer.cancel();   
+                public void onResponse(Call call, final Response response) throws IOException {
+                    httpTimer.cancel();
                     if (response.code() == 502) {
                         Log.e("API", "HTTP " + response.code());
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
