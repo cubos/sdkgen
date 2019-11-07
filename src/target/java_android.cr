@@ -509,7 +509,7 @@ END
                     .connectionPool(connectionPool)
                     .dispatcher(dispatcher)
                     .sslSocketFactory(sslSocketFactory, trustManager)
-                    .connectTimeout(60, TimeUnit.SECONDS);
+                    .readTimeout(60, TimeUnit.SECONDS);
 
             if (interceptor != null)
                 builder.addNetworkInterceptor(interceptor);
