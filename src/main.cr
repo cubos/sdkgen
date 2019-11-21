@@ -2,6 +2,7 @@ require "./syntax/parser"
 require "./semantic/ast_semantic"
 require "./target/java_android"
 require "./target/kt_android"
+require "./target/kt_jetpack_android"
 require "./target/swift_ios"
 require "./target/typescript_nodeserver"
 require "./target/typescript_nodeclient"
@@ -16,7 +17,7 @@ destination = ""
 target_name = ""
 sources = [] of String
 
-OptionParser.parse! do |parser|
+OptionParser.parse do |parser|
   parser.banner = "Usage: salute [arguments]"
   parser.on("-o NAME", "--output=NAME", "Specifies the output file") { |name| destination = name }
   parser.on("-t TARGET", "--target=TARGET", "Specifies the target platform") { |target| target_name = target }

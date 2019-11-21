@@ -65,17 +65,6 @@ module AST
     def kt_decode(expr, desc)
       String.build do |io|
         io << "gson.fromJson<ArrayList<#{base.kt_native_type}>>(#{expr}.getJSONArray(\"result\")?.toString(), object : TypeToken<ArrayList<#{base.kt_native_type}>>() { }.type) \n"
-        # io << "ArrayList<#{base.kt_native_type}>().apply {\n"
-        # io << "    for (i in 0 until #{expr}.length()) {\n"
-        # if base.is_a? AST::ArrayType
-        #   io << "        add(#{base.kt_native_type}.fromJsonArray(#{expr}.getJSONArray(i)))\n"
-        # elsif base.is_a? AST::StructType
-        #   io << "        add(#{base.kt_native_type}.fromJson(#{expr}.getJSONObject(i)))\n"
-        # else
-        #   io << "        add(#{base.kt_decode(expr, "i")})"
-        # end
-        # io << "    }\n"
-        # io << ""
       end
     end
 

@@ -39,19 +39,19 @@ module AST
 
     # KOTLIN
     def kt_decode(expr, desc)
-      raise "Not implemented"
+      "#{expr}.getString(#{desc})"
     end
 
     def kt_encode(expr, desc)
-      raise "Not implemented"
+      "#{expr}"
     end
 
     def kt_native_type
-      raise "Not implemented"
+      "String"
     end
 
     def kt_return_type_name
-      raise "Not implemented"
+      "hex"
     end
     # KOTLIN
   end
