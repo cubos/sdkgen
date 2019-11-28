@@ -55,11 +55,11 @@ abstract class SwiftTarget < Target
 
   def generate_struct_type(t)
     String.build do |io|
-      io << "class #{t.name}: Codable {\n"
+      io << "public class #{t.name}: Codable {\n"
       t.fields.each do |field|
-        io << ident "var #{field.name}: #{native_type field.type}\n"
+        io << ident "public var #{field.name}: #{native_type field.type}\n"
       end
-      io << ident "\nvar copy: #{t.name} {\n"
+      io << ident "\npublic var copy: #{t.name} {\n"
       io << ident ident "return #{t.name}(\n"
       io << ident ident ident t.fields.map { |field| "#{field.name}: #{generate_property_copy(field.type, field.name)}" }.join(",\n")
       io << ident ident "\n)\n"
@@ -74,7 +74,7 @@ abstract class SwiftTarget < Target
       io << ident <<-END
 
 
-init() {
+public init() {
 
 END
       t.fields.each do |field|
@@ -83,7 +83,7 @@ END
       io << ident <<-END
 }
 
-init(#{t.fields.map { |f| "#{f.name}: #{native_type f.type}" }.join(", ")}) {
+public init(#{t.fields.map { |f| "#{f.name}: #{native_type f.type}" }.join(", ")}) {
 
 END
       t.fields.each do |field|
@@ -92,7 +92,7 @@ END
       io << ident <<-END
 }
 
-init(json: [String: Any]) throws {
+public init(json: [String: Any]) throws {
     let jsonData = try JSONSerialization.data(withJSONObject: json, options: .prettyPrinted)
     let decodedSelf = try decoder.decode(#{t.name}.self, from: jsonData)\n
 
@@ -103,7 +103,7 @@ END
       io << ident <<-END
 }
 
-func toJSON() -> [String: Any] {
+public func toJSON() -> [String: Any] {
     var json = [String: Any]()
 
 END
@@ -122,9 +122,9 @@ END
   def generate_enum_type(t)
     String.build do |io|
       if t.name == "ErrorType"
-        io << "enum #{t.name}: String, Error, Codable {\n"
+        io << "public enum #{t.name}: String, Error, Codable {\n"
       else
-        io << "enum #{t.name}: String, CaseIterable, DisplayableValue, Codable {\n"
+        io << "public enum #{t.name}: String, CaseIterable, DisplayableValue, Codable {\n"
       end
 
       t.values.each do |value|
@@ -142,7 +142,7 @@ END
         io << ident ident "return dictionary\n"
         io << ident "}\n"
 
-        io << ident "\nstatic func allDisplayableValues() -> [String] {\n"
+        io << ident "\npublic static func allDisplayableValues() -> [String] {\n"
         io << ident ident "var displayableValues: [String] = []\n"
         io << ident ident "for enumCase in self.allCases {\n"
         io << ident ident ident "displayableValues.append(enumCase.displayableValue)\n"

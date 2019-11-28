@@ -6,7 +6,7 @@ class SwiftIosTarget < SwiftTarget
 import Alamofire
 import KeychainSwift
 
-protocol ApiCallsLogic: class {\n
+public protocol ApiCallsLogic: class {\n
 END
 
     @ast.operations.each do |op|
@@ -24,18 +24,18 @@ END
     @io << "}\n\n" # CloseAPICallsProtocol
     @io << <<-END
 
-class API {
-    static var customUrl: String?
-    static var useStaging = false
-    static var globalCallback: (_ method: String, _ result: ApiInternal.Result<Any?>, _ callback: ((ApiInternal.Result<Any?>) -> Void)?) -> Void = { _, result, callback in
+public class API {
+    public static var customUrl: String?
+    public static var useStaging = false
+    public static var globalCallback: (_ method: String, _ result: ApiInternal.Result<Any?>, _ callback: ((ApiInternal.Result<Any?>) -> Void)?) -> Void = { _, result, callback in
         callback?(result)
     }
 
-    static var isEnabledAssertion = true
-    static var calls: ApiCallsLogic = Calls()
-    static var apiInternal = ApiInternal()
+    public static var isEnabledAssertion = true
+    public static var calls: ApiCallsLogic = Calls()
+    public static var apiInternal = ApiInternal()
 
-    static var decoder: JSONDecoder = {
+    public static var decoder: JSONDecoder = {
         let currentDecoder = JSONDecoder()
         currentDecoder.dateDecodingStrategy = .custom({ (decoder) -> Date in
             let container = try decoder.singleValueContainer()
@@ -54,7 +54,7 @@ class API {
     }()
 
      // MARK: Struct and Enums
-     struct NoReply: Codable {}\n\n
+     public struct NoReply: Codable {}\n\n
 END
     # ApiCalls
     @io << ident(String.build do |io|
@@ -102,20 +102,20 @@ END
 
     @io << <<-END
 
-    class ApiInternal {
+    public class ApiInternal {
         var baseUrl = #{@ast.options.url.inspect}
 
         // MARK: ApiInternal Inner classes
-        enum Result<T> {
+        public enum Result<T> {
             case success(T)
             case failure(Error)
         }
 
-        class Error: Codable {
+        public class Error: Codable {
             var type: API.ErrorType
             var message: String
 
-            init(type: API.ErrorType, message: String) {
+            public init(type: API.ErrorType, message: String) {
                 self.type = type
                 self.message = message
             }
@@ -299,11 +299,11 @@ END
         }
     }
 }
-protocol DisplayableValue: RawRepresentable {
+public protocol DisplayableValue: RawRepresentable {
     var displayableValue: String { get }
 }
 
-extension DisplayableValue where RawValue == String {
+public extension DisplayableValue where RawValue == String {
     var displayableValue: String {
         return self.rawValue
     }
