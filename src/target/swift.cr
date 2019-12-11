@@ -12,6 +12,7 @@ abstract class SwiftTarget < Target
     when AST::BoolPrimitiveType    ; "Bool"
     when AST::BytesPrimitiveType   ; "Data"
     when AST::VoidPrimitiveType    ; "NoReply"
+    when AST::MoneyPrimitiveType   ; "Int64"
     else
       raise "BUG! Should handle primitive #{t.class}"
     end
@@ -38,6 +39,7 @@ abstract class SwiftTarget < Target
     when AST::StringPrimitiveType  ; path
     when AST::IntPrimitiveType     ; path
     when AST::UIntPrimitiveType    ; path
+    when AST::MoneyPrimitiveType   ; path
     when AST::FloatPrimitiveType   ; path
     when AST::DatePrimitiveType    ; path
     when AST::DateTimePrimitiveType; path
@@ -158,7 +160,7 @@ END
     case t
     when AST::StringPrimitiveType
       "\"\""
-    when AST::IntPrimitiveType, AST::UIntPrimitiveType, AST::FloatPrimitiveType
+    when AST::IntPrimitiveType, AST::UIntPrimitiveType, AST::FloatPrimitiveType, AST::MoneyPrimitiveType
       "0"
     when AST::BoolPrimitiveType
       "false"
@@ -185,7 +187,7 @@ END
 
   def type_to_json(t : AST::Type, src : String)
     case t
-    when AST::StringPrimitiveType, AST::IntPrimitiveType, AST::UIntPrimitiveType, AST::FloatPrimitiveType, AST::BoolPrimitiveType
+    when AST::StringPrimitiveType, AST::IntPrimitiveType, AST::UIntPrimitiveType, AST::FloatPrimitiveType, AST::BoolPrimitiveType, AST::MoneyPrimitiveType
       "#{src}"
     when AST::DatePrimitiveType
       "apiInternal.encodeDate(date: #{src})"
