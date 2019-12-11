@@ -260,7 +260,7 @@ export function start(port: number = 8000) {
 
         res.setHeader("Access-Control-Allow-Origin", "*");
         res.setHeader("Access-Control-Allow-Methods", "PUT, POST, GET, OPTIONS");
-        res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+        res.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
         res.setHeader("Access-Control-Max-Age", "86400");
         res.setHeader("Content-Type", "application/json");
 
