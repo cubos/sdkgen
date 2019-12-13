@@ -113,8 +113,15 @@ END
     @ast.operations.each do |op|
       args = op.args.map { |arg| "final #{native_type arg.type} #{mangle arg.name}" }
       args << "final #{callback_type op.return_type} callback"
+
+      args2 = op.args.map { |arg| "final #{native_type arg.type} #{mangle arg.name}" }
+      args2 << "final int flags"
+      args2 << "final #{callback_type op.return_type} callback"
+
       @io << ident(String.build do |io|
         io << "public void #{mangle op.pretty_name}(#{args.join(", ")});\n"
+        io << "public void #{mangle op.pretty_name}(#{args2.join(", ")});\n"
+        io << "public void #{mangle op.pretty_name}(#{args.join(", ")}, Long timeout);\n"
       end)
     end
 
@@ -143,16 +150,29 @@ END
     @ast.operations.each do |op|
       args = op.args.map { |arg| "final #{native_type arg.type} #{mangle arg.name}" }
       args << "final #{callback_type op.return_type} callback"
+
+      args2 = op.args.map { |arg| "final #{native_type arg.type} #{mangle arg.name}" }
+      args2 << "final int flags"
+      args2 << "final #{callback_type op.return_type} callback"
+
       @io << ident(String.build do |io|
         io << "@Override \n"
         io << "public void #{mangle op.pretty_name}(#{args.join(", ")}) {\n"
-        io << "    #{mangle op.pretty_name}(#{(op.args.map { |arg| mangle arg.name } + ["0", "callback"]).join(", ")});\n"
-        io << "}"
+        io << "    #{mangle op.pretty_name}(#{(op.args.map { |arg| mangle arg.name } + ["0", "callback"]).join(", ")}, null);\n"
+        io << "}\n\n"
+        io << "@Override \n"
+        io << "public void #{mangle op.pretty_name}(#{args.join(", ")}, final Long timeout) {\n"
+        io << "    #{mangle op.pretty_name}(#{(op.args.map { |arg| mangle arg.name } + ["0", "callback"]).join(", ")}, timeout);\n"
+        io << "}\n\n"
+        io << "@Override \n"
+        io << "public void #{mangle op.pretty_name}(#{args2.join(", ")}) {\n"
+        io << "    #{mangle op.pretty_name}(#{(op.args.map { |arg| mangle arg.name } + ["callback"]).join(", ")}, null);\n"
+        io << "}\n\n"
       end)
       @io << "\n\n"
       args = args[0..-2] + ["final int flags", args[-1]]
       @io << ident(String.build do |io|
-        io << "public void #{mangle op.pretty_name}(#{args.join(", ")}) {\n"
+        io << "public void #{mangle op.pretty_name}(#{args.join(", ")}, final Long timeout) {\n"
         io << ident(String.build do |io|
           if op.args.size == 0
             io << "final JSONObject args = new JSONObject();"
@@ -267,22 +287,22 @@ if ((flags & API.Cache) != 0) {
                                 callback.cacheAge = 0;
                                 reqCallbackSaveCache.onResult(error, result);
                             }
-                        });
+                        }, timeout);
                     }
                 };
                 reqCallbackPure.onResult(null, data);
             } catch (JSONException e) {
-                Internal.makeRequest(#{mangle(op.pretty_name).inspect}, args, reqCallbackSaveCache);
+                Internal.makeRequest(#{mangle(op.pretty_name).inspect}, args, reqCallbackSaveCache, timeout);
             }
         }
 
         @Override
         public void onFailure(Exception e) {
-            Internal.makeRequest(#{mangle(op.pretty_name).inspect}, args, reqCallbackSaveCache);
+            Internal.makeRequest(#{mangle(op.pretty_name).inspect}, args, reqCallbackSaveCache, timeout);
         }
     });
 } else {
-    Internal.makeRequest(#{mangle(op.pretty_name).inspect}, args, reqCallback);
+    Internal.makeRequest(#{mangle(op.pretty_name).inspect}, args, reqCallback, timeout);
 }
 
 END
@@ -336,7 +356,7 @@ END
                     else
                         getDeviceId(callback);
                 }
-            });
+            }, null);
         }
     }
 
@@ -353,6 +373,11 @@ END
 
     static public void setHttpClient(OkHttpClient newClient) {
         Internal.setHttpClient(newClient);
+    }
+
+    static public void setHttpTimeout(Long timeoutInMillis) {
+        Internal.defaultTimeout = timeoutInMillis;
+        Internal.createHttpClient();
     }
 
     static public void setApiUrl(String url) {
@@ -417,6 +442,7 @@ END
         static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         static Application application;
         static Interceptor interceptor = null;
+        static Long defaultTimeout = 30000L;
 
         static {
             dateTimeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -436,12 +462,16 @@ END
             http = newClient;
         }
 
+        static void setTimeout(Long timeout) {
+            defaultTimeout = timeout;
+        }
+
         static void createHttpClient() {
             if (http != null) {
                 OkHttpClient.Builder builder = http.newBuilder();
                 if (interceptor != null)
                     builder.addNetworkInterceptor(interceptor);
-                
+
                 http = builder.build();
                 return;
             }
@@ -479,7 +509,8 @@ END
                     .connectionPool(connectionPool)
                     .dispatcher(dispatcher)
                     .sslSocketFactory(sslSocketFactory, trustManager)
-                    .connectTimeout(45, TimeUnit.SECONDS);
+                    .readTimeout(60, TimeUnit.SECONDS)
+                    .retryOnConnectionFailure(false);
 
             if (interceptor != null)
                 builder.addNetworkInterceptor(interceptor);
@@ -726,9 +757,9 @@ END
             };
         }
 
-        static void makeRequest(String name, JSONObject args, final RequestCallback callback) {
+        static void makeRequest(String name, JSONObject args, final RequestCallback callback, Long timeout) {
             initialize();
-
+            final Timer httpTimer = new Timer();
             JSONObject body = new JSONObject();
             try {
                 body.put("id", randomBytesHex(8));
@@ -746,95 +777,75 @@ END
                     .post(RequestBody.create(MediaType.parse("application/json; charset=utf-8"), body.toString()))
                     .build();
 
-            final boolean shouldReceiveResponse[] = new boolean[] {true};
-            final int sentCount[] = new int[] {0};
-            final Timer timer = new Timer();
-            final TimerTask task = new TimerTask() {
+            final Call call = http.newCall(request);
+            call.enqueue(new okhttp3.Callback() {
                 @Override
-                public void run() {
-                    sentCount[0] += 1;
-                    if (sentCount[0] >= 22 || (sentCount[0] * 2000) >= http.connectTimeoutMillis()) {
-                        if (!shouldReceiveResponse[0]) return;
-                        shouldReceiveResponse[0] = false;
-                        timer.cancel();
+                public void onFailure(Call call, final IOException e) {
+                    httpTimer.cancel();
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            e.printStackTrace();
+                            callback.onResult(new Error() {{type = ErrorType.Fatal; message = e.getMessage();}}, null);
+                        }
+                    });
+                }
+
+                @Override
+                public void onResponse(Call call, final Response response) throws IOException {
+                    httpTimer.cancel();
+                    if (response.code() == 502) {
+                        Log.e("API", "HTTP " + response.code());
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
-                                callback.onResult(new Error() {{type = ErrorType.Connection; message = "Erro de conexão, tente novamente mais tarde.";}}, null);
+                                callback.onResult(new Error() {{type = ErrorType.Fatal; message = "Erro Fatal (502) - Tente novamente";}}, null);
                             }
                         });
                         return;
                     }
-
-                    if (sentCount[0] >= #{@ast.options.retryRequest ? "22" : "2"}) {
-                        return;
-                    }
-
-                    if (sentCount[0] % 4 == 0) {
-                        createHttpClient();
-                    }
-
-                    http.newCall(request).enqueue(new okhttp3.Callback() {
+                    final String stringBody = response.body().string();
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
-                        public void onFailure(Call call, final IOException e) {
-                            if (!shouldReceiveResponse[0] || e instanceof SocketTimeoutException) return;
-                            shouldReceiveResponse[0] = false;
-                            timer.cancel();
-                            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    e.printStackTrace();
-                                    callback.onResult(new Error() {{type = ErrorType.Fatal; message = e.getMessage();}}, null);
+                        public void run() {
+                            try {
+                                JSONObject body = new JSONObject(stringBody);
+
+                                SharedPreferences pref = context().getSharedPreferences("api", Context.MODE_PRIVATE);
+                                pref.edit().putString("deviceId", body.getString("deviceId")).apply();
+
+                                if (!body.getBoolean("ok")) {
+                                    JSONObject jsonError = body.getJSONObject("error");
+                                    Error error = new Error();
+                                    error.type = #{type_from_json(@ast.enum_types.find { |e| e.name == "ErrorType" }.not_nil!, "jsonError", "type".inspect)};
+                                    error.message = jsonError.getString("message");
+                                    Log.e("API Error", jsonError.getString("type") + " - " + error.message);
+                                    callback.onResult(error, null);
+                                } else {
+                                    callback.onResult(null, body);
                                 }
-                            });
-                        }
-
-                        @Override
-                        public void onResponse(Call call, final Response response) throws IOException {
-                            if (!shouldReceiveResponse[0]) return;
-                            shouldReceiveResponse[0] = false;
-                            timer.cancel();
-                            if (response.code() == 502) {
-                                Log.e("API", "HTTP " + response.code());
-                                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        callback.onResult(new Error() {{type = ErrorType.Fatal; message = "Erro Fatal (502) - Tente novamente";}}, null);
-                                    }
-                                });
-                                return;
+                            } catch (final JSONException e) {
+                                e.printStackTrace();
+                                callback.onResult(new Error() {{type = ErrorType.Fatal; message = e.getMessage();}}, null);
                             }
-                            final String stringBody = response.body().string();
-                            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        JSONObject body = new JSONObject(stringBody);
-
-                                        SharedPreferences pref = context().getSharedPreferences("api", Context.MODE_PRIVATE);
-                                        pref.edit().putString("deviceId", body.getString("deviceId")).apply();
-
-                                        if (!body.getBoolean("ok")) {
-                                            JSONObject jsonError = body.getJSONObject("error");
-                                            Error error = new Error();
-                                            error.type = #{type_from_json(@ast.enum_types.find { |e| e.name == "ErrorType" }.not_nil!, "jsonError", "type".inspect)};
-                                            error.message = jsonError.getString("message");
-                                            Log.e("API Error", jsonError.getString("type") + " - " + error.message);
-                                            callback.onResult(error, null);
-                                        } else {
-                                            callback.onResult(null, body);
-                                        }
-                                    } catch (final JSONException e) {
-                                        e.printStackTrace();
-                                        callback.onResult(new Error() {{type = ErrorType.Fatal; message = e.getMessage();}}, null);
-                                    }
-                                }
-                            });
                         }
                     });
                 }
+            });
+            final TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    call.cancel();
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            callback.onResult(new Error() {{type = ErrorType.Connection ; message = "Timeout" ;}}, null);
+                        }
+                    });
+                    return;
+                }
             };
-            timer.scheduleAtFixedRate(task, 0, 2000);
+            httpTimer.schedule(task, timeout != null ? timeout : defaultTimeout);
         }
 
         static Calendar toCalendar(Date date){
