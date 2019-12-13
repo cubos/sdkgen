@@ -36,7 +36,6 @@ import org.json.JSONException
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Point
-import android.os.Handler
 import android.provider.Settings
 import android.util.Log
 import com.google.gson.Gson
@@ -45,7 +44,6 @@ import java.io.IOException
 import java.io.Serializable
 import org.json.JSONArray
 import com.google.gson.reflect.TypeToken
-import android.os.Looper
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
 import androidx.lifecycle.LiveData
@@ -54,6 +52,7 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import java.io.InvalidObjectException
 
 @ExperimentalCoroutinesApi
 fun <T> Deferred<T>.result(callback: (error: Throwable?, response: T?) -> Unit) {
@@ -69,6 +68,8 @@ fun <T> Deferred<T>.result(callback: (error: Throwable?, response: T?) -> Unit) 
     }
 }
 
+
+@Suppress("DeferredIsResult", "unused")
 @SuppressLint("SimpleDateFormat", "StaticFieldLeak")
 object API {
     
@@ -107,11 +108,12 @@ END
     var useStaging = false
     private val hexArray = "0123456789abcdef".toCharArray()
     
-    var connectionPool = ConnectionPool(100, 45, TimeUnit.SECONDS)
+    var connectionPool = ConnectionPool(100, 60, TimeUnit.SECONDS)
     var client = OkHttpClient.Builder()
           .connectionPool(connectionPool)
           .dispatcher(Dispatcher().apply { maxRequests = 200 ; maxRequestsPerHost = 200 })
-          .connectTimeout(15, TimeUnit.SECONDS)
+          .connectTimeout(60, TimeUnit.SECONDS)
+          .readTimeout(60, TimeUnit.SECONDS)
           .build()
     
     class Error(
