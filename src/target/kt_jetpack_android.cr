@@ -46,29 +46,17 @@ import org.json.JSONArray
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.*
 import kotlinx.coroutines.Dispatchers.IO
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import java.io.InvalidObjectException
+import kotlin.concurrent.timerTask
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.Flow
 
 @ExperimentalCoroutinesApi
-fun <T> Deferred<T>.result(callback: (error: Throwable?, response: T?) -> Unit) {
-    try {
-        this.invokeOnCompletion { cause ->
-            if (this.getCompletionExceptionOrNull() != null)
-                throw this.getCompletionExceptionOrNull()!!
-
-            callback(cause, if (this.isCompleted) this.getCompleted() else null)
-        }
-    } catch (e: Throwable) {
-        callback(e, if (this.isCompleted) this.getCompleted() else null)
-    }
-}
-
-
 @Suppress("DeferredIsResult", "unused")
 @SuppressLint("SimpleDateFormat", "StaticFieldLeak")
 object API {
@@ -83,11 +71,9 @@ END
         "Boolean?"
       end
       @io << ident(String.build do |io|
-        io << "   fun #{mangle op.pretty_name}(#{args.join(", ")}): Deferred<LiveData<Response<#{returnType}>>> = CoroutineScope(IO).async { \n"
-        io << "       MutableLiveData<Response<#{returnType}>>().apply { \n " 
-        io << "         postValue(Response(Error(ErrorType.Fatal, \"Not Implemented\"), null)) \n"
-        io << "       }\n"
-        io << "   }\n"
+        io << "   fun #{mangle op.pretty_name}(#{args.join(", ")}): Flow<Response<#{returnType}>> = flow<Response<#{returnType}>> { \n"
+        io << "       emit(Response(Error(ErrorType.Fatal, \"Not Implemented\"), null)) \n"
+        io << "   }.flowOn(IO)\n"
       end)
     end
     @io << <<-END
@@ -96,24 +82,34 @@ END
     lateinit var context: Context
     private val gson = Gson()
     private val dateTimeFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS",Locale.US).apply {
-        setTimeZone(TimeZone.getTimeZone("GMT"))
+        timeZone = TimeZone.getTimeZone("GMT")
     }
     private val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
-    fun init(appContext: Context, useStaging: Boolean) {
-          API.useStaging = useStaging
-          context = appContext 
-    }
-    
-    var BASE_URL = #{@ast.options.url.inspect}
+    private var isForcedBaseUrl = false    
+    var DEFAULT_TIMEOUT_SECONDS = 15
+    private var BASE_URL = #{@ast.options.url.inspect}
     var useStaging = false
     private val hexArray = "0123456789abcdef".toCharArray()
+
+    fun init(appContext: Context, useStaging: Boolean, baseUrl: String? = null, timeoutSeconds: Int? = null) {
+          API.useStaging = useStaging
+          context = appContext 
+          if (timeoutSeconds != null)
+            DEFAULT_TIMEOUT_SECONDS = timeoutSeconds
+
+          if (baseUrl != null) {
+              BASE_URL = baseUrl  
+              isForcedBaseUrl = true
+          } 
+    }
     
-    var connectionPool = ConnectionPool(100, 60, TimeUnit.SECONDS)
+    var connectionPool = ConnectionPool(100, 80, TimeUnit.SECONDS)
     var client = OkHttpClient.Builder()
           .connectionPool(connectionPool)
           .dispatcher(Dispatcher().apply { maxRequests = 200 ; maxRequestsPerHost = 200 })
-          .connectTimeout(60, TimeUnit.SECONDS)
-          .readTimeout(60, TimeUnit.SECONDS)
+          .connectTimeout(80, TimeUnit.SECONDS)
+          .readTimeout(80, TimeUnit.SECONDS)
+          .retryOnConnectionFailure(false)
           .build()
     
     class Error(
@@ -149,13 +145,14 @@ END
         "Boolean?"
       end
       @io << ident(String.build do |io|
-        io << "     override fun #{mangle op.pretty_name}(#{args.join(", ")}): Deferred<LiveData<Response<#{returnType}>>> = CoroutineScope(IO).async { \n"
+        io << "     override fun #{mangle op.pretty_name}(#{args.join(", ")}): Flow<Response<#{returnType}>> = flow<Response<#{returnType}>> { \n"
         puts = op.args.map { |arg| "put(\"#{arg.name}\", #{arg.type.kt_encode(mangle(arg.name), nil)})" }.join("\n")
         bodyParameter = "null"
         if op.args.size > 0
           bodyParameter = "bodyArgs"
           io << "          val #{bodyParameter} = JSONObject().apply {\n"
-          io << "              #{puts}\n"
+          io << ident ident ident puts
+          io << "\n"
           io << "          }\n"
         else
           ""
@@ -176,8 +173,9 @@ END
         end
         io << ident responseExpression
         io << "          } else null\n"
-        io << "         MutableLiveData<Response<#{returnType}>>().apply { postValue(Response(r.error, responseData)) }\n"
-        io << "     }\n"
+        io << "         emit(Response(r.error, responseData))\n"
+        io << "     }.flowOn(IO)\n"
+        io << "\n"
       end)
     end
 
@@ -278,7 +276,7 @@ END
             return bcp47Tag.toString()
         }
 
-        private suspend fun makeRequest(functionName: String, bodyArgs: JSONObject?, timeoutSeconds: Int = 15): InternalResponse = suspendCoroutine { continuation ->
+        private suspend fun makeRequest(functionName: String, bodyArgs: JSONObject?, timeoutSeconds: Int = DEFAULT_TIMEOUT_SECONDS): InternalResponse = suspendCoroutine { continuation ->
             try {
                 val body = JSONObject().apply {
                     put("id", randomBytesHex(8))
@@ -289,16 +287,26 @@ END
                 }
 
                 val request = Request.Builder()
-                        .url("https://$BASE_URL${if (useStaging) "-staging" else ""}/$functionName")
+                        .url(
+                          if (isForcedBaseUrl)
+                            "$BASE_URL/$functionName"
+                          else    
+                            "https://$BASE_URL${if (useStaging) "-staging" else ""}/$functionName"
+                        )
                         .post(body.toString().toRequestBody("application/json; charset=utf-8".toMediaTypeOrNull()))
                         .build()
-                 client.newCall(request).enqueue(object: Callback {
+
+                val httpTimer = Timer()
+                val call = client.newCall(request)
+                call.enqueue(object: Callback {
                     override fun onFailure(call: Call, e: IOException) {
+                        httpTimer.cancel()
                         e.printStackTrace()
                         continuation.resume(InternalResponse(Error(ErrorType.Fatal, e.message ?: "Chamada falhou sem mensagem de erro!"), null))
                     }
 
                     override fun onResponse(call: Call, response: okhttp3.Response) {
+                        httpTimer.cancel()
                         if (response.code == 502) {
                             continuation.resume(InternalResponse(Error(ErrorType.Fatal, "Erro Fatal (502) - Tente novamente"), null))
                             return
@@ -326,6 +334,15 @@ END
                         }
                     }
                 })
+
+                httpTimer.schedule(
+                  timerTask {
+                      call.cancel()
+                      val error = Error(ErrorType.Connection, "Timeout")
+                      continuation.resume(InternalResponse(error, null))
+                  },
+                  timeoutSeconds * 1000L
+                )
             } catch (e: JSONException) {
                 e.printStackTrace()
                 continuation.resume(InternalResponse(Error(ErrorType.Fatal, e.message ?: "Erro ao parsear json"), null))

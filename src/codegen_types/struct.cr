@@ -99,7 +99,7 @@ module AST
           io << "#{suffix} \n"
           index += 1
         end
-        io << "): Serializable {\n\n"
+        io << "): Serializable {\n"
         io << "    companion object {\n"
         io << "        fun fromJson(jsonToParse : JSONObject): #{kt_native_type} {\n"
         io << "            return gson.fromJson(jsonToParse.toString(), #{name}::class.java)\n"
@@ -112,8 +112,8 @@ module AST
 
         toJsonExpr = "this@#{name}"
         io << "    fun toJson(): JSONObject {\n"
-        io << "        return JSONObject(gson.toJson(this))"
-        io << "    }"
+        io << "        return JSONObject(gson.toJson(this))\n"
+        io << "    }\n"
         io << "}"
       end
     end

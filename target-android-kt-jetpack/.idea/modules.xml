@@ -3,7 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/api/api.iml" filepath="$PROJECT_DIR$/api/api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sample/sample.iml" filepath="$PROJECT_DIR$/sample/sample.iml" />
       <module fileurl="file://$PROJECT_DIR$/target-android.iml" filepath="$PROJECT_DIR$/target-android.iml" />
+      <module fileurl="file://$PROJECT_DIR$/target-android-kt-jetpack.iml" filepath="$PROJECT_DIR$/target-android-kt-jetpack.iml" />
+      <module fileurl="file://$PROJECT_DIR$/api/target-android-kt-jetpack-api.iml" filepath="$PROJECT_DIR$/api/target-android-kt-jetpack-api.iml" />
     </modules>
   </component>
 </project>
