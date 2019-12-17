@@ -139,7 +139,7 @@ END
       @io << ident ident ident ident "const {key, expirationSeconds, version} = await cacheConfig.#{op.pretty_name}(#{(["ctx"] + op.args.map(&.name)).join(", ")});\n"
       @io << ident ident ident ident "if (!key) throw \"\";\n"
       @io << ident ident ident ident "cacheKey = crypto.createHash(\"sha256\").update(JSON.stringify(key)+ \"-#{op.pretty_name}\").digest(\"hex\").substr(0, 100); decodedKey = JSON.stringify(key); cacheExpirationSeconds = expirationSeconds; cacheVersion = version;\n"
-      @io << ident ident ident ident "const cache = await hook.getCache(cacheKey, version);console.log(JSON.stringify(cache));\n"
+      @io << ident ident ident ident "const cache = await hook.getCache(cacheKey, version);\n"
       @io << ident ident ident ident "if (cache && (!cache.expirationDate || cache.expirationDate > new Date())) return cache.ret;\n"
       @io << ident ident ident "} catch(e) {console.log(JSON.stringify(e));}\n"
       @io << ident ident "}\n"
@@ -260,7 +260,7 @@ export function start(port: number = 8000) {
 
         res.setHeader("Access-Control-Allow-Origin", "*");
         res.setHeader("Access-Control-Allow-Methods", "PUT, POST, GET, OPTIONS");
-        res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+        res.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
         res.setHeader("Access-Control-Max-Age", "86400");
         res.setHeader("Content-Type", "application/json");
 

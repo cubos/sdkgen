@@ -21,6 +21,7 @@ abstract class JavaTarget < Target
     when AST::StringPrimitiveType  ; "String"
     when AST::IntPrimitiveType     ; "Integer"
     when AST::UIntPrimitiveType    ; "Integer"
+    when AST::MoneyPrimitiveType   ; "Long"
     when AST::FloatPrimitiveType   ; "Double"
     when AST::DatePrimitiveType    ; "Calendar"
     when AST::DateTimePrimitiveType; "Calendar"
@@ -201,6 +202,8 @@ END
 
   def type_from_json(t : AST::Type, obj : String, name : String)
     case t
+    when AST::MoneyPrimitiveType
+      "#{obj}.getLong(#{name})"
     when AST::StringPrimitiveType
       "#{obj}.getString(#{name})"
     when AST::IntPrimitiveType, AST::UIntPrimitiveType
@@ -236,7 +239,7 @@ END
 
   def type_to_json(t : AST::Type, src : String)
     case t
-    when AST::StringPrimitiveType, AST::IntPrimitiveType, AST::UIntPrimitiveType, AST::FloatPrimitiveType, AST::BoolPrimitiveType
+    when AST::StringPrimitiveType, AST::IntPrimitiveType, AST::UIntPrimitiveType, AST::FloatPrimitiveType, AST::BoolPrimitiveType, AST::MoneyPrimitiveType
       "#{src}"
     when AST::DatePrimitiveType
       "DateHelpers.encodeDate(#{src})"
