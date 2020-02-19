@@ -85,8 +85,12 @@ END
     return new Promise<any>((resolve, reject) => {
       const request = (url.protocol === "http:" ? http.request : https.request)
       const req = request(options, resp => {
+        resp.on("error", error => {
+          console.error(error);
+          reject({type: "Fatal", message: error.toString()});
+        });
         let data = "";
-        resp.on("data", (chunk) => {
+        resp.on("data", chunk => {
           data += chunk;
         });
         resp.on("end", () => {
