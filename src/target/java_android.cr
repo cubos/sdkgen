@@ -442,7 +442,7 @@ END
         static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         static Application application;
         static Interceptor interceptor = null;
-        static Long defaultTimeout = 30000L;
+        static Long defaultTimeout = 60000L;
 
         static {
             dateTimeFormat.setTimeZone(TimeZone.getTimeZone("GMT"));
@@ -471,6 +471,11 @@ END
                 OkHttpClient.Builder builder = http.newBuilder();
                 if (interceptor != null)
                     builder.addNetworkInterceptor(interceptor);
+
+                builder.connectTimeout(defaultTimeout, TimeUnit.MILLISECONDS)
+                    .readTimeout(defaultTimeout, TimeUnit.MILLISECONDS)
+                    .writeTimeout(defaultTimeout, TimeUnit.MILLISECONDS)
+                    .callTimeout(defaultTimeout, TimeUnit.MILLISECONDS);
 
                 http = builder.build();
                 return;
@@ -509,7 +514,10 @@ END
                     .connectionPool(connectionPool)
                     .dispatcher(dispatcher)
                     .sslSocketFactory(sslSocketFactory, trustManager)
-                    .readTimeout(60, TimeUnit.SECONDS)
+                    .connectTimeout(defaultTimeout, TimeUnit.MILLISECONDS)
+                    .writeTimeout(defaultTimeout, TimeUnit.MILLISECONDS)
+                    .readTimeout(defaultTimeout, TimeUnit.MILLISECONDS)
+                    .callTimeout(defaultTimeout, TimeUnit.MILLISECONDS)
                     .retryOnConnectionFailure(false);
 
             if (interceptor != null)
@@ -759,7 +767,6 @@ END
 
         static void makeRequest(String name, JSONObject args, final RequestCallback callback, Long timeout) {
             initialize();
-            final Timer httpTimer = new Timer();
             JSONObject body = new JSONObject();
             try {
                 body.put("id", randomBytesHex(8));
@@ -778,10 +785,14 @@ END
                     .build();
 
             final Call call = http.newCall(request);
+
+            if (timeout != null) {
+                call.timeout().timeout(timeout, TimeUnit.MILLISECONDS);
+            }
+
             call.enqueue(new okhttp3.Callback() {
                 @Override
                 public void onFailure(Call call, final IOException e) {
-                    httpTimer.cancel();
                     new Handler(Looper.getMainLooper()).post(new Runnable() {
                         @Override
                         public void run() {
@@ -793,7 +804,6 @@ END
 
                 @Override
                 public void onResponse(Call call, final Response response) throws IOException {
-                    httpTimer.cancel();
                     if (response.code() == 502) {
                         Log.e("API", "HTTP " + response.code());
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
@@ -832,20 +842,6 @@ END
                     });
                 }
             });
-            final TimerTask task = new TimerTask() {
-                @Override
-                public void run() {
-                    call.cancel();
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            callback.onResult(new Error() {{type = ErrorType.Connection ; message = "Timeout" ;}}, null);
-                        }
-                    });
-                    return;
-                }
-            };
-            httpTimer.schedule(task, timeout != null ? timeout : defaultTimeout);
         }
 
         static Calendar toCalendar(Date date){
