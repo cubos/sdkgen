@@ -113,7 +113,10 @@ END
             reject({type: "BadFormattedResponse", message: `Response couldn't be parsed as JSON (${data}):\\n${e.toString()}`});
           }
         });
-
+        resp.on("aborted", () => {
+          console.error("Request aborted");
+          reject({type: "Fatal", message: "Request aborted"});
+        });
       });
 
       req.on("error", (e) => {
