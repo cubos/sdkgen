@@ -53,8 +53,10 @@ public class API {
         return currentDecoder
     }()
 
-     // MARK: Struct and Enums
-     public struct NoReply: Codable {}\n\n
+    // MARK: Struct and Enums
+    public struct NoReply: Codable {
+        public init() {}
+    }\n\n
 END
     # ApiCalls
     @io << ident(String.build do |io|
