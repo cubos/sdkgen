@@ -199,6 +199,7 @@ class Lexer
                 when "import"  ; ImportKeywordToken.new
                 when "get"     ; GetKeywordToken.new
                 when "function"; FunctionKeywordToken.new
+                when "fn"      ; FunctionKeywordToken.new
                 when "true"    ; TrueKeywordToken.new
                 when "false"   ; FalseKeywordToken.new
                 else
